@@ -1,0 +1,642 @@
+C++ PRIMER:
+CHAPTER 7:
+Pg 343
+References Vs Pointers [C++ Primer Pg 343]
+		- Useful for OPERATOR OVERLAODING
+		References - alias to objects; Once initialized CANT be made to refer another object; References - NOT correct to initialized to ADDRESS of object; But can define POINTER REFERNCE. 
+				int *i = &j;
+				int *&a = i;
+
+Pg 346
+2) When Arrays are passed, -> Passed as a Pointer. 
+		So size of array is not PART of its parameter type. Hence size has to be passed to the function as well
+
+3) Ellipses SUSPEND type-checking
+4) Global VS Return Arguments (Communication between funciton)
+		Global -> Reusing the funciton becomes difficult
+				-> Even local changes need full understanding of the program.
+				-> Recursion and threading becomes tough
+
+5) LINKAGE DIRECTIVES -> EXTERN [Pg 364]
+		Tell that the specific function is in a different lang and use its NAMING CONVENTIONS/ PARAMETER passing etc. eg. extern C
+6) Function name is not part of its type.
+	function type -> determined by Return type and Argument list
+--------------	
+CHAPTER 8: SCOPE & LIFE TIME
+1) Type Safe Linkage: [Pg 398]
+	Type & no of function parameters are encoded in function name.
+2) PLACEMENT NEW [Pg 417]
+	Object will be created in MEMORY that is already allocated
+--------------	
+CHAPTER 9: OVERLOADING: - Pg 452
+1) Function Overloading can have ONE EXTERN function
+	void fn(int);
+	void fn(doublt);
+	
+	void (*pf) (int) = &fn
+2) Viable functions
+
+CHAPTER 11: EXCEPTIONS
+1) Stack Unwinding:
+	Order in which catch clauses are examined
+------------------------------------------------------------------------------------------------
+Deitel C++:
+srand - to avoid pseudo random numbers. srand(TIME)
+character array can be treated as strings
+function overloading taking only the method arguments for differentiating, not the return values
+	when different functionality has to be carried out
+Templates:
+	when same functionality has to be done
+	
+	Template <class T>
+	T max(T a, T b)
+	{
+		if (a < b)
+			return b)
+	}
+	
+Passing Array to a function:
+	Always done through Call by Reference.
+	So changing the contents of passed array changes the original array
+
+A constant pointer has to be initialized at declaration itself
+	int x,y
+	int * const ptr = &x; //ptr always points to the same memory location but the value at that memory location can change.
+	* ptr = 7;
+	ptr = & y; //ERROR
+
+CANNOT DEREFERENCE A VOID* POINTER
+
+FUNCTION POINTER: pG 303 
+http://www.newty.de/fpt/intro.html
+	return_type (*fn_name[size])(args) = {fn1, fn2, fn3 ... fnSize};
+	
+	(*fn_name[choice])(choice)
+-------------------------------------
+USe of FRIENDs violates ENCAPSULATION of a class
+Pg 408
+THIS POINTER:
+	- Each object maintains a pointer to itself
+	- PREVENT self assignment during Operator overloading [Assigning an object t o itself]
+------------------------------------
+OPERATOR OVERLOADING: Pg 456
+	. , .*, ::, sizeof, ?: CANNOT BE OVERLOADED
+	
+OVERLOADING UNARY OPERATORS:
+	- non static member function with NO arguments OR
+	non member function with ONE argument
+
+OVERLOADING BINARY OPERATORS:
+	- non static member function with ONE arguments OR
+	non member function with TWO arguments. (ONE of which must be a CLASS object/Reference to a CLASS object)
+	
+int String::operator<(const String &right) const
+{ return strcmp(sPtr, right.sPtr) >= 0;}	
+------------------------------------
+VIRTUAL FUNCTIONS:	 Pg 538
+	B *b;
+	D d;
+	b = &d;
+	b->print(); //DYNAMIC BINDING
+	d.print(); //STATIC BINDING
+
+PURE VIRTUAL FUNCTION:
+you want the base class to present only  an interface for its derived classes. That is, you don’t want anyone to actually create an object of the base class, only to upcast to it so that its interface can be used. This is accomplished by making that class abstract, which happens if you give it at least one  pure virtual function . You can recognize a pure virtual function because it uses the  v i r t u a l keyword and is followed by  =   0. If anyone tries to make an object of an abstract class, the compiler prevents them.
+
+VIRTUAL DESTRUCTORS:	
+	If a class has virtual functions, make the DESTRUCTORS virtual. so that derived class may contain destructors which has to be called properly.
+IMP TIC++:
+	Each destructor knows what its class is derived  from , but not what is derived from it.
+	The problem occurs when you want to d e l e t e a  pointer of this type for an object that has been created on the heap with n e w. If the pointer is to the base class, the compiler can only know to call the base-class version of the destructor during d e l e t e. Sound familiar? This is the same problem that virtual functions  were created to solve for the general case. Fortunately, virtual  functions work for destructors as they do for all other functions except constructors
+
+class Base1 
+{ 
+public: 
+  ~Base1() { cout << "~Base1()\n"; } 
+}; 
+ 
+class Derived1 : public Base1 
+{ 
+public: 
+  ~Derived1() { cout << "~Derived1()\n"; } 
+}; 
+ 
+class Base2 
+{ 
+public: 
+  virtual ~Base2() { cout << "~Base2()\n"; } 
+}; 
+ 
+class Derived2 : public Base2 
+{ 
+public: 
+  ~Derived2() { cout << "~Derived2()\n"; } 
+}; 
+ 
+int main() 
+{ 
+  Base1* bp = new Derived1; // Upcast 
+  delete bp; 
+  Base2* b2p = new Derived2; // Upcast	
+  delete b2p; 	
+ }
+ 
+ P U R E   V I R T U A L   D E S T R U C T O R S - Pg 722 TIC++
+------------------------------------
+TEMPLATES: Pg 606 Deittel
+SYNATX: template<class T> ; 
+				template<class T, class U>
+
+template<class T>
+void print(T *array, const int c)
+{
+	for(int i=0;i<c;i++)
+		cout<<array[i];
+}
+
+Class templates are PARAMETERIZED TYPES - Pg 609
+------------------------------------
+EXCEPTION HANDLING TIC++ PART 2 Pg 373
+
+throw myerror(“something bad happened”); 
+myerror is an ordinary class, which takes a char*  as its argument. 
+------------------------------------
+FILE IO Pg 653 Deitel
+
+IOS
+	ISTREAM
+			IFSTREAM
+	OSTREAM
+			OFSTREAM
+			iostream -> in both I&O
+				FSTREAM - from IOSTREAM
+				
+	main()
+	{
+		ofstream outF("a.txt", ios::out);
+		if(!outF)
+			exit(1); //ERROR
+		outF<<"Hi Whats up";
+		
+		ifstream inF("a.txt", ios::in);
+		if(!inF)
+			exit(1);
+		while( inF>>acount>>name>>balance)
+	}
+------------------------------------
+NAME HIDING
+if Base declares a member function f(double x), and Derived declares a member function f(char c) (same name but different parameter types and/or constness), then the Base f(double x) is "hidden" rather than "overloaded" or "overridden" (even if the Base f(double x) is virtual). 
+
+http://bojolais.livejournal.com/222428.html
+Overloading and name hiding in C++
+In a phone conversation with Brad last night, he told me about a strange problem he's encountered in his new C++ job. Granted, it's probably no big deal to people with extensive C++ experience, but to those of us who live in managed code worlds, this seemed strange.
+
+In C++, when you have a class with an overloaded method (member function, whatever you want to call it), and you then extend and override that method, you must override all of the overloaded methods.
+
+I understand the case where you have changed a method signature in a child class, thereby invalidating the established interface. In this case, though, it seems counterintuitive, since you're not changing the interface, but selectively overriding. Which is different.
+
+For example:
+
+    class FirstClass
+    {
+    public:
+            virtual void MethodA (int);
+            virtual void MethodA (int, int);
+    };
+     
+    void FirstClass::MethodA (int i)
+    {
+            std::cout << "ONE!!\n";
+    }
+     
+    void FirstClass::MethodA (int i, int j)
+    {
+            std::cout << "TWO!!\n";
+    }
+
+Simple class here with two methods (or one overloaded method). You want to override the two-parameter version, so you continue with the following:
+    class SecondClass : public FirstClass
+    {
+    public:
+            void MethodA (int);
+    };
+     
+    void SecondClass::MethodA (int i)
+    {
+            std::cout << "THREE!!\n";
+    }
+
+Now, when you use an instance of SecondClass, most Java or C# programmers might assume you can call:
+    int main ()
+    {
+            SecondClass a;
+            a.MethodA (1);
+            a.MethodA (1, 1);
+    }
+
+However, the second call won't work, since the two-parameter MethodA is not visible. You can get a pointer and up-cast to FirstClass, but your SecondClass instance doesn't inherit the non-overridden methods directly.
+
+
+SINGLETON:
+	restricting the instantiation of a class to one object
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Encapsulation vs Abstraction:
+
+VERY IMP:
+    Though every method is an encapsulation, it is also an abstraction, because every time you put some things together and give it a name you create a new (abstract) concept. Encapsulation without abstraction is useless.
+
+    http://stackoverflow.com/questions/742341/difference-between-abstraction-and-encapsulation
+        Encapsulation puts some things in a box and gives you a peephole; this keeps you from mucking with the gears.
+
+        Abstraction flat-out ignores the details that don't matter, like whether the things have gears, ratchets, flywheels, or nuclear cores; they just "go"
+
+        Abstraction is hiding the implementation details by providing a layer over the basic functionality.
+
+        Information Hiding is hiding the data which is being affected by that implementation. Use of private and public comes under this. For example, hiding the variables of the classes.
+
+        Encapsulation is just grouping all similar data and functions into a group e.g Class in programming; Packet in networking.
+
+        Putting data and behavior together is what I understand from encapsulation. Hiding complexity is abstraction. Information should remain unseen is what information hiding is. Very famous three sentences. To understand the above statements better, lets take some examples:
+
+        Encapsulation:
+        ATM (Automated Teller Machine), in which the data is money and the behavior is how it will be processed. That is how data will behave in different scenarios. If user asks for the balance in his account, ATM machine will behave differently with that data, it will just tell the balance. If user asks for paying bill, it will pay bill and will tell the user the updated balance and many other behaviors. That was all encapsulation because ATM is encapsulating the money and the behavior or the functions performed on that money together.
+
+        Abstraction on other hand is hiding complexity that what behind the scenes is ATM functioning with the money and I don't want to care about that (if nothing wrong happened and my account balance stays fine.. :P ).
+        In this example, funny part is for information hiding. You hide the important information which is money by locking the ATM. That was something not good, although money will be safe until someone breaks it :D. ATM connects to your account by some mechanism and downloads your data which is very important and is available to you and to you only. But the functionality which does that is hidden from the world so nobody can just access it.
+        That was the easiest example I could thought of.
+        For all these, there are many real life example. You take your mind. Your information is hidden in your mind. That is information hiding. Some stranger cant know you until you tell him who are you.
+
+
+    http://stackoverflow.com/questions/742341/difference-between-abstraction-and-encapsulation
+        A priori, they've got nothing in common.
+
+        Most answers here focus on OOP but encapsulation begins much earlier; every method is an encapsulation:
+
+        point x = { 1, 4 };
+        point y = { 23, 42 };
+
+        int d = distance(x, y);
+
+        Here, distance encapsulates the calculation of the (euclidean) distance between two points in a plane: it hides implementation details. This is encapsulation, pure and simple.
+
+        Abstraction is the process of generalization: taking a concrete implementation and making it applicable to different, albeit somewhat related, types of data. The classical example of abstraction is C's qsort function which sorts data.
+
+        The thing about qsort is that it doesn't care about the data it sorts – in fact, it doesn't know what data it sorts. Rather, its input type is a typeless pointer (void*) which is just C's way of saying “I don't care about the type of data” (this is also called type erasure). The important point is that the implementation of qsort always stays the same, regardless of data type. The only thing that has to change is the compare function, which differs from data type to data type. qsort therefore expects the user to provide said compare function as a function argument.
+            
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Polymorphism vs Overriding vs Overloading:
+    http://stackoverflow.com/questions/154577/polymorphism-vs-overriding-vs-overloading
+
+    The clearest way to express polymorphism is via an abstract base class (or interface)
+
+    public abstract class Human{
+       ...
+       public abstract void goPee();
+    }
+
+    This class is abstract because the goPee() method is not definable for Humans. It is only definable for the subclasses Male and Female. Also, Human is an abstract concept — You cannot create a human that is neither Male nor Female. It’s got to be one or the other.
+
+    So we defer the implementation by using the abstract class.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. What is Abstraction:
+    - Abstraction is the concept of ignoring unnecessary details.
+    - Or other words, describing something in a simpler way by not concentrating on the intricate details and focusing only on necessary details.
+    - It can be thought as generalization.
+    - Say when you are meeting a random person, you would say that you are the guy in Black Shirt and Blue Jean.
+    - We can consider Interfaces as Abstraction.
+
+2. What is Encapsulation:
+    - Encapsulation is something like group similar things in a box.
+    - So someone else won't have access to the inside of the box. They can just use the box to do what they want.
+    - Changing the contents of the box won't affect the outsider. They will still be able to use the box.
+
+3. What is Polymorphism:
+    - Polymorphism is the ability to an object to decide what it should.
+    - Simple example would be to consider "Shapes" class. And the class has methods like Area and Cirumferance.
+    - We can have subclasses like Square, Rectangle.
+    - To find the area of all the shapes, we can just give Shapes.area(). Based on what shape it is, we will get the respective Area.
+
+4. Overriding:
+    - Concept of adding more details to a function in the derived class.
+    - It replaces the function in the base class.
+
+5. Overloading:
+    - It is concept of defining multiple methods based on the parameters passed.
+
+6. What is Inheritence:
+    - It is concept where a new class is derived from an existing class.
+    - This happens when we want to have a new Class that will make use of an existing class with some added details to it.
+    - Eg we have a Vehicle / Shapes class and we want to add Car / Square class.
+    - Inheritence should only be used if the sub class is BEHAVIORIALLY equal to the superclass.
+
+7. Is-A vs Has-A
+    A House is a Building (inheritance);
+    A House has a Room (composition);
+    A House has an occupant (aggregation).
+    http://stackoverflow.com/questions/49002/prefer-composition-over-inheritance
+        
+        Does TypeB want to expose the complete interface (all public methods no less) of TypeA such that TypeB can be used where TypeA is expected? Indicates Inheritance.
+        e.g. A Cessna biplane will expose the complete interface of an airplane, if not more. So that makes it fit to derive from Airplane.
+
+        Does TypeB only want only some/part of the behavior exposed by TypeA? Indicates need for Composition.
+        e.g. A Bird may need only the fly behavior of an Airplane. In this case, it makes sense to extract it out as an interface / class / both and make it a member of both classes.
+
+    http://enoshtechdiary.blogspot.com/2012/04/composition-vs-aggregation.html
+
+    Usage of Inheritence and Aggregation
+    - If we have used inheritance but we only use part of the interface, or we are forced to override a lot of functionality to keep the correlation logical.
+      Then we have a big nasty smell that indicates that we had to use aggregation.
+    - If we have used aggregation (or we plan to use it) but we find out we need to copy almost all of the functionality. Then we have a smell that points in the direction of inheritance.
+
+    HAS-A - ASSOCIATION
+    1. Composition:
+        - REPRESENTED using FILLED DIAMOND in a CLASS DIAGRAM
+        - Composition is an association in which one class CANNOT exisit without other.
+        - EG: CAR has-a Engine.
+        - When we destroy CAR, we destroy Object as well.
+        - CAR manages the lifetime of the Engine.
+
+        - OUR TREE STURUCTURE has FILES.
+        - When we destroy Trees, we destroy Files.
+
+    2. AGGREGATION
+        - REPRESENTED using EMPTY DIAMOND in a CLASS DIAGRAM
+        - Aggregation is a Composition in which one class belongs to a Collection.
+        - However it CAN exist without the WHOLE.
+        - EG: CAR has a DRIVER.
+
+        - Multichannel Sessions that can exist even if the Connection goes away.
+
+Inheritence Vs Polymorphism:
+    http://stackoverflow.com/questions/6308178/what-is-the-main-difference-between-inheritance-and-polymorphism
+    http://www.tutorialspoint.com/cplusplus/cpp_inheritance.htm
+
+    // Base class
+    class Shape 
+    {
+       public:
+          void setWidth(int w)
+          {
+             width = w;
+          }
+          void setHeight(int h)
+          {
+             height = h;
+          }
+       protected:
+          int width;
+          int height;
+    };
+
+    // Derived class
+    class Rectangle: public Shape
+    {
+       public:
+          int getArea()
+          { 
+             return (width * height); 
+          }
+    };
+
+    int main(void)
+    {
+       Rectangle Rect;
+     
+       Rect.setWidth(5);
+       Rect.setHeight(7);
+
+       // Print the area of the object.
+       cout << "Total area: " << Rect.getArea() << endl;
+
+       return 0;
+    }
+
+8. Friend Function vs Static Function
+http://stackoverflow.com/questions/4723143/static-member-functions
+http://stackoverflow.com/questions/2315166/where-would-you-use-a-friend-function-vs-a-static-member-function
+http://stackoverflow.com/questions/4921150/when-to-use-static-member-function?lq=1
+
+    Static Variable:
+        Lifetime is throughout the program. It will hold valid for all instances of the Class.
+    Static Function:
+        PRotected static function.
+        Good uses of static member functions:
+
+            Meta-programming. Real-world example is template std::char_traits. All member functions are static
+            Making it a static member function gives it access to private members of the class, although a friend would suffice here too
+            A protected static member function thus is accessible only to the class and classes derived from it.
+
+    Friend function:
+        It has access to private members of the class.
+
+http://stackoverflow.com/questions/17434/when-should-you-use-friend-in-c
+    Friend CLASS:
+        The 'friend' specifier allows the designated class access to protected data or functionality within the class making the friend statement.
+        For example in the below code anyone may ask a child for their name, but only the mother and the child may change the name.
+
+        You can take this simple example further by considering a more complex class such as a Window. Quite likely a Window will have many function/data elements that should not be publicly accessible, but ARE needed by a related class such as a WindowManager.
+
+        class Child
+        {
+        friend class Mother;
+
+        public:
+
+          string name( void );
+
+        protected:
+
+          void setName( string newName );
+        };
+
+9. External Linkage vs Internal Linkage
+    TIC++
+    - Internal linkage means that storage is created to represent the identifier only for the file being compiled.
+    - Internal linkage is specified by the keyword static in C and C++
+
+
+    - External linkage means that a single piece of storage is created to represent the identifier for all files being compiled.
+    - The storage is created once, and the linker must resolve all other references to that storage.
+    - Global variables and function names have external linkage.
+    - These are accessed from other files by declaring them with the keyword extern.
+
+10. Abstract Class vs Interface:
+    Interface:
+        - Interfaces have no implementation.
+        - A class implementing an interface should implements all its functions.
+        
+    - Abstract class have some implementation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+General Concepts:
+1. What happens when I click the Stop button on the browser
+http://stackoverflow.com/questions/138116/what-happens-when-i-click-the-stop-button-on-the-browser?rq=1
+
+    A Web Page load from a browser is usually a 4 step process (not considering redirections):
+
+        - Browser sends HTTP Request, when the Server is available
+        - Server executes code (for dynamic pages)
+        - Server sends the HTTP Response (usually HTML)
+        - Browser renders HTML, and asks for other files (images, css, ...)
+
+    The browser reaction to "Stop" depends on the step your request is at that time:
+
+        - If your server is slow or overloaded, and you hit "Stop" during step 1, nothing happens. The browser doesn't send the request.
+        - Most of the times, however, "Stop" will be hit on steps 2, 3 and 4, and in those steps your code is already executed, the browser simply stops waiting for the response (2), or receiving the response (3), or rendering the response (4).
+
+    The HTTP call itself is always a 2 steps action (Request/Response), and there is no automatic way to rollback the execution from the client
+
+2. what happens when you type in a URL in browser
+http://stackoverflow.com/questions/2092527/what-happens-when-you-type-in-a-url-in-browser
+http://igoro.com/archive/what-really-happens-when-you-navigate-to-a-url/
+
+    In an extremely rough and simplified sketch, assuming the simplest possible HTTP request, no proxies, IPv4 and no problems in any step:
+
+        - browser checks cache; if requested object is in cache and is fresh, skip to #9
+        - browser asks OS for server's IP address
+        - OS makes a DNS lookup and replies the IP address to the browser
+        - browser opens a TCP connection to server (this step is much more complex with HTTPS)
+        - browser sends the HTTP request through TCP connection
+        - browser receives HTTP response and may close the TCP connection, or reuse it for another request
+        - browser checks if the response is a redirect or a conditional response (3xx result status codes), authorization request (401), error (4xx and 5xx), etc.; these are handled differently from normal responses (2xx)
+        - if cacheable, response is stored in cache
+        - browser decodes response (e.g. if it's gzipped)
+        - browser determines what to do with response (e.g. is it a HTML page, is it an image, is it a sound clip?)
+        - browser renders response, or offers a download dialog for unrecognized types
+
+3. What is Cardinality
+    3a. In Data Modelling:
+        - the relationship that one table can have with another table. These relationships include: many-to-many, many-to-one/one-to-many, or one-to-one
+
+        - Suppose we have three tables that are used by a company to store employee information: an Employee table, an Employee_Salary table, and a Department table.
+        - The Department table will have a one to many relationship with the Employee table, because every employee can belong to only one department,
+          but a department can consist of many employees.
+        - In other words, the cardinality of the Department table in relationship to the employee table is one to many.
+        - The cardinality of the Employee table in relationship to the Employee_Salary table will be one to one, since an employee can only have one salary, and vice versa
+
+    3b. In SQL:
+        - remember that the cardinality is a number.
+          For example, let’s say we have a table with a “Sex” column which has only two possible values of “Male” and “Female”.
+          Then, that “Sex” column would have a cardinality of 2
+
+4. What are mock Objects
+http://stackoverflow.com/questions/3622455/what-is-the-purpose-of-mock-objects
+    - Fake objects to test intermediate functions.
+      Eg: Cook <- Waiter <- Customer
+
+5. UML Diagrams
+    5.1 Use Case Diagram:
+        - Has Actors, Scenarios and Use cases
+
+        - It is used to get the overview of the system; 
+          i.e The functionality of the system
+        - It gives a basic understanding of WHO uses the SYSTEM and how the system is USED
+        - It does not say anything about HOW the SYSTEM WILL BE DESIGNED
+
+    5.2 CLASS DIAGRAM
+        - This diagram identifies the key components of the system and how the system should be designed.
+        - It represents the STATIC structure of the project.
+        - It has
+            - Class name
+            - attributes
+            - methods
+
+    5.3 OBJECT DIAGRAM
+        - It gives a REPRESENTATION of a cLASS diagram at any point of time.
+        - I would say OBJECT DIAGRAM as an EXAMPLE of a CLASS DIAGRAM
+
+
+    5.4 SEQUENCE DIAGRAM
+        - Shows interaction between objects at any given time.
+        - This helps in better understanding how the system should be implemented.
+        - IT shows how message flows from One object to another.
+
+        Async Messages: 
+            Thin Overhead
+
+        Sync MEssages:
+            Dark Overhead
+
+
+6. Boxing and Unboxing
+http://stackoverflow.com/questions/2111857/why-do-we-need-boxing-and-unboxing-in-c
+    
+
+7. Shadowing and Overriding
+http://stackoverflow.com/questions/392721/difference-between-shadowing-and-overriding-in-c
+
+8. Agile Model
+http://istqbexamcertification.com/what-is-agile-model-advantages-disadvantages-and-when-to-use-it/
+   - Software is developed in incremental, rapid cycles. results in small incremental releases with each release building on previous functionality 
+   - DIS ADV: In case of some software deliverables, especially the large ones, it is difficult to assess the effort required at the beginning of the software development life cycle.
+
+
+9. Types of Polymorphism
+    Run time - Overriding
+    Compile time - Over loading
+
+10. Factory Pattern vs Singleton Pattern
+http://stackoverflow.com/questions/2094211/difference-between-singleton-and-factory-pattern
+    A singleton pattern ensures that you always get back the same instance of whatever type you are retrieving, whereas the factory pattern generally gives you a different instance of each type
+
+    The Singleton pattern ensures that only one instance of the class exists and typically provides a well-known, i.e., global point for accessing it.
+    The purpose of the singleton is where you want all calls to go through the same instance.
+    An example of this might be a class that manages a disk cache, or gets data from a static dictionary; wherever it is important only one known instance interacts with the resource.
+    This does make it less scalable.
+
+    The Factory pattern defines an interface for creating objects (no limitation on how many) and usually abstracts the control of which class to instantiate.
+    The purpose of the factory is to create and return new instances.
+    Often, these won't actually be the same type at all, but they will be implementations of the same base class.
+    However, there may be many instances of each type
+
+11. MVC PAttern
+http://programmers.stackexchange.com/questions/127624/what-is-mvc-really
+
+    The model manages fundamental behaviors and data of the application. It can respond to requests for information, respond to instructions to change the state of its information, and even to notify observers in event-driven systems when information changes. This could be a database, or any number of data structures or storage systems. In short, it is the data and data-management of the application.
+
+    The view effectively provides the user interface element of the application. It'll render data from the model into a form that is suitable for the user interface.
+
+    The controller receives user input and makes calls to model objects and the view to perform appropriate actions.
+
+
+    MVC (Model, View, Controller) is a pattern for organising code in an application to improve maintainability.
+    Imagine a photographer with his camera in a studio. A customer asks him to take a photo of a box.
+
+    The box is the model, the photographer is the controller and the camera is the view.
+
+    Because the box does not know about the camera or the photographer, it is completely independent. This separation allows the photographer to walk around the box and point the camera at any angle to get the shot/view that he wants.
+
+    Non-MVC architectures tend to be tightly integrated together. If the box, the controller and the camera were one-and-the-same-object then, we would have to pull apart and then re-build both the box and the camera each time we wanted to get a new view. Also, taking the photo would always be like trying to take a selfie - and that's not always very easy.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+DESIGN Questions:
+1. PArking lot  
+http://stackoverflow.com/questions/764933/amazon-interview-question-design-an-oo-parking-lot
+
+2. Coffee Maker
+http://www.drdobbs.com/object-oriented-analysis-and-design-part/184403494
+
+3. Deck of Cards
+http://latentcontent.net/2010/03/27/anatomy-of-an-interview-question-design-a-deck-of-cards/
+http://programmers.stackexchange.com/questions/284113/i-need-a-data-structure-for-a-card-game
+
+
+
+

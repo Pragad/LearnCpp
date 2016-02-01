@@ -22,7 +22,7 @@ int main()
     // Q3: IMP: Array Decaying
     // http://stackoverflow.com/questions/10088661/assigning-a-string-of-characters-to-a-char-array?lq=1
     uint8_t fileName[9];
-    strncpy(fileName, "hello", 9);
+    //strncpy(fileName, "hello", 9);
     //fileName = "hello000";
     cout << fileName << endl;
 
@@ -30,6 +30,7 @@ int main()
     int *a;
     int *b; 
    // *a = 5;
+    /*
     cout<<a<<endl;
     cout<<*a<<endl;
     cout<<b<<endl;
@@ -40,7 +41,13 @@ int main()
 
     str.copy(test, 5);
     cout << test << endl;
+    */
 
+    string tempStr = "xyz";
+    tempStr[0] = 'a';
+    tempStr[1] = 'b';
+    tempStr[2] = 'c';
+    cout << "TempStr: " << tempStr << endl;
     cout <<  endl;
     return 0;
 }
