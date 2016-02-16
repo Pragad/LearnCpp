@@ -1,246 +1,264 @@
 C++ PRIMER:
-CHAPTER 7:
-Pg 343
-References Vs Pointers [C++ Primer Pg 343]
-		- Useful for OPERATOR OVERLAODING
-		References - alias to objects; Once initialized CANT be made to refer another object; References - NOT correct to initialized to ADDRESS of object; But can define POINTER REFERNCE. 
-				int *i = &j;
-				int *&a = i;
+    CHAPTER 7:
+    Pg 343
+    References Vs Pointers [C++ Primer Pg 343]
+        - Useful for OPERATOR OVERLAODING
+        References - alias to objects;
+        Once initialized CANT be made to refer another object;
+        References - NOT correct to initialize to ADDRESS of object;
+        But can define POINTER REFERNCE. 
+            int *i = &j;
+            int *&a = i;
 
-Pg 346
-2) When Arrays are passed, -> Passed as a Pointer. 
-		So size of array is not PART of its parameter type. Hence size has to be passed to the function as well
+    Pg 346
+    2) When Arrays are passed, -> Passed as a Pointer. 
+        So size of array is not PART of its parameter type. Hence size has to be passed to the function as well
 
-3) Ellipses SUSPEND type-checking
-4) Global VS Return Arguments (Communication between funciton)
-		Global -> Reusing the funciton becomes difficult
-				-> Even local changes need full understanding of the program.
-				-> Recursion and threading becomes tough
+    3) Ellipses SUSPEND type-checking
+    4) Global VS Return Arguments (Communication between function)
+            Global -> Reusing the funciton becomes difficult
+                    -> Even local changes need full understanding of the program.
+                    -> Recursion and threading becomes tough
 
-5) LINKAGE DIRECTIVES -> EXTERN [Pg 364]
-		Tell that the specific function is in a different lang and use its NAMING CONVENTIONS/ PARAMETER passing etc. eg. extern C
-6) Function name is not part of its type.
-	function type -> determined by Return type and Argument list
---------------	
-CHAPTER 8: SCOPE & LIFE TIME
-1) Type Safe Linkage: [Pg 398]
-	Type & no of function parameters are encoded in function name.
-2) PLACEMENT NEW [Pg 417]
-	Object will be created in MEMORY that is already allocated
---------------	
-CHAPTER 9: OVERLOADING: - Pg 452
-1) Function Overloading can have ONE EXTERN function
-	void fn(int);
-	void fn(doublt);
-	
-	void (*pf) (int) = &fn
-2) Viable functions
+    5) LINKAGE DIRECTIVES -> EXTERN [Pg 364]
+            Tell that the specific function is in a different lang and use its NAMING CONVENTIONS/ PARAMETER passing etc. eg. extern C
+    6) Function name is not part of its type.
+        function type -> determined by Return type and Argument list
+    --------------	
+    CHAPTER 8: SCOPE & LIFE TIME
+    1) Type Safe Linkage: [Pg 398]
+        Type & no of function parameters are encoded in function name.
+    2) PLACEMENT NEW [Pg 417]
+        Object will be created in MEMORY that is already allocated
+    --------------	
+    CHAPTER 9: OVERLOADING: - Pg 452
+    1) Function Overloading can have ONE EXTERN function
+        void fn(int);
+        void fn(double);
+        
+        void (*pf) (int) = &fn
+    2) Viable functions
 
-CHAPTER 11: EXCEPTIONS
-1) Stack Unwinding:
-	Order in which catch clauses are examined
+    CHAPTER 11: EXCEPTIONS
+    1) Stack Unwinding:
+        Order in which catch clauses are examined
 ------------------------------------------------------------------------------------------------
 Deitel C++:
-srand - to avoid pseudo random numbers. srand(TIME)
-character array can be treated as strings
-function overloading taking only the method arguments for differentiating, not the return values
-	when different functionality has to be carried out
-Templates:
-	when same functionality has to be done
-	
-	Template <class T>
-	T max(T a, T b)
-	{
-		if (a < b)
-			return b)
-	}
-	
-Passing Array to a function:
-	Always done through Call by Reference.
-	So changing the contents of passed array changes the original array
+    srand - to avoid pseudo random numbers. srand(TIME)
+    character array can be treated as strings
+    function overloading taking only the method arguments for differentiating, not the return values
+        when different functionality has to be carried out
+    Templates:
+        when same functionality has to be done
+        
+        Template <class T>
+        T max(T a, T b)
+        {
+            if (a < b)
+                return b)
+        }
+        
+    Passing Array to a function:
+        Always done through Call by Reference.
+        So changing the contents of passed array changes the original array
 
-A constant pointer has to be initialized at declaration itself
-	int x,y
-	int * const ptr = &x; //ptr always points to the same memory location but the value at that memory location can change.
-	* ptr = 7;
-	ptr = & y; //ERROR
+    A constant pointer has to be initialized at declaration itself
+        int x,y
+        int * const ptr = &x; //ptr always points to the same memory location but the value at that memory location can change.
+        * ptr = 7;
+        ptr = & y; //ERROR
 
-CANNOT DEREFERENCE A VOID* POINTER
+    CANNOT DEREFERENCE A VOID* POINTER
 
-FUNCTION POINTER: pG 303 
-http://www.newty.de/fpt/intro.html
-	return_type (*fn_name[size])(args) = {fn1, fn2, fn3 ... fnSize};
-	
-	(*fn_name[choice])(choice)
--------------------------------------
-USe of FRIENDs violates ENCAPSULATION of a class
-Pg 408
-THIS POINTER:
-	- Each object maintains a pointer to itself
-	- PREVENT self assignment during Operator overloading [Assigning an object t o itself]
-------------------------------------
-OPERATOR OVERLOADING: Pg 456
-	. , .*, ::, sizeof, ?: CANNOT BE OVERLOADED
-	
-OVERLOADING UNARY OPERATORS:
-	- non static member function with NO arguments OR
-	non member function with ONE argument
+    FUNCTION POINTER: pG 303 
+    http://www.newty.de/fpt/intro.html
+        return_type (*fn_name[size])(args) = {fn1, fn2, fn3 ... fnSize};
+        
+        (*fn_name[choice])(choice)
+    -------------------------------------
+    USe of FRIENDs violates ENCAPSULATION of a class
+    Pg 408
+    THIS POINTER:
+        - Each object maintains a pointer to itself
+        - PREVENT self assignment during Operator overloading [Assigning an object t o itself]
+    ------------------------------------
+    OPERATOR OVERLOADING: Pg 456
+        . , .*, ::, sizeof, ?: CANNOT BE OVERLOADED
+        
+    OVERLOADING UNARY OPERATORS:
+        - non static member function with NO arguments OR
+        non member function with ONE argument
 
-OVERLOADING BINARY OPERATORS:
-	- non static member function with ONE arguments OR
-	non member function with TWO arguments. (ONE of which must be a CLASS object/Reference to a CLASS object)
-	
-int String::operator<(const String &right) const
-{ return strcmp(sPtr, right.sPtr) >= 0;}	
-------------------------------------
-VIRTUAL FUNCTIONS:	 Pg 538
-	B *b;
-	D d;
-	b = &d;
-	b->print(); //DYNAMIC BINDING
-	d.print(); //STATIC BINDING
+    OVERLOADING BINARY OPERATORS:
+        - non static member function with ONE arguments OR
+        non member function with TWO arguments. (ONE of which must be a CLASS object/Reference to a CLASS object)
+        
+    int String::operator<(const String &right) const
+    { return strcmp(sPtr, right.sPtr) >= 0;}	
+    ------------------------------------
+    VIRTUAL FUNCTIONS:	 Pg 538
+        B *b;
+        D d;
+        b = &d;
+        b->print(); //DYNAMIC BINDING
+        d.print(); //STATIC BINDING
 
-PURE VIRTUAL FUNCTION:
-you want the base class to present only  an interface for its derived classes. That is, you don’t want anyone to actually create an object of the base class, only to upcast to it so that its interface can be used. This is accomplished by making that class abstract, which happens if you give it at least one  pure virtual function . You can recognize a pure virtual function because it uses the  v i r t u a l keyword and is followed by  =   0. If anyone tries to make an object of an abstract class, the compiler prevents them.
+    When you have a base class and a derived class, if you want a specific implementation of method in the base
+    class, you override it by giving a specific implementation in the derived class.
 
-VIRTUAL DESTRUCTORS:	
-	If a class has virtual functions, make the DESTRUCTORS virtual. so that derived class may contain destructors which has to be called properly.
-IMP TIC++:
-	Each destructor knows what its class is derived  from , but not what is derived from it.
-	The problem occurs when you want to d e l e t e a  pointer of this type for an object that has been created on the heap with n e w. If the pointer is to the base class, the compiler can only know to call the base-class version of the destructor during d e l e t e. Sound familiar? This is the same problem that virtual functions  were created to solve for the general case. Fortunately, virtual  functions work for destructors as they do for all other functions except constructors
+    Both of the functions will be having the same name.
+    Base Class: Animal
+    Method: eat() {"eat any food"};
 
-class Base1 
-{ 
-public: 
-  ~Base1() { cout << "~Base1()\n"; } 
-}; 
- 
-class Derived1 : public Base1 
-{ 
-public: 
-  ~Derived1() { cout << "~Derived1()\n"; } 
-}; 
- 
-class Base2 
-{ 
-public: 
-  virtual ~Base2() { cout << "~Base2()\n"; } 
-}; 
- 
-class Derived2 : public Base2 
-{ 
-public: 
-  ~Derived2() { cout << "~Derived2()\n"; } 
-}; 
- 
-int main() 
-{ 
-  Base1* bp = new Derived1; // Upcast 
-  delete bp; 
-  Base2* b2p = new Derived2; // Upcast	
-  delete b2p; 	
- }
- 
- P U R E   V I R T U A L   D E S T R U C T O R S - Pg 722 TIC++
-------------------------------------
-TEMPLATES: Pg 606 Deittel
-SYNATX: template<class T> ; 
-				template<class T, class U>
+    Dervided Class: Cow, Cat
+    Method: eat() {"eat grass"}, eat() {"eat cat"}
 
-template<class T>
-void print(T *array, const int c)
-{
-	for(int i=0;i<c;i++)
-		cout<<array[i];
-}
+    If we have a function xyz(Animal* ani){ ani->eat()},
+    If we have a COMMON FUNCTION for all dervided classes, then if we want to call a specific implementation at run time,
+    we should make the function virtual.
 
-Class templates are PARAMETERIZED TYPES - Pg 609
-------------------------------------
-EXCEPTION HANDLING TIC++ PART 2 Pg 373
 
-throw myerror(“something bad happened”); 
-myerror is an ordinary class, which takes a char*  as its argument. 
-------------------------------------
-FILE IO Pg 653 Deitel
+    PURE VIRTUAL FUNCTION:
+    you want the base class to present only  an interface for its derived classes. That is, you don’t want anyone to actually create an object of the base class, only to upcast to it so that its interface can be used. This is accomplished by making that class abstract, which happens if you give it at least one  pure virtual function . You can recognize a pure virtual function because it uses the  v i r t u a l keyword and is followed by  =   0. If anyone tries to make an object of an abstract class, the compiler prevents them.
 
-IOS
-	ISTREAM
-			IFSTREAM
-	OSTREAM
-			OFSTREAM
-			iostream -> in both I&O
-				FSTREAM - from IOSTREAM
-				
-	main()
-	{
-		ofstream outF("a.txt", ios::out);
-		if(!outF)
-			exit(1); //ERROR
-		outF<<"Hi Whats up";
-		
-		ifstream inF("a.txt", ios::in);
-		if(!inF)
-			exit(1);
-		while( inF>>acount>>name>>balance)
-	}
-------------------------------------
-NAME HIDING
-if Base declares a member function f(double x), and Derived declares a member function f(char c) (same name but different parameter types and/or constness), then the Base f(double x) is "hidden" rather than "overloaded" or "overridden" (even if the Base f(double x) is virtual). 
 
-http://bojolais.livejournal.com/222428.html
-Overloading and name hiding in C++
-In a phone conversation with Brad last night, he told me about a strange problem he's encountered in his new C++ job. Granted, it's probably no big deal to people with extensive C++ experience, but to those of us who live in managed code worlds, this seemed strange.
+    VIRTUAL DESTRUCTORS:	
+        If a class has virtual functions, make the DESTRUCTORS virtual. so that derived class may contain destructors which has to be called properly.
+    IMP TIC++:
+        Each destructor knows what its class is derived  from , but not what is derived from it.
+        The problem occurs when you want to d e l e t e a  pointer of this type for an object that has been created on the heap with n e w. If the pointer is to the base class, the compiler can only know to call the base-class version of the destructor during d e l e t e. Sound familiar? This is the same problem that virtual functions  were created to solve for the general case. Fortunately, virtual  functions work for destructors as they do for all other functions except constructors
 
-In C++, when you have a class with an overloaded method (member function, whatever you want to call it), and you then extend and override that method, you must override all of the overloaded methods.
-
-I understand the case where you have changed a method signature in a child class, thereby invalidating the established interface. In this case, though, it seems counterintuitive, since you're not changing the interface, but selectively overriding. Which is different.
-
-For example:
-
-    class FirstClass
-    {
-    public:
-            virtual void MethodA (int);
-            virtual void MethodA (int, int);
-    };
+    class Base1 
+    { 
+    public: 
+      ~Base1() { cout << "~Base1()\n"; } 
+    }; 
      
-    void FirstClass::MethodA (int i)
-    {
-            std::cout << "ONE!!\n";
-    }
+    class Derived1 : public Base1 
+    { 
+    public: 
+      ~Derived1() { cout << "~Derived1()\n"; } 
+    }; 
      
-    void FirstClass::MethodA (int i, int j)
-    {
-            std::cout << "TWO!!\n";
-    }
-
-Simple class here with two methods (or one overloaded method). You want to override the two-parameter version, so you continue with the following:
-    class SecondClass : public FirstClass
-    {
-    public:
-            void MethodA (int);
-    };
+    class Base2 
+    { 
+    public: 
+      virtual ~Base2() { cout << "~Base2()\n"; } 
+    }; 
      
-    void SecondClass::MethodA (int i)
+    class Derived2 : public Base2 
+    { 
+    public: 
+      ~Derived2() { cout << "~Derived2()\n"; } 
+    }; 
+     
+    int main() 
+    { 
+      Base1* bp = new Derived1; // Upcast 
+      delete bp; 
+      Base2* b2p = new Derived2; // Upcast	
+      delete b2p; 	
+     }
+     
+     P U R E   V I R T U A L   D E S T R U C T O R S - Pg 722 TIC++
+    ------------------------------------
+    TEMPLATES: Pg 606 Deittel
+    SYNATX: template<class T> ; 
+                    template<class T, class U>
+
+    template<class T>
+    void print(T *array, const int c)
     {
-            std::cout << "THREE!!\n";
+        for(int i=0;i<c;i++)
+            cout<<array[i];
     }
 
-Now, when you use an instance of SecondClass, most Java or C# programmers might assume you can call:
-    int main ()
-    {
-            SecondClass a;
-            a.MethodA (1);
-            a.MethodA (1, 1);
-    }
+    Class templates are PARAMETERIZED TYPES - Pg 609
+    ------------------------------------
+    EXCEPTION HANDLING TIC++ PART 2 Pg 373
 
-However, the second call won't work, since the two-parameter MethodA is not visible. You can get a pointer and up-cast to FirstClass, but your SecondClass instance doesn't inherit the non-overridden methods directly.
+    throw myerror(“something bad happened”); 
+    myerror is an ordinary class, which takes a char*  as its argument. 
+    ------------------------------------
+    FILE IO Pg 653 Deitel
+
+    IOS
+        ISTREAM
+                IFSTREAM
+        OSTREAM
+                OFSTREAM
+                iostream -> in both I&O
+                    FSTREAM - from IOSTREAM
+                    
+        main()
+        {
+            ofstream outF("a.txt", ios::out);
+            if(!outF)
+                exit(1); //ERROR
+            outF<<"Hi Whats up";
+            
+            ifstream inF("a.txt", ios::in);
+            if(!inF)
+                exit(1);
+            while( inF>>acount>>name>>balance)
+        }
+    ------------------------------------
+    NAME HIDING
+    if Base declares a member function f(double x), and Derived declares a member function f(char c) (same name but different parameter types and/or constness), then the Base f(double x) is "hidden" rather than "overloaded" or "overridden" (even if the Base f(double x) is virtual). 
+
+    http://bojolais.livejournal.com/222428.html
+    Overloading and name hiding in C++
+    In a phone conversation with Brad last night, he told me about a strange problem he's encountered in his new C++ job. Granted, it's probably no big deal to people with extensive C++ experience, but to those of us who live in managed code worlds, this seemed strange.
+
+    In C++, when you have a class with an overloaded method (member function, whatever you want to call it), and you then extend and override that method, you must override all of the overloaded methods.
+
+    I understand the case where you have changed a method signature in a child class, thereby invalidating the established interface. In this case, though, it seems counterintuitive, since you're not changing the interface, but selectively overriding. Which is different.
+
+    For example:
+
+        class FirstClass
+        {
+        public:
+                virtual void MethodA (int);
+                virtual void MethodA (int, int);
+        };
+         
+        void FirstClass::MethodA (int i)
+        {
+                std::cout << "ONE!!\n";
+        }
+         
+        void FirstClass::MethodA (int i, int j)
+        {
+                std::cout << "TWO!!\n";
+        }
+
+    Simple class here with two methods (or one overloaded method). You want to override the two-parameter version, so you continue with the following:
+        class SecondClass : public FirstClass
+        {
+        public:
+                void MethodA (int);
+        };
+         
+        void SecondClass::MethodA (int i)
+        {
+                std::cout << "THREE!!\n";
+        }
+
+    Now, when you use an instance of SecondClass, most Java or C# programmers might assume you can call:
+        int main ()
+        {
+                SecondClass a;
+                a.MethodA (1);
+                a.MethodA (1, 1);
+        }
+
+    However, the second call won't work, since the two-parameter MethodA is not visible. You can get a pointer and up-cast to FirstClass, but your SecondClass instance doesn't inherit the non-overridden methods directly.
 
 
-SINGLETON:
-	restricting the instantiation of a class to one object
+    SINGLETON:
+        restricting the instantiation of a class to one object
 -----------------------------------------------------------------------------------------------------------------------------------------
-
 Encapsulation vs Abstraction:
 
 VERY IMP:
@@ -470,19 +488,202 @@ http://stackoverflow.com/questions/17434/when-should-you-use-friend-in-c
     - Abstract class have some implementation.
 
 
+11. Copy Constructor vs Assignment Operator:
+    A copy constructor is used to initialize a previously uninitialized object from some other object's data.
+
+    A(const A& rhs) : data_(rhs.data_) {}
+
+    An assignment operator is used to replace the data of a previously initialized object with some other object's data.
+
+    A& operator=(const A& rhs) {data_ = rhs.data_; return *this;}
+
+    Copy constructor is called when a new object is created from an existing object, as a copy of the existing object (see this G-Fact). And assignment operator is called when an already initialized object is assigned a new value from another existing object.
+    t2 = t1;  // calls assignment operator, same as "t2.operator=(t1);"
+    Test t3 = t1;  // calls copy constructor, same as "Test t3(t1);"
+
+18. Typedef vs #define
+A typedef is generally preferred unless there's some odd reason that you specifically need a macro.
+
+macros do textual substitution, which can do considerable violence to the semantics of the code.
+
+19. Volatile keyword:
+http://stackoverflow.com/questions/246127/why-is-volatile-needed-in-c
+
+20. What is Pure Virtual Function vs Virtual Function - VIRTUAL FUNCTION vs PURE VIRTUAL FUNCTION:
+    - What a Virtual function will do is,
+        - It will make its CLASS a polymorphic base class. 
+        - So we can have derived classes that can override the virtual methods in the base class.
+
+    - What a PURE Virtual function will do is,
+        http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained
+        - When you want SOMEONE TO DEFINE ALL THE METHODS in your class.
+        - It will make the base Class ABSTRACT. And any class that derives it MUST have an 
+          implementation for the virtual function.
+        - A pure virtual function or pure virtual method is a virtual function that is
+          REQUIRED to be implemented by a derived class that is not abstract"
+
+21. Purpose of Virtual in C++
+    - When you want to OVERRIDE an method in base class AND
+        - CALL it using a base class pointer
+    You use virtual functions when you want to override a certain behavior (read method) for your derived class rather than the one implemented for the base class and
+    you want to do so at run-time through a pointer to the base class. 
 
 
+21b. Why do we need Virtual methods in C++
+    http://stackoverflow.com/questions/2391679/why-do-we-need-virtual-methods-in-c
+        Let's say you have these two classes:
 
+        class Animal
+        {
+        public:
+        void eat() { std::cout << "I'm eating generic food."; }
+        }
 
+        class Cat : public Animal
+        {
+        public:
+        void eat() { std::cout << "I'm eating a rat."; }
+        }
 
+        In your main function:
 
+        Animal *animal = new Animal;
+        Cat *cat = new Cat;
 
+        animal->eat(); // outputs: "I'm eating generic food."
+        cat->eat();    // outputs: "I'm eating a rat."
 
+        So far so good right? Animals eat generic food, cats eat rats, all without virtual.
 
+        Let's change it a little now so that eat() is called via an intermediate function (a trivial function just for this example):
 
+        //this can go at the top of the main.cpp file
+        void func(Animal *xyz) { xyz->eat(); }
 
+        Now our main function is:
 
+        Animal *animal = new Animal;
+        Cat *cat = new Cat;
 
+        func(animal); // outputs: "I'm eating generic food."
+        func(cat);    // outputs: "I'm eating generic food."
+
+        Uh oh... we passed a Cat into func(), but it won't eat rats. Should you overload func() so it takes a Cat* ? If you have to derive more animals from Animal they would all need their own func().
+
+        The solution is to make eat() a virtual function:
+
+        class Animal
+        {
+        public:
+        virtual void eat() { std::cout << "I'm eating generic food."; }
+        }
+        class Cat : public Animal
+        {
+        public:
+        void eat() { std::cout << "I'm eating a rat."; }
+        }
+
+        Main:
+
+        func(animal); // outputs: "I'm eating generic food."
+        func(cat);    // outputs: "I'm eating a rat."
+
+22. How do you declare an interface in C++
+    Make a class with pure virtual methods. Use the interface by creating another class that overrides those virtual methods.
+
+    class IDemo
+    {
+        public:
+            virtual ~IDemo() {}
+            virtual void OverrideMe() = 0;
+    }
+
+    class Child : public IDemo
+    {
+        public:
+            virtual void OverrideMe()
+            {
+                //do stuff
+            }
+    }   
+
+23. Multiple Inheritence in C++
+    http://www.geeksforgeeks.org/multiple-inheritance-in-c/
+    IT creates the Diamond problem.
+         A
+        /  \
+       B    C
+        \  /
+         D
+
+    - Can be solved by making the BASE class virtual.
+
+24. Exception handling in C++
+    IMP READ:
+    http://stackoverflow.com/questions/7480146/difference-between-exception-handling-in-c-and-java
+    Question:
+        In Java, if a specific line of code causes the program to crash, then the exception is caught and the program continues to execute.
+
+        However, in C++, if I have a piece of code that causes the program to crash, like:
+
+        try
+        {
+            int x = 6;
+            int *p = NULL;
+            p = reinterpret_cast<int*>(x);
+
+            *p = 10; // the program crashed here
+
+            cout << "x = " << *p << endl;
+        }
+        catch(const char* Message)
+        {
+            cout << "There is an run-time error";
+        }
+
+        Then the program still crash and the exception is not caught
+
+    Answer:
+        The line that crashes is dereferencing an invalid pointer.
+        In C++ this will not throw an exception. Instead it is undefined behaviour.
+
+        There's no such thing as a null pointer exception in C++, unlike Java which will throw a null pointer exception.
+        Instead dereferencing an invalid pointer will lead to undefined behaviour.
+
+    How to use exception in C++ - Example
+      try
+      {
+        int* myarray= new int[1000];
+      }
+      catch (exception& e)
+      {
+        cout << "Standard exception: " << e.what() << endl;
+      }
+
+25. Side effects of macros:
+    https://gcc.gnu.org/onlinedocs/cpp/Duplication-of-Side-Effects.html
+
+        Many C programs define a macro min, for “minimum”, like this:
+         #define min(X, Y)  ((X) < (Y) ? (X) : (Y))
+
+        When you use this macro with an argument containing a side effect, as shown here,
+         next = min (x + y, foo (z));
+
+        it expands as follows:
+         next = ((x + y) < (foo (z)) ? (x + y) : (foo (z)));
+
+        foo (z) gets executed twice.
+
+26. Macros vs Inline Function:
+    http://stackoverflow.com/questions/1137575/inline-functions-vs-preprocessor-macros
+
+    - Macros are not type safe, and can be expanded regardless of whether they are syntatically correct - the compile phase will report errors resulting from macro expansion problems.
+    - Macros can be used in context where you don't expect, resulting in problems
+    - Macros are more flexible, in that they can expand other macros - whereas inline functions don't necessarily do this.
+    - Macros can result in side effects because of their expansion, since the input expressions are copied wherever they appear in the pattern.
+    - Inline function are not always guaranteed to be inlined - some compilers only do this in release builds, or when they are specifically configured to do so. Also, in some cases inlining may not be possible.
+    - Inline functions can provide scope for variables (particularly static ones), preprocessor macros can only do this in code blocks {...}, and static variables will not behave exactly the same way.
+    
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 General Concepts:
 1. What happens when I click the Stop button on the browser
@@ -624,7 +825,36 @@ http://programmers.stackexchange.com/questions/127624/what-is-mvc-really
 
     Non-MVC architectures tend to be tightly integrated together. If the box, the controller and the camera were one-and-the-same-object then, we would have to pull apart and then re-build both the box and the camera each time we wanted to get a new view. Also, taking the photo would always be like trying to take a selfie - and that's not always very easy.
 
+12. Memory Layout - Code Segment Data Segment Stack Heap
+    http://www.geeksforgeeks.org/memory-layout-of-c-program/
 
+    Text / Code Segment:
+        Machine instructions gets stored here
+        Code segment, also known as text segment contains machine code of the compiled program.
+        The text segment of an executable object file is often read-only segment that prevents a program from being accidentally modified.
+
+    DATA Segment:
+        - Has Initialized and Uninitialized segments
+        Data segment stores program data.
+        This data could be in form of initialized or uninitialized variables, and it could be local or global.
+        Data segment is further divided into four sub-data segments (initialized data segment, uninitialized or .bss data segment, stack, and heap)
+
+13. Allocating in Stack vs Heap:
+    STACK:
+        SCOPE - Function
+        Allocating in the stack is easy and fast, but stack is limited,
+        Apart from that, stack allocated values are "deleted" once you leave the scope, so it is very good for small local values like primitive variables.
+
+        If you allocate too much in the stack you might run out of stack and die,
+        main as all the functions you execute has a stack frame in the stack and all the local variables to the function are stored there,
+        so going too deep into function calling might get you into a stackoverflow as well.
+
+        and small variables and pointers in the stack.
+
+    HEAP:
+        SCOPE - When you want something to be used outside of the function
+        heap is slower but much bigger.
+        In general is a good rule of thumb to allocate anything that you use often and is bigger than a hundred bytes in the heap,
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 DESIGN Questions:
 1. PArking lot  
@@ -640,3 +870,103 @@ http://programmers.stackexchange.com/questions/284113/i-need-a-data-structure-fo
 
 
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+OS NOTES:
+1. Differentiate Threads and Processes
+    Both processes and threads are independent sequences of execution.
+    The typical difference is that threads (of the same process) run in a shared memory space, while processes run in separate memory spaces.
+
+    1. Threads share the address space of the process that created it; processes have their own address space.
+    2. Threads have direct access to the data segment of its process; processes have their own copy of the data segment of the parent process.
+    3. Threads can directly communicate with other threads of its process; processes must use interprocess communication to communicate with sibling processes.
+    4. Threads have almost no overhead; processes have considerable overhead.
+    5. New threads are easily created; new processes require duplication of the parent process.
+    6. Threads can exercise considerable control over threads of the same process; processes can only exercise control over child processes.
+    7. Changes to the main thread (cancellation, priority change, etc.) may affect the behavior of the other threads of the process; changes to the parent process does not affect child processes.
+
+2. Mutex vs Semaphores:
+    http://www.geeksforgeeks.org/mutex-vs-semaphore/
+    https://blog.feabhas.com/2009/09/mutex-vs-semaphores-–-part-1-semaphores/
+
+    Mutex can be released only by thread that had acquired it, while you can signal semaphore from any other thread (or process), so semaphores are more suitable for some synchronization problems like producer-consumer.
+
+    So, if you have a number of instances of a resource (say three tape drives), you could use a semaphore with a count of 3. Note that this doesn't tell you which of those tape drives you have, just that you have a certain number.
+
+    Also with semaphores, it's possible for a single locker to lock multiple instances of a resource, such as for a tape-to-tape copy. If you have one resource (say a memory location that you don't want to corrupt), a mutex is more suitable.
+
+    Equivalent operations are:
+
+    Counting semaphore          Mutual exclusion semaphore
+    --------------------------  --------------------------
+      Claim/decrease (P)                  Lock
+      Release/increase (V)                Unlock
+
+
+3. Spin Locks vs Mutex:
+http://stackoverflow.com/questions/5869825/when-should-one-use-a-spinlock-instead-of-mutex
+    The Theory
+    In theory, when a thread tries to lock a mutex and it does not succeed, because the mutex is already locked, it will go to sleep, immediately allowing another thread to run. It will continue to sleep until being woken up, which will be the case once the mutex is being unlocked by whatever thread was holding the lock before. When a thread tries to lock a spinlock and it does not succeed, it will continuously re-try locking it, until it finally succeeds; thus it will not allow another thread to take its place (however, the operating system will forcefully switch to another thread, once the CPU runtime quantum of the current thread has been exceeded, of course).
+
+    The Problem
+    The problem with mutexes is that putting threads to sleep and waking them up again are both rather expensive operations, they'll need quite a lot of CPU instructions and thus also take some time. If now the mutex was only locked for a very short amount of time, the time spent in putting a thread to sleep and waking it up again might exceed the time the thread has actually slept by far and it might even exceed the time the thread would have wasted by constantly polling on a spinlock. On the other hand, polling on a spinlock will constantly waste CPU time and if the lock is held for a longer amount of time, this will waste a lot more CPU time and it would have been much better if the thread was sleeping instead.
+
+    The Solution
+    Using spinlocks on a single-core/single-CPU system makes usually no sense, since as long as the spinlock polling is blocking the only available CPU core, no other thread can run and since no other thread can run, the lock won't be unlocked either. IOW, a spinlock wastes only CPU time on those systems for no real benefit. If the thread was put to sleep instead, another thread could have ran at once, possibly unlocking the lock and then allowing the first thread to continue processing, once it woke up again.
+
+    On a multi-core/multi-CPU systems, with plenty of locks that are held for a very short amount of time only, the time wasted for constantly putting threads to sleep and waking them up again might decrease runtime performance noticeably. When using spinlocks instead, threads get the chance to take advantage of their full runtime quantum (always only blocking for a very short time period, but then immediately continue their work), leading to much higher processing throughput.
+
+    The Practice
+    Since very often programmers cannot know in advance if mutexes or spinlocks will be better (e.g. because the number of CPU cores of the target architecture is unknown), nor can operating systems know if a certain piece of code has been optimized for single-core or multi-core environments, most systems don't strictly distinguish between mutexes and spinlocks. In fact, most modern operating systems have hybrid mutexes and hybrid spinlocks. What does that actually mean?
+
+    A hybrid mutex behaves like a spinlock at first on a multi-core system. If a thread cannot lock the mutex, it won't be put to sleep immediately, since the mutex might get unlocked pretty soon, so instead the mutex will first behave exactly like a spinlock. Only if the lock has still not been obtained after a certain amount of time (or retries or any other measuring factor), the thread is really put to sleep. If the same code runs on a system with only a single core, the mutex will not spinlock, though, as, see above, that would not be beneficial.
+
+    A hybrid spinlock behaves like a normal spinlock at first, but to avoid wasting too much CPU time, it may have a back-off strategy. It will usually not put the thread to sleep (since you don't want that to happen when using a spinlock), but it may decide to stop the thread (either immediately or after a certain amount of time) and allow another thread to run, thus increasing chances that the spinlock is unlocked (a pure thread switch is usually less expensive than one that involves putting a thread to sleep and waking it up again later on, though not by far).
+
+    Summary
+    If in doubt, use mutexes, they are usually the better choice and most modern systems will allow them to spinlock for a very short amount of time, if this seems beneficial. Using spinlocks can sometimes improve performance, but only under certain conditions and the fact that you are in doubt rather tells me, that you are not working on any project currently where a spinlock might be beneficial. You might consider using your own "lock object", that can either use a spinlock or a mutex internally (e.g. this behavior could be configurable when creating such an object), initially use mutexes everywhere and if you think that using a spinlock somewhere might really help, give it a try and compare the results (e.g. using a profiler), but be sure to test both cases, a single-core and a multi-core system before you jump to conclusions (and possibly different operating systems, if your code will be cross-platform).
+
+
+4. Multi-threaded programming in C++
+http://stackoverflow.com/questions/266168/simple-example-of-threading-in-c
+    Create a function that you want the thread to execute. I'll demonstrate with a trivial example:
+
+    void task1(std::string msg)
+    {
+        std::cout << "task1 says: " << msg;
+    }
+
+    Now create the thread object that will ultimately invoke the function above like so:
+
+    std::thread t1(task1, "Hello");
+
+    (You need to #include <thread> to access the std::thread class)
+
+    As you can see, the constructor's arguments are the function the thread will execute, followed by the function's parameters.
+
+    Finally, join it to your main thread of execution like so:
+
+    t1.join(); 
+
+    (Joining means that the thread who invoked the new thread will wait for the new thread to finish execution, before it will continue it's own execution).
+    The Code
+
+    #include <string>
+    #include <iostream>
+    #include <thread>
+
+    using namespace std;
+
+    // The function we want to execute on the new thread.
+    void task1(string msg)
+    {
+        cout << "task1 says: " << msg;
+    }
+
+    int main()
+    {
+        // Constructs the new thread and runs it. Does not block execution.
+        thread t1(task1, "Hello");
+
+        // Makes the main thread wait for the new thread to finish execution, therefore blocks its own execution.
+        t1.join();
+    }

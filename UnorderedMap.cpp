@@ -2,8 +2,38 @@
 #include <unordered_map>
 using namespace std;
 
+struct Info
+{
+    string name;
+    uint32_t score;
+};
+
 int main()
 {
+    unordered_map<char, Info> myMap;
+    myMap['a'] = {"apple", 5};
+    myMap['b'] = {"boy", 8};
+    myMap['c'] = {"cat", 7};
+
+    for (auto itr = myMap.begin(); itr != myMap.end(); itr++)
+    {
+        cout << itr->first << ": " << itr->second.name << " , " << itr->second.score << endl;
+    }
+    cout << endl;
+
+    for (auto itr = myMap.begin(); itr != myMap.end(); itr++)
+    {
+        itr->second.score = 5;
+    }
+
+
+    for (auto itr = myMap.begin(); itr != myMap.end(); itr++)
+    {
+        cout << itr->first << ": " << itr->second.name << " , " << itr->second.score << endl;
+    }
+    cout << endl;
+
+
     unordered_map<int, int> sampIntHash;
 
     //int a[7] = {5, 6, 7, 8, 6, 9, 7};

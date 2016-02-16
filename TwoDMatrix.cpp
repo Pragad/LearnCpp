@@ -1,0 +1,103 @@
+#include <iostream>
+using namespace std;
+
+int** allocate ( int row, int col )
+{
+    if (row < 0)
+    {
+        cout << "Invalid row" << endl;
+        return NULL;
+    }
+
+    if (col < 0)
+    {
+        cout << "Invalid col" << endl;
+        return NULL;
+    }
+
+    int** twoDarray = new(std::nothrow) int*[row];
+    if (twoDarray != NULL)
+    {
+        for (unsigned int i = 0; i < row; i++)
+        {
+            twoDarray[i] = new (std::nothrow) int[col];
+
+            if (twoDarray[i] == NULL)
+            {
+                for (unsigned int tmp = 0; tmp < i; tmp++)
+                {
+                    delete twoDarray[tmp];
+                }
+        
+                delete[] twoDarray;
+                return NULL;
+            }
+        }
+    }
+    else
+    {
+        return NULL;
+    }
+
+    return twoDarray;
+}
+
+template <size_t rows, size_t cols>
+void printTwoDMatrix(int (&matrix)[rows][cols])
+{
+    for (uint32_t i = 0; i < rows; i++)
+    {
+        for (uint32_t j = 0; j < cols; j++)
+        {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void printTwoDPtrToPtr(int** array, uint32_t rows, uint32_t cols)
+{
+    for (uint32_t i = 0; i < rows; i++)
+    {
+        for (uint32_t j = 0; j < cols; j++)
+        {
+            cout << array[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+int main()
+{
+    // How to allocate a 2-D array in C++
+    int matrix[3][2] = {{1, 2}, {3, 4}, {5, 6}};
+
+    // VERY IMP: The values should be compile time.
+    // Does not work if the values are got from run time
+    int twoD[5][5] = {{1, 1, 0, 0, 0},
+                            {0, 1, 0, 0, 1},
+                            {1, 0, 0, 1, 1},
+                            {0, 0, 0, 0, 0},
+                            {1, 0, 1, 0, 1}};
+
+    uint32_t rows = 5;
+    uint32_t cols = 5;
+    int **arrayTwoD = new int *[rows];
+
+    for (uint32_t i = 0; i < rows; i++)
+    {
+        arrayTwoD[i] = new int[cols];
+    }
+
+    for (uint32_t i = 0; i < rows; i++)
+    {
+        for (uint32_t j = 0; j < cols; j++)
+        {
+            arrayTwoD[i][j] = twoD[i][j];
+        }
+    }
+
+    printTwoDPtrToPtr(arrayTwoD, rows, cols);
+    cout << endl;
+    return 0;
+}
