@@ -98,6 +98,10 @@ int main()
     }
 
     printTwoDPtrToPtr(arrayTwoD, rows, cols);
+
+    // VERY IMP: the below will fail.
+    // Can't cast 'int (*)[5]' to 'int**'
+    //printTwoDPtrToPtr((int**)twoD, rows, cols);
     cout << endl;
     return 0;
 }

@@ -2,15 +2,6 @@
 #include <string>
 using namespace std;
 
-#ifdef _WIN32
-typedef char 	                uint8_t;
-typedef unsigned short int 	    uint16_t;
-typedef unsigned int 	        uint32_t;
-typedef unsigned long long int 	uint64_t;
-#else
-#include <stdint.h>
-#endif
-
 // Q1. Assigning value to a struct inside a union
 // http://stackoverflow.com/questions/17556780/how-can-i-assign-value-to-the-struct-inside-union-here
 
@@ -43,11 +34,40 @@ int main()
     cout << test << endl;
     */
 
-    string tempStr = "xyz";
-    tempStr[0] = 'a';
-    tempStr[1] = 'b';
-    tempStr[2] = 'c';
-    cout << "TempStr: " << tempStr << endl;
+    // Modifying a string
+    {
+        string tempStr = "xyz";
+        tempStr[0] = 'a';
+        tempStr[1] = 'b';
+        tempStr[2] = 'c';
+        cout << "TempStr: " << tempStr << endl;
+    }
+
+    // Adding characters to a string
+    {
+        string str;
+        str += 'a';
+        str += 'b';
+        str += 'c';
+        str += 'd';
+        cout << str << endl;
+    }
+
+    // String Compare
+    {
+        string str1 = "223425623";
+        string str2 = "234256623";
+
+        cout << "String Compare: " << str1.compare(str2) << endl;
+        cout << "String Compare: " << str2.compare(str1) << endl;
+    }
+
+    {
+        int a = 5;
+        int Arr[a];
+        cout << sizeof(Arr) << endl;
+    }
+
     cout <<  endl;
     return 0;
 }

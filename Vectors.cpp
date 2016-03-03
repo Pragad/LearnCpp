@@ -76,6 +76,14 @@ int main()
     cout << vecOfVecs[0][0] << endl;
 
 
-    // VECTOR OF STRINGS
+    // Pass Vectors through recursion
+    {
+        vector<int> vecInts = {1, 2, 3};
+        cout << &vecInts << endl;
+        cout << &vecInts[0] << endl;
+        cout << &vecInts[1] << endl;
+        cout << &vecInts[2] << endl;
+        cout << (&vecInts + 1)<< endl;
+    }
     cout << endl;
 }

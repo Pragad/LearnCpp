@@ -684,6 +684,58 @@ http://stackoverflow.com/questions/246127/why-is-volatile-needed-in-c
     - Inline function are not always guaranteed to be inlined - some compilers only do this in release builds, or when they are specifically configured to do so. Also, in some cases inlining may not be possible.
     - Inline functions can provide scope for variables (particularly static ones), preprocessor macros can only do this in code blocks {...}, and static variables will not behave exactly the same way.
     
+
+27. Segmentation Fault:
+    http://stackoverflow.com/questions/2346806/what-is-segmentation-fault
+
+    - generates SIGSEGV event
+    - Segmentation fault is a specific kind of error caused by accessing memory that “does not belong to you.
+    int *p = NULL;
+    *p = 1;
+
+    It would be worth noting that segmentation fault isn't caused by directly accessing another process memory, as it is simply not possible.
+    With virtual memory every process has its own virtual address space and there is no way to access another one using any value of pointer.
+    Exception to this can be shared libraries which are same physical address space mapped to (possibly) different virtual addresses and kernel memory which is even mapped in the same way in every process (to avoid TLB flushing on syscall, I think).  - these are what I count as 'indirect' access.
+    One can, however, check that they are usually located long way from process code and we are usually able to access them (this is why they are there, nevertheless accessing them in a improper way will produce segmentation fault).
+
+    Still, segmentation fault can occur in case of accessing our own (process) memory in improper way (for instance trying to write to non-writable space).
+    But the most common reason for it is the access to the part of the virtual address space that is not mapped to physical one at all.
+
+28. Interrupts vs Exception
+    http://stackoverflow.com/questions/125394/interrupts-and-exceptions
+
+29: Callback Functions:
+    http://stackoverflow.com/questions/9596276/how-to-explain-callbacks-in-plain-english-how-are-they-different-from-calling-o
+        Imagine this scenario: You are expecting a package in a couple of days. The package is a gift for your neighbor. Therefore, once you get the package, you want it brought over to the neighbors. You are out of town, and so you leave instructions for your spouse.
+
+        You could tell them to get the package and bring it to the neighbors. If your spouse was as stupid as a computer, they would sit at the door and wait for the package until it came (NOT DOING ANYTHING ELSE) and then once it came they would bring it over to the neighbors. But there's a better way. Tell your spouse that ONCE they receive the package, they should bring it over the neighbors. Then, they can go about life normally UNTIL she receives the package.
+
+        In our example, the receiving of the package is the "event" and the bringing it to the neighbors is the "callback". Your spouse "runs" your instructions to bring the package over only when the package arrives. Much better!
+
+        This kind of thinking is obvious in daily life, but computers don't have the same kind of common sense. Consider how programmers normally write to a file:
+
+        fileObject = open(file)
+        # now that we have WAITED for the file to open, we can write to it
+        fileObject.write("We are writing to the file.")
+        # now we can continue doing the other, totally unrelated things our program does
+
+        Here, we WAIT for the file to open, before we write to it. This "blocks" the flow of execution, and our program cannot do any of the other things it might need to do! What if we could do this instead:
+
+        # we pass writeToFile (A CALLBACK FUNCTION!) to the open function
+        fileObject = open(file, writeToFile)
+        # execution continues flowing -- we don't wait for the file to be opened
+        # ONCE the file is opened we write to it, but while we wait WE CAN DO OTHER THINGS!
+
+30: Asynchronous Programming:
+        In solving many engineering problems, the software is designed to split up the overall problem into multiple individual tasks, and then execute them asynchronously.
+        Inverting a matrix, or a finite element analysis problem, are good examples.
+        In computing, sorting a list is an example. The quick sort routine, for example, splits the list into two lists, and sorts each of them by calling itself recursively.
+        In both of the above examples, the two tasks can (and often were) executed asynchronously.
+        They do not need to be on separate threads.
+        Even a machine with one CPU, and only one thread of execution can be coded to initiate processing of a second task before a first one has completed.
+        The only criterion is that the results of one task are not necessary as inputs to the other task.
+        As long as the start and end times of the tasks overlap, (possible only if the output of neither is needed as inputs to the other), they are being executed asynchronously, no matter how many threads are in use.
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 General Concepts:
 1. What happens when I click the Stop button on the browser
@@ -967,6 +1019,99 @@ http://stackoverflow.com/questions/266168/simple-example-of-threading-in-c
         // Constructs the new thread and runs it. Does not block execution.
         thread t1(task1, "Hello");
 
-        // Makes the main thread wait for the new thread to finish execution, therefore blocks its own execution.
+       // Makes the main thread wait for the new thread to finish execution, therefore blocks its own execution.
         t1.join();
     }
+
+5. Hard Link vs Soft Link
+    http://stackoverflow.com/questions/185899/what-is-the-difference-between-a-symbolic-link-and-a-hard-link
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+NETWORKS:
+http://www.hardwaresecrets.com/how-tcp-ip-protocol-works-part-1/
+1. How TCP/IP Network works.
+    - A network can be classified as TCP/IP and Ethernet at the same time.
+      TCP/IP is a set of protocols that deals with layers 3 to 7 from the OSI reference model.
+      Ethernet is a set of protocols that deals with layers 1 and 2 from the OSI reference model
+
+                    Data
+                      |
+                      |
+           TCP/UDP  Data
+           Header 
+                |
+                |
+    IP     TCP/UDP  Data
+  Header   Header 
+                |
+                |
+
+
+    1. Application Layer:
+        - Application parses the request and sends to the Transport Layer.
+        - Communication between programs and transport protocols
+        - This layer handles,
+            a. HTTP, FTP, SMTP
+
+               Email    Browser     FTP Program
+                 |         |            |
+                SMTP      HTTP         FTP
+                 |         |            |
+              Port 25   Port 80      Port 20/21
+                 |         |            |
+              ------------TCP Layer-------------
+
+        - APPLICATION LAYER TALKS TO TRANSPORT LAYER THROUGH PORT NUMBER.
+
+    2. Transport Layer / Network Layer:
+        - TCP and UDP comes here.
+
+        - Divides data into packets
+        - Puts back the packet in orders
+        - Sending ACK back to the sender / receiver
+        - Header will include information like,
+            a. Port Number (Source and destination)
+            b. Sequence Number ( for ordering)
+            c. Checksum (if data is intact)
+
+    3. Internet Layer:
+        - IP is an unreliable protocol. NO ACK system.
+        - Several hops to reach the destination
+        - Adds Source and Target IP address
+        - Responsible for routing of packets.
+            Example: tracert www.google.com
+        - This also deals with fragmentation.
+            Each ROUTER can have a limit on the size of the packet. 
+            So Internet layer fragments when sending the data.
+
+    4. Network Access Layer:
+        a. Logic Link Control (LLC),
+            - The Logic Link Control layer (LLC) is in charge of adding information of which protocol on the Internet layer delivered data to be transmitted,
+              so when receiving a frame from the network this layer on the receiving computer has to know to which protocol from the Internet layer it should deliver data.
+
+        b. Media Access Control (MAC) and
+            - The Media Access Control layer (MAC) is in charge of assembling the frame that will be sent over the network.
+            - This layer is in charge of adding the source MAC address and the target MAC address
+
+            - IMP: To communicate in an Ethernet network, MAC addresses are used.
+                   Ethernet frames (packets) don't know anything about IP addresses. ARP is used to find out the MAC address of a host on the local network.
+        c. Physical
+            - Switches come in this layer.
+        
+
+2. Why is MAC address required    
+    Why do we need the MAC address if all Ethernet connections are done via IP address?
+    - The MAC address is the hardware address, i.e. it is hard coded in the NIC of the machine.
+      So it cannot be changed. Though all Ethernet communication happens via IP address, lower layers do not understand IP but they do understand MAC address.
+      At the same time, there are instances when you use protocols other than IP, like IPX or AppleTalk.
+      In such cases there has to be a mechanism which lets you work without changing hardware.
+      So MAC addresses form the basic identifier of the hardware.
+      MAC addresses are difficult to remember so we use IP addresses, which are more friendly, but not as friendly as names. 
+
+3. Switch vs Hub vs Router:
+    - Switch:
+        - Transmits frames to a particular destination PORT
+        - Keeps tracks of mac address
+    - Hub:
+        - Broadcasts frames to every devices connected
+        - Doesn't keep track of MAC address

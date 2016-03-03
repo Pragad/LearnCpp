@@ -27,6 +27,14 @@ struct ScoreIndexGreater
 
 int main()
 {
+    // Simple Priority Queue
+    int myInts[]= {10,60,50,20};
+    std::priority_queue<int, std::vector<int>, std::greater<int> > intsInAsc (myInts, myInts + 4);
+    std::priority_queue<int, std::vector<int> > intsInDesc (myInts, myInts + 4);
+    std::cout << "Top Asc : " << intsInAsc.top() << std::endl;
+    std::cout << "Top Desc: " << intsInDesc.top() << std::endl;
+
+    // Priority Queue that holds a structure
     std::priority_queue<ScoreIndex> scoreIndex;
     std::priority_queue<ScoreIndexGreater> scoreIndexGreater;
 
