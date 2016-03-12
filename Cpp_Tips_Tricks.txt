@@ -1,0 +1,1031 @@
+1.
+Using namespace std;
+http://stackoverflow.com/questions/1452721/why-is-using-namespace-std-considered-bad-practice
+    Say you have,
+    using namespace foo; has function foos()
+        using namespace bar; has function bars()
+
+    In version 2.0, foo comes up with a function bars(). Then we will end up calling the other function.
+    So use foo::foos(), bar::bars()
+
+2. 
+How to split a string
+http://stackoverflow.com/questions/236129/split-a-string-in-c
+    
+    #include <string>
+    #include <sstream>
+    #include <vector>
+
+    std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+        std::stringstream ss(s);
+        std::string item;
+        while (std::getline(ss, item, delim)) {
+            elems.push_back(item);
+        }
+        return elems;
+    }
+
+
+    std::vector<std::string> split(const std::string &s, char delim) {
+        std::vector<std::string> elems;
+        split(s, delim, elems);
+        return elems;
+    }
+
+C++ Find Substring using a pattern
+http://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+
+    Parsing with a single char delimiter is fine. But what if I want to use a string as delimiter.
+    Example: I want to split:
+    scott>=tiger
+    with >= as delimiter so that I can get scott and tiger.
+
+    You can use the std::string::find() function to find the position of your string delimiter, then use std::string::substr() to get a token.
+    Example:
+    std::string s = "scott>=tiger";
+    std::string delimiter = ">=";
+    std::string token = s.substr(0, s.find(delimiter)); // token is "scott"
+    The find(const string& str, size_t pos = 0) function returns the position of the first occurrence of str in the string, or npos if the string is not found.
+    The substr(size_t pos = 0, size_t n = npos) function returns a substring of the object, starting at position pos and of length npos
+
+3. 
+Use of cin ignore
+http://stackoverflow.com/questions/25475384/when-and-why-do-i-need-to-use-cin-ignore-in-c
+http://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
+
+        cin.ignore(256, '\n');
+
+    The cin.clear() clears the error flag on cin (so that future I/O operations will work correctly), and then
+    cin.ignore(10000, '\n') skips to the next newline (to ignore anything else on the same line as the non-number so that it does not cause another parse failure).
+    It will only skip up to 10000 characters, so the code is assuming the user will not put in a very long, invalid line.
+
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+
+    std::ws
+    Discards leading whitespace from an input stream.
+        std::istringstream s("     this is a test");
+        std::string line;
+        getline(s >> std::ws, line);
+        std::cout << "ws + getline returns: \"" << line << "\"\n";
+
+4. 
+Why to use nested class
+http://stackoverflow.com/questions/4571355/why-would-one-use-nested-classes-in-c
+
+    Cool to hide implementation details:
+    class List
+    {
+        public:
+            List(): head(NULL), tail(NULL) {}
+        private:
+            class Node
+            {
+                  public:
+                      int   data;
+                      Node* next;
+                      Node* prev;
+            };
+        private:
+            Node*     head;
+            Node*     tail;
+    };
+
+5. 
+NULL pointer - nullptr
+http://stackoverflow.com/questions/1282295/what-exactly-is-nullptr
+http://stackoverflow.com/questions/20509734/null-vs-nullptr-why-was-it-replaced?lq=1
+
+    nullptr is always a pointer type. 0 (aka. C's NULL bridged over into C++) could cause ambiguity in overloaded function resolution, among other things:
+    f(int);
+    f(foo *);
+
+6. 
+Print contents of a vector:
+http://stackoverflow.com/questions/10750057/c-printing-out-the-contents-of-a-vector
+
+    Solution 1:
+    for (std::vector<char>::const_iterator i = path.begin(); i != path.end(); ++i)
+        std::cout << *i << ' ';
+
+    Solution 2:
+    for (auto i = path.begin(); i != path.end(); ++i)
+        std::cout << *i << ' ';
+
+7. 
+Convert string to Upper Case:
+http://stackoverflow.com/questions/735204/convert-a-string-in-c-to-upper-case
+
+    #include <algorithm>
+    #include <string>
+
+    std::string str = "Hello World";
+    std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+
+8. 
+Switch can't be used on strings:
+http://stackoverflow.com/questions/650162/why-switch-statement-cannot-be-applied-on-strings
+
+    The reason why has to do with the type system. C/C++ doesn't really support strings as a type.
+    It does support the idea of a constant char array but it doesn't really fully understand the notion of a string. 
+
+9. 
+Copy String to Char array
+http://stackoverflow.com/questions/13294067/how-to-convert-string-to-char-array-in-c
+
+    string tmp = "cat";
+    char tab2[1024];
+    strcpy(tab2, tmp.c_str());
+    For safety, you might prefer:
+    string tmp = "cat";
+    char tab2[1024];
+    strncpy(tab2, tmp.c_str(), sizeof(tab2));
+    tab2[sizeof(tab2) - 1] = 0;
+
+10.
+Char * vs Char []
+http://stackoverflow.com/questions/1704407/what-is-the-difference-between-char-s-and-char-s-in-c
+
+        char *s = "Hello world";
+    will place Hello world in the read-only parts of the memory and making s a pointer to that, making any writing operation on this memory illegal. While doing:
+        char s[] = "Hello world";
+    puts the literal string in read-only memory and copies the string to newly allocated memory on the stack. Thus making
+        s[0] = 'J';
+    legal.
+
+11.
+Char * assignment
+http://stackoverflow.com/questions/20944784/why-is-conversion-from-string-constant-to-char-valid-in-c-but-invalid-in-c
+
+        char* p = "abc"; // valid in C, invalid in C++
+    It uses a deprecated implicit conversion--a string literal should be treated as being of type char const *, since you can't modify its contents
+
+12.
+Passing Array requires number of elements. Arrays decay into pointers.
+http://stackoverflow.com/questions/2559896/how-are-arrays-passed
+
+    They are passed as pointers. This means that all information about the array size is lost.
+
+13. 
+Deleting Array of objects using delete[]. delete[] vs delete
+http://stackoverflow.com/questions/703691/how-does-delete-know-its-an-array
+
+    The compiler doesn't know it's an array, it's trusting the programmer. Deleting a pointer to a single int with delete [] would result in undefined behavior.
+
+14.
+Setting pointers to NULL after delete
+http://stackoverflow.com/questions/1931126/is-it-good-practice-to-null-a-pointer-after-deleting-it
+
+    Double delete causes an undefined behavior. So setting a pointer to NULL will overcome that.
+    Deleting a NULL pointer is a Void operation
+
+    Setting a pointer to 0 (which is "null" in standard C++, the NULL define from C is somewhat different) avoids crashes on double deletes.
+    Consider the following:
+        Foo* foo = 0; // Sets the pointer to 0 (C++ NULL)
+        delete foo; // Won't do anything
+    Whereas:
+        Foo* foo = new Foo();
+        delete foo; // Deletes the object
+        delete foo; // Undefined behavior
+
+15.
+cout << new int[0] << endl; Allocating new with size 0
+http://stackoverflow.com/questions/1087042/c-new-int0-will-it-allocate-memory
+
+    When the value of the expression in a direct-new-declarator is zero, the allocation function is called to allocate an array with no elements.
+    From 3.7.3.1/2
+    The effect of dereferencing a pointer returned as a request for zero size is undefined.
+
+    That means you can do it, but you can not legally (in a well defined manner across all platforms) dereference the memory that you get - you can only pass it to array delete - and you should delete it.
+
+16.
+Default value of a boolean in a struct
+http://stackoverflow.com/questions/3845353/what-will-be-the-default-value-of-an-uninitialized-boolean-value-in-c
+
+    The value of the bool will is undefined. It will be whatever else was on the stack before it, which is sometimes zeroed out if nothing has used it previously.
+    But again, it is undefined, which means it can be either true or false.
+    If you need a default value, you can do:
+        struct fool_bool {
+          bool b1;
+          bool b2;
+          fool_bool() {
+            b1 = true;
+            b2 = false;
+          }  };
+
+17.
+Clearing a Char array in C
+http://stackoverflow.com/questions/632846/clearing-a-char-array-c
+
+    It depends on how you want to view the array. If you are viewing the array as a series of char's then the only way to clear out the data is to touch every entry.
+    memset is probably the most effective way to achieve this.
+    On the other hand if you are choosing to view this as a C/C++ null terminated string, setting the first byte to 0 will effectively clear the string.
+
+        memset(&arr[0], 0, sizeof(arr));
+    This is generally the fastest way to take care of this. If you can use C++, consider std::fill instead:
+        char *begin = &arr;
+        char *end = begin + sizeof(arr);
+        std::fill(begin, end, 0);
+
+18.
+Re-declaration of default parameter
+http://stackoverflow.com/questions/6210450/the-compiler-is-complaining-about-my-default-parameters
+
+    You have to specify the default values for the arguments only in the declaration but not in the definition.
+        class pBase : public sf::Thread {
+             // ....
+             void setColor( int _color = -1 );
+             // ....
+         } ;
+
+         void pBase:: setColor( int _color )
+         {
+             // ....
+         }
+
+19.
+IMP: Char array vs NULL terminated String
+http://stackoverflow.com/questions/11229477/are-all-char-arrays-automatically-null-terminated
+
+    Only string literals get null-terminated, and that means that char x[]="asdf" is an array of 5 elements.
+    char arrays are not automatically NULL terminated
+
+20.
+Find Substring
+http://www.cplusplus.com/reference/string/string/substr/
+
+    std::string str="We think in generalities, but we live in details.";
+                                               // (quoting Alfred N. Whitehead)
+
+    std::string str2 = str.substr (3,5);     // "think"
+
+    std::size_t pos = str.find("live");      // position of "live" in str
+
+    std::string str3 = str.substr (pos);     // get from "live" to the end
+
+
+21.
+Combining vector of strings:
+http://stackoverflow.com/questions/1985978/combining-a-vector-of-strings
+
+    Use accumulate
+        int main () {
+            string str = "Hello World!";
+            vector<string>  vec (10,str);
+            string a = accumulate( vec.begin(), vec.end(), string("") );
+            cout << a << endl;
+
+
+22.
+Convert String to Int - C++
+http://stackoverflow.com/questions/7663709/convert-string-to-int-c
+
+    In C++11 there are some nice new convert functions from std::string to a number type.
+    So instead of
+        atoi( str.c_str() )
+    you can use
+        std::stoi( str )
+    where str is your number as std::string.
+    There are version for all flavours of numbers: long stol(string), float stof(string), double stod(string)
+
+23.
+Align std out
+http://stackoverflow.com/questions/2485963/c-alignment-when-printing-cout
+
+    The ISO C++ standard way to do it is to #include <iomanip> and use io manipulators like std::setw
+    However, that said, those io manipulators are a real pain to use even for text, and are just about unusable for formatting numbers
+
+24.
+IMP: Why Pointers
+http://stackoverflow.com/questions/22146094/why-should-i-use-a-pointer-rather-than-the-object-itself?rq=1
+
+    I'm coming from a Java background and have started working with objects in C++.
+    But one thing that occurred to me is that people often use pointers to objects rather than the objects themselves, for example this declaration:
+        Object *myObject = new Object;
+    rather than:
+        Object myObject;
+
+    Or instead of using a function, let's say testFunc(), like this:
+        myObject.testFunc();
+    we have to write:
+        myObject->testFunc();
+
+    You have two questions bundled up into one. The first is when should we use dynamic allocation (using new)? The second is when should we use pointers?
+    The important take-home message is that you should always use the appropriate tool for the job.
+    In almost all situations, there is something more appropriate and safer than performing manual dynamic allocation and/or using raw pointers.
+
+    Dynamic allocation
+        In your question, you've demonstrated two ways of creating an object. The main difference is the storage duration of the object.
+        When doing Object myObject; within a block, the object is created with automatic storage duration, which means it will be destroyed automatically when it goes out of scope.
+        When you do new Object(), the object has dynamic storage duration, which means it stays alive until you explicitly delete it.
+        You should only use dynamic storage duration when you need it. That is, you should always prefer creating objects with automatic storage duration when you can.
+
+        The main two situations in which you might require dynamic allocation:
+        You need the object to outlive the current scope - that specific object at that specific memory location, not a copy of it.
+        If you're okay with copying/moving the object (most of the time you should be), you should prefer an automatic object.
+
+        You need to allocate a lot of memory, which may easily fill up the stack.
+        It would be nice if we didn't have to concern ourselves with this (most of the time you shouldn't have to), as it's really outside the purview of C++, but unfortunately we have to deal with the reality of the systems we're developing for.
+        When you do absolutely require dynamic allocation, you should encapsulate it in a smart pointer or some other type that performs RAII (like the standard containers).
+        Smart pointers provide ownership semantics of dynamically allocated objects.
+        Take a look at std::unique_ptr and std::shared_ptr, for example.
+        If you use them appropriately, you can almost entirely avoid performing your own memory management (see the Rule of Zero).
+
+    Pointers
+        However, there are other more general uses for raw pointers beyond dynamic allocation, but most have alternatives that you should prefer.
+        As before, always prefer the alternatives unless you really need pointers.
+
+        You need reference semantics.
+        Sometimes you want to pass an object using a pointer (regardless of how it was allocated) because you want the function to which you're passing it to have access that that specific object (not a copy of it).
+        However, in most situations, you should prefer reference types to pointers, because this is specifically what they're designed for.
+        Note this is not necessarily about extending the lifetime of the object beyond the current scope, as in situation 1 above.
+        As before, if you're okay with passing a copy of the object, you don't need reference semantics.
+
+        You need polymorphism.
+        You can only call functions polymorphically (that is, according to the dynamic type of an object) through a pointer or reference to the object.
+        If that's the behaviour you need, then you need to use pointers or references.
+        Again, references should be preferred.
+        You want to represent that an object is optional by allowing a nullptr to be passed when the object is being omitted.
+        If it's an argument, you should prefer to use default arguments or function overloads.
+        Otherwise, you should prefer use a type that encapsulates this behaviour, such as boost::optional (or perhaps soon, std::optional - Edit std::optional is voted out of the current C++14 draft n3797).
+
+        You want to decouple compilation units to improve compilation time.
+        The useful property of a pointer is that you only require a forward declaration of the pointed-to type (to actually use the object, you'll need a definition).
+        This allows you to decouple parts of your compilation process, which may significantly improve compilation time.
+        See the Pimpl idiom.
+
+        You need to interface with a C library or a C-style library.
+        At this point, you're forced to use raw pointers.
+        The best thing you can do is make sure you only let your raw pointers loose at the last possible moment.
+        You can get a raw pointer from a smart pointer, for example, by using its get member function.
+        If a library performs some allocation for you which it expects you to deallocate via a handle, you can often wrap the handle up in a smart pointer with a custom deleter that will deallocate the object appropriately.
+
+25.
+Garbage Collection:
+http://stackoverflow.com/questions/5009869/how-to-implement-garbage-collection-in-c?lq=1
+
+    Garbage collection in C and C++ are both difficult topics for a few reasons:
+
+    Pointers can be typecast to integers and vice-versa.
+    This means that I could have a block of memory that is reachable only by taking an integer, typecasting it to a pointer, then dereferencing it.
+    A garbage collector has to be careful not to think a block is unreachable when indeed it still can be reached.
+
+    Pointers are not opaque. Many garbage collectors, like stop-and-copy collectors, like to move blocks of memory around or compact them to save space.
+    Since you can explicitly look at pointer values in C and C++, this can be difficult to implement correctly.
+    You would have to be sure that if someone was doing something tricky with typecasting to integers that you correctly updated the integer if you moved a block of memory around.
+
+    Memory management can be done explicitly. Any garbage collector will need to take into account that the user is able to explicitly free blocks of memory at any time.
+
+    In C++, there is a separation between allocation/deallocation and object construction/destruction.
+    A block of memory can be allocated with sufficient space to hold an object without any object actually being constructed there.
+    A good garbage collector would need to know, when it reclaims memory, whether or not to call the destructor for any objects that might be allocated there.
+    This is especially true for the standard library containers, which often make use of std::allocator to use this trick for efficiency reasons.
+
+    Memory can be allocated from different areas.
+    C and C++ can get memory either from the built-in freestore (malloc/free or new/delete), or from the OS via mmap or other system calls, and, in the case of C++, from get_temporary_buffer or return_temporary_buffer.
+    The programs might also get memory from some third-party library.
+    A good garbage collector needs to be able to track references to memory in these other pools and (possibly) would have to be responsible for cleaning them up.
+
+    Pointers can point into the middle of objects or arrays.
+    In many garbage-collected languages like Java, object references always point to the start of the object.
+    In C and C++ pointers can point into the middle of arrays, and in C++ into the middle of objects (if multiple inheritance is used). This can greatly complicate the logic for detecting what's still reachable.
+
+    So, in short, it's extremely hard to build a garbage collector for C or C++.
+    Most libraries that do garbage collection in C and C++ are extremely conservative in their approach and are technically unsound - they assume that you won't, for example, take a pointer, cast it to an integer, write it to disk, and then load it back in at some later time.
+    They also assume that any value in memory that's the size of a pointer could possibly be a pointer, and so sometimes refuse to free unreachable memory because there's a nonzero chance that there's a pointer to it.
+
+    As others have pointed out, the Boehm GC does do garbage collection for C and C++, but subject to the aforementioned restrictions.
+
+    Interestingly, C++11 includes some new library functions that allow the programmer to mark regions of memory as reachable and unreachable in anticipation of future garbage collection efforts.
+    It may be possible in the future to build a really good C++11 garbage collector with this sort of information.
+    In the meantime though, you'll need to be extremely careful not to break any of the above rules.
+
+26.
+C++ References:
+http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-pointer-variable-and-a-reference-variable-in?rq=1
+
+    Summary from answers and links below:
+        A pointer can be re-assigned any number of times while a reference can not be re-seated after binding.
+
+    A pointer can be re-assigned:
+        int x = 5;
+        int y = 6;
+        int *p;
+        p =  &x;
+        p = &y;
+        *p = 10;
+        assert(x == 5);
+        assert(y == 10);
+
+    A reference cannot, and must be assigned at initialization:
+        int x = 5;
+        int y = 6;
+        int &r = x;
+
+
+    Pointers can point nowhere (NULL), whereas reference always refer to an object.
+        int *p = NULL;
+        int &r = NULL; <--- compiling error
+
+    You can't take the address of a reference like you can with pointers.
+    A pointer has its own memory address and size on the stack (4 bytes on x86), whereas a reference shares the same memory address (with the original variable) but also takes up some space on the stack.
+    Since a reference has the same address as the original variable itself, it is safe to think of a reference as another name for the same variable.
+
+    There's no "reference arithmetics" (but you can take the address of an object pointed by a reference and do pointer arithmetics on it as in &obj + 5).
+
+27.
+Smart Pointer:
+http://stackoverflow.com/questions/106508/what-is-a-smart-pointer-and-when-should-i-use-one
+http://ootips.org/yonat/4dev/smart-pointers.html
+
+    The simplest example of a smart pointer is auto_ptr, which is included in the standard C++ library.
+    You can find it in the header <memory>, or take a look at Scott Meyers' auto_ptr implementation.
+    Here is part of auto_ptr's implementation, to illustrate what it does:
+        template <class T> class auto_ptr
+        {
+            T* ptr;
+        public:
+            explicit auto_ptr(T* p = 0) : ptr(p) {}
+            ~auto_ptr()                 {delete ptr;}
+            T& operator*()              {return *ptr;}
+            T* operator->()             {return ptr;}
+            // ...
+        };
+
+    As you can see, auto_ptr is a simple wrapper around a regular pointer.
+    It forwards all meaningful operations to this pointer (dereferencing and indirection).
+    Its smartness in the destructor: the destructor takes care of deleting the pointer.
+    For the user of auto_ptr, this means that instead of writing:
+
+        void foo()
+        {
+            MyClass* p(new MyClass);
+            p->DoSomething();
+            delete p;
+        }
+
+    You can write:
+        void foo()
+        {
+            auto_ptr<MyClass> p(new MyClass);
+            p->DoSomething();
+        }
+    And trust p to cleanup after itself. 
+
+28.
+C++ Cast:
+http://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-const-cast-and-reinterpret-cast-be-used?rq=1
+
+    static_cast is the first cast you should attempt to use.
+        It does things like implicit conversions between types (such as int to float, or pointer to void*), and it can also call explicit conversion functions (or implicit ones).
+        In many cases, explicitly stating static_cast isn't necessary, but it's important to note that the T(something) syntax is equivalent to (T)something and should be avoided (more on that later).
+        A T(something, something_else) is safe, however, and guaranteed to call the constructor.
+        static_cast can also cast through inheritance hierarchies. It is unnecessary when casting upwards (towards a base class), but when casting downwards it can be used as long as it doesn't cast through virtual inheritance.
+        It does not do checking, however, and it is undefined behavior to static_cast down a hierarchy to a type that isn't actually the type of the object.
+
+    const_cast can be used to remove or add const to a variable; no other C++ cast is capable of removing it (not even reinterpret_cast).
+        It is important to note that modifying a formerly const value is only undefined if the original variable is const; if you use it to take the const off a reference to something that wasn't declared with const, it is safe.
+        This can be useful when overloading member functions based on const, for instance.
+        It can also be used to add const to an object, such as to call a member function overload.
+        const_cast also works similarly on volatile, though that's less common.
+
+    dynamic_cast is almost exclusively used for handling polymorphism.
+        You can cast a pointer or reference to any polymorphic type to any other class type (a polymorphic type has at least one virtual function, declared or inherited).
+        You can use it for more than just casting downwards -- you can cast sideways or even up another chain.
+        The dynamic_cast will seek out the desired object and return it if possible.
+        If it can't, it will return nullptr in the case of a pointer, or throw std::bad_cast in the case of a reference.
+        dynamic_cast has some limitations, though. It doesn't work if there are multiple objects of the same type in the inheritance hierarchy (the so-called 'dreaded diamond') and you aren't using virtual inheritance.
+        It also can only go through public inheritance - it will always fail to travel through protected or private inheritance.
+        This is rarely an issue, however, as such forms of inheritance are rare.
+
+    reinterpret_cast is the most dangerous cast, and should be used very sparingly.
+        It turns one type directly into another - such as casting the value from one pointer to another, or storing a pointer in an int, or all sorts of other nasty things.
+        Largely, the only guarantee you get with reinterpret_cast is that normally if you cast the result back to the original type, you will get the exact same value (but not if the intermediate type is smaller than the original type).
+        There are a number of conversions that reinterpret_cast cannot do, too.
+        It's used primarily for particularly weird conversions and bit manipulations, like turning a raw data stream into actual data, or storing data in the low bits of an aligned pointer.
+
+29.
+C++ to Java:
+http://stackoverflow.com/questions/5732224/just-enough-java-for-hadoop
+
+30.
+Finding all subsets of a Vector of Vector
+http://stackoverflow.com/questions/728972/finding-all-the-subsets-of-a-set
+
+    It's very simple to do this recursively.
+    The basic idea is that for each element, the set of subsets can be divided equally into those that contain that element and those that don't, and those two sets are otherwise equal.
+        For n=1, the set of subsets is {{}, {1}}
+        For n>1, find the set of subsets of 1,...,n-1 and make two copies of it. For one of them, add n to each subset. Then take the union of the two copies.
+    Edit To make it crystal clear:
+        The set of subsets of {1} is {{}, {1}}
+        For {1, 2}, take {{}, {1}}, add 2 to each subset to get {{2}, {1, 2}} and take the union with {{}, {1}} to get {{}, {1}, {2}, {1, 2}}
+    Repeat till you reach n
+
+32.
+C++ Count occurrences of a char
+http://stackoverflow.com/questions/3867890/count-character-occurrences-in-a-string
+
+    How can I count the number of "_" in a string like "bla_bla_blabla_bla"
+
+    #include <algorithm>
+
+    std::string s = "a_b_c";
+    size_t n = std::count(s.begin(), s.end(), '_');
+
+33.
+C++ Cin:
+How to include White space using Cin
+http://stackoverflow.com/questions/2765462/how-to-cin-space-in-c
+http://stackoverflow.com/questions/5838711/c-cin-input-with-spaces
+
+    It skips all whitespace (spaces, tabs, new lines, etc.) by default.
+    You can either change its behavior, or use a slightly different mechanism.
+    To change its behavior, use the manipulator noskipws, as follows:
+
+        cin >> noskipws >> a[i];
+    But, since you seem like you want to look at the individual characters, I'd suggest using get, like this prior to your loop
+        cin.get( a, n );
+
+    #include <iostream>
+    #include <string>
+    int main()
+    {
+       std::string a;
+       std::getline(std::cin,a);
+       for(std::string::size_type i = 0; i < a.size(); ++i)
+       {
+           if(a[i] == ' ')
+              std::cout<<"It is a space!!!"<<std::endl;
+       }
+
+
+    int main()
+    {
+       std::string name, title;
+
+       std::cout << "Enter your name: ";
+       std::getline(std::cin, name);
+
+       std::cout << "Enter your favourite movie: ";
+       std::getline(std::cin, title);
+
+       std::cout << name << "'s favourite movie is " << title;
+    }
+
+34.
+C++ Empty String:
+http://stackoverflow.com/questions/26310772/why-an-empty-string-can-output-index-0-element-in-c
+http://stackoverflow.com/questions/17997204/does-an-empty-string-contain-an-empty-string-in-c
+
+    #include<iostream>
+    #include<string>
+
+    using std::string;
+    using std::cout;
+    using std::endl;
+
+    int main()
+    {
+        string s;
+        cout << s.size() << endl;
+        cout << s[0] << endl;  //output empty line
+        return 0;
+    }
+
+
+    There's a special rule that you can access s[n] where n is the length of s.
+    The result is a null character (i.e. the value that results from value-initializing the character type) and attempting to modify it causes undefined behaviour
+
+35.
+Stack Unwinding
+http://stackoverflow.com/questions/2331316/what-is-stack-unwinding
+
+    Stack unwinding is usually talked about in connection with exception handling. Here's an example:
+        void func( int x )
+        {
+            char* pleak = new char[1024]; // might be lost => memory leak
+            std::string s( "hello world" ); // will be properly destructed
+
+            if ( x ) throw std::runtime_error( "boom" );
+
+            delete [] pleak; // will only get here if x == 0. if x!=0, throw exception
+        }
+
+        int main()
+        {
+            try
+            {
+                func( 10 );
+            }
+            catch ( const std::exception& e )
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+    Here memory allocated for pleak will be lost if exception is thrown, while memory allocated to s will be properly released by std::string destructor in any case.
+    The objects allocated on the stack are "unwound" when the scope is exited (here the scope is of the function func.)
+    This is done by the compiler inserting calls to destructors of automatic (stack) variables.
+    Now this is a very powerful concept leading to the technique called RAII, that is Resource Acquisition Is Initialization, that helps us manage resources like memory, database connections, open file descriptors, etc. in C++.
+
+
+36.
+RAII:
+http://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
+http://www.tomdalling.com/blog/software-design/resource-acquisition-is-initialisation-raii-explained/
+
+    It's a really terrible name for an incredibly powerful concept, and perhaps one of the number 1 things that C++ developers miss when they switch to other languages.
+    There has been a bit of a movement to try to rename this concept as Scope-Bound Resource Management, though it doesn't seem to have caught on just yet.
+
+    When we say 'Resource' we don't just mean memory - it could be file handles, network sockets, database handles, GDI objects.
+    In short, things that we have a finite supply of and so we need to be able to control their usage.
+    The 'Scope-bound' aspect means that the lifetime of the object is bound to the scope of a variable, so when the variable goes out of scope then the destructor will release the resource.
+    A very useful property of this is that it makes for greater exception-safety. For instance, compare this:
+
+        RawResourceHandle* handle=createNewResource();
+        handle->performInvalidOperation();  // Oops, throws exception
+        ...
+        deleteResource(handle); // oh dear, never gets called so the resource leaks
+
+    With the RAII one
+        class ManagedResourceHandle {
+        public:
+           ManagedResourceHandle(RawResourceHandle* rawHandle_) : rawHandle(rawHandle_) {};
+           ~ManagedResourceHandle() {delete rawHandle; }
+           ... // omitted operator*, etc
+        private:
+           RawResourceHandle* rawHandle;
+        };
+
+        ManagedResourceHandle handle(createNewResource());
+        handle->performInvalidOperation();
+
+    In this latter case, when the exception is thrown and the stack is unwound, the local variables are destroyed which ensures that our resource is cleaned up and doesn't leak.
+
+        File f;
+        f.open("boo.txt");
+        //UNSAFE - an exception here means the file is never closed
+        loadFromFile(f);
+        f.close();
+
+        Dog* dog = new Daschund;
+        //UNSAFE - an exception here means the dog is never deleted
+        goToThePark(dog); 
+        delete dog;
+
+        Lock* lock = getLock();
+        lock.aquire();
+        //UNSAFE - an exception here means the lock is never released
+        doSomething();
+        lock.release();
+
+37.
+Branch Prediction:
+http://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-an-unsorted-array?rq=1
+
+    Why is processing a sorted array faster than an unsorted array
+
+    You are a processor and you see a branch.
+    You have no idea which way it will go. What do you do? You halt execution and wait until the previous instructions are complete.
+    Then you continue down the correct path.
+
+    Modern processors are complicated and have long pipelines. So they take forever to "warm up" and "slow down".
+    Is there a better way? You guess which direction the branch will go!
+    If you guessed right, you continue executing.
+    If you guessed wrong, you need to flush the pipeline and roll back to the branch. Then you can restart down the other path.
+    If you guess right every time, the execution will never have to stop.
+    If you guess wrong too often, you spend a lot of time stalling, rolling back, and restarting.
+
+    Notice that the data is evenly distributed between 0 and 255.
+    When the data is sorted, roughly the first half of the iterations will not enter the if-statement.
+    After that, they will all enter the if-statement.
+
+    This is very friendly to the branch predictor since the branch consecutively goes the same direction many times.
+    Even a simple saturating counter will correctly predict the branch except for the few iterations after it switches direction.
+
+    However, when the data is completely random, the branch predictor is rendered useless because it can't predict random data.
+    Thus there will probably be around 50% misprediction. (no better than random guessing)
+
+38.
+Monitors in C++
+http://stackoverflow.com/questions/12647217/making-a-c-class-a-monitor-in-the-concurrent-sense
+
+39.
+PThreads:
+http://stackoverflow.com/questions/21323628/warning-cast-to-from-pointer-from-to-integer-of-different-size
+http://stackoverflow.com/questions/1640423/error-cast-from-void-to-int-loses-precision
+
+    Pthread Join and Pthread exit
+http://stackoverflow.com/questions/20824229/when-to-use-pthread-exit-and-when-to-use-pthread-join-in-linux
+
+    Both methods ensure that your process doesn't end before all of your threads have ended.
+
+    The join method has your thread of the main function explicitly wait for all threads that are to be "joined".
+
+    The pthread_exit method terminates your main function and thread in a controlled way. main has the particularity that ending main otherwise would be terminating your whole process including all other threads.
+
+40.
+Convert Vector to Array
+http://stackoverflow.com/questions/2923272/how-to-convert-vector-to-array-c
+
+    There's a fairly simple trick to do so, since the spec now guarantees vectors store their elements contiguously:
+        std::vector<double> v;
+        double* a = &v[0];
+
+    Cover array to vector:
+http://stackoverflow.com/questions/8777603/what-is-the-simplest-way-to-convert-array-to-vector
+
+        int x[3]={1, 2, 3};
+        std::vector<int> v(x, x + sizeof x / sizeof x[0]);
+
+    VERY IMP: GIVES ERROR
+        void fn(vector<int>& nums)
+
+        int arr[] = {1,2,3}
+        fn(vector<int> (arr, arr + sizeof(arr)/sizeof(arr[0]);
+    
+    As the function take a REFERENCE, we should first store in a variable before passing it. Can’t pass a value to a reference.
+
+41.
+Initialization of a normal array with one default value
+http://stackoverflow.com/questions/1065774/c-c-initialization-of-a-normal-array-with-one-default-value
+
+    Using the syntax that you used:
+        int array[100] = {-1};
+    says "set the first element to -1 and the rest to 0" since all omitted elements are set to 0.
+
+    In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>):
+        std::fill_n(array, 100, -1);
+
+42.
+Templates: Template keyword vs Class keyword
+http://stackoverflow.com/questions/213121/use-class-or-typename-for-template-parameters
+
+    Stroustrup originally used class to specify types in templates to avoid introducing a new keyword.
+    Some in the committee worried that this overloading of the keyword led to confusion.
+    Later, the committee introduced a new keyword typename to resolve syntactic ambiguity, and decided to let it also be used to specify template types to reduce confusion, but for backward compatibility, class kept its overloaded meaning.
+
+43.
+comparing int with size_t
+http://stackoverflow.com/questions/3642010/comparing-int-with-size-t
+
+    size_t CANNOT be compared with int when the int is INT is negative
+
+    It's safe provided the int is zero or positive.
+    If it's negative, and size_t is of equal or higher rank than int, then the int will be converted to size_t and so its negative value will instead become a positive value.
+    This new positive value is then compared to the size_t value, which may (in a staggeringly unlikely coincidence) give a false positive.
+    To be truly safe (and perhaps overcautious) check that the int is nonnegative first:
+
+    /* given int i; size_t s; */
+        if (i>=0 && i == s)
+    and to suppress compiler warnings:
+    if (i>=0 && (size_t)i == s)
+
+44.
+Unicode vs Ascii
+http://stackoverflow.com/questions/19212306/whats-the-difference-between-ascii-and-unicode
+
+    ASCII defines 128 characters, which map to the numbers 0–127.
+    Unicode defines (less than) 221 characters, which, similarly, map to numbers 0–221 (though not all numbers are currently assigned, and some are reserved).
+
+45.
+Where are Class Members stored in memory
+http://stackoverflow.com/questions/15572411/where-are-member-functions-stored-for-an-object
+
+    Member functions or pointers to them aren't stored in the object.
+    (virtual functions are typically called through a pointer stored in a table to which an object has a single pointer to) This would be a huge waste of memory. 
+
+    They're typically stored in a code memory section, and are known to the compiler.
+    The object (*this) is typically passed as an invisible parameter so the functions know on which object to operate when they are called.
+
+    Size of a C++ Object is determined by Class’s data members and base classes
+    Only non-virtual data members occupy space.
+    Each instance of derived class will contain a complete copy of the instance data of the base class
+
+46.
+C++ Class vs C Struct Memory Layout
+http://stackoverflow.com/questions/422830/structure-of-a-c-object-in-memory-vs-a-struct
+
+    The C++ standard guarantees that memory layouts of a C struct and a C++ class (or struct -- same thing) will be identical, provided that the C++ class/struct fits the criteria of being POD ("Plain Old Data").
+
+    So what does POD mean?
+    A class or struct is POD if:
+    All data members are public and themselves POD or fundamental types (but not reference or pointer-to-member types), or arrays of such
+    It has no user-defined constructors, assignment operators or destructors
+    It has no virtual functions
+    It has no base classes
+
+47. Pass by Value vs Const Reference
+http://stackoverflow.com/questions/2582797/why-pass-by-const-reference-instead-of-by-value
+http://stackoverflow.com/questions/1567138/const-t-arg-vs-t-arg/1567186#1567186
+
+    Passing arguments by value and thus copying them can be expensive - const references avoid that expensive step while still promising the caller that the object won't be changed.
+    Usually fundamental types (int, double, ...) are passed by value, while class-types are passed by const reference.
+
+    Use const T & arg if sizeof(T)>sizeof(void*) and use T arg if sizeof(T) <= sizeof(void*)
+
+48. Virtual Function and Pure Virtual Functions
+http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained?rq=1
+
+    A virtual function or virtual method is a function or method whose behavior can be overridden within an inheriting class by a function with the same signature 
+
+    A pure virtual function or pure virtual method is a virtual function that is required to be implemented by a derived class that is not abstract" - Wikipedia
+
+    The virtual keyword gives C++ its' ability to support polymorphism. When you have a pointer to an object of some class such as:
+
+        class Animal
+        {
+          public:
+            virtual int GetNumberOfLegs() = 0;
+        };
+
+        class Duck : public Animal
+        {
+          public:
+             int GetNumberOfLegs() { return 2; }
+        };
+
+        class Horse : public Animal
+        {
+          public:
+             int GetNumberOfLegs() { return 4; }
+        };
+
+        void SomeFunction(Animal * pAnimal)
+        {
+          cout << pAnimal->GetNumberOfLegs();
+        }
+
+    In this (silly) example, the GetNumberOfLegs() function returns the appropriate number based on the class of the object that it is called for.
+    Now, consider the function 'SomeFunction'.
+    It doesn't care what type of animal object is passed to it, as long as it is derived from Animal.
+    The compiler will automagically cast any Animal-derived class to a Animal as it is a base class.
+
+    If we do this:
+        Duck d;
+        SomeFunction(&d);
+    it'd output '2'.
+
+    If we do this:
+        Horse h;
+        SomeFunction(&h);
+    it'd output '4'.
+
+    We can't do this:
+        Animal a;
+        SomeFunction(&a);
+    because it won't compile due to the GetNumberOfLegs() virtual function being pure, which means it must be implemented by deriving classes (subclasses).
+
+    Pure Virtual Functions are mostly used to define:
+        a) abstract classes
+        These are base classes where you have to derive from them and then implement the pure virtual functions.
+
+        b) interfaces
+        These are 'empty' classes where all functions are pure virtual and hence you have to derive and then implement all of the functions.
+
+49. Virtual Functions
+    Each time you create a class that contains virtual functions, or you derive from a class that contains virtual functions, the compiler creates a VTABLE for that class
+    In that table it places the addresses of all the functions that are declared virtual in this class or in the base class
+
+50. new vs new()
+http://stackoverflow.com/questions/620137/do-the-parentheses-after-the-type-name-make-a-difference-with-new
+
+    new Thing(); is explicit that you want a constructor called whereas new Thing; is taken to imply you don't mind if the constructor isn't called
+
+    If used on a struct/class with a user-defined constructor, there is no difference.
+    If called on a trivial struct/class (e.g. struct Thing { int i; };) then new Thing; is like malloc(sizeof(Thing)); whereas new Thing(); is like calloc(sizeof(Thing)); - it gets zero initialized.
+
+
+51. Reading Multiple words from cin
+
+    std::getline(cin, wordsList);
+
+52. Reading multiple lines from cin
+
+        while (getline(cin, line))
+        {
+            if (!line.empty())
+            {
+                lines.push_back(line);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+53. Using size_t for loops
+http://www.embedded.com/electronics-blogs/programming-pointers/4026076/Why-size-t-matters
+http://stackoverflow.com/questions/1951519/when-should-i-use-stdsize-t
+http://stackoverflow.com/questions/19732319/difference-between-size-t-and-unsigned-int
+http://stackoverflow.com/questions/131803/unsigned-int-vs-size-t
+
+    Code that assumes sizeof yields an unsigned int would not be portable. Code that assumes it yields a size_t is more likely to be portable.
+
+    The size_t type is meant to specify the size of something so it's natural to use it, for example, getting the length of a string and then processing each character:
+
+        for (size_t i = 0, max = strlen (str); i < max; i++)
+            doSomethingWith (str[i]);
+
+    You do have to watch out for boundary conditions of course, since it's an unsigned type.
+    The boundary at the top end is not usually that important since the maximum is usually large (though it is possible to get there).
+    Most people just use an int for that sort of thing because they rarely have structures or arrays that get big enough to exceed the capacity of that int.
+
+    IMP: But watch out for things like:
+
+        for (size_t i = strlen (str) - 1; i >= 0; i--)
+
+    which will cause an infinite loop due to the wrapping behaviour of unsigned values (although I've seen compilers warn against this).
+    This can also be alleviated by the (slightly harder to understand but at least immune to wrapping problems):
+
+        for (size_t i = strlen (str); i-- > 0; )
+
+
+    So, you ask, why not just use an unsigned int?
+        Because unsigned int is not the only unsigned integral type.
+        size_t could be any of unsigned char, unsigned short, unsigned int, unsigned long or unsigned long long, depending on the implementation.
+
+        It may not be able to hold big enough numbers.
+        In an implementation where unsigned int is 32 bits, the biggest number it can represent is 4294967295.
+        Some processors, such as the IP16L32, can copy objects larger than 4294967295 bytes.
+        For example in 64 bit systems int and unsigned int may be 32 bit wide, but size_t must be big enough to store numbers bigger than 4G
+
+    So, you ask, why not use an unsigned long int?
+        It exacts a performance toll on some platforms.
+        Standard C requires that a long occupy at least 32 bits.
+        An IP16L32 platform implements each 32-bit long as a pair of 16-bit words.
+        Almost all 32-bit operators on these platforms require two instructions, if not more, because they work with the 32 bits in two 16-bit chunks.
+        For example, moving a 32-bit long usually requires two machine instructions -- one to move each 16-bit chunk.
+
+54. size_t vs size_type
+http://stackoverflow.com/questions/918567/size-t-vs-containersize-type
+
+    size_type - C++
+    For better portability
+
+    This is how SIZE should be used
+        for(size_t i = 0; i < dataVecs.size(); i++)
+
+    This is how SIZE_TYPE should be used
+        for(vector<string>::size_type i = 0; i < dataVecs.size(); i++)
+
+55. File IO
+http://www.cplusplus.com/doc/tutorial/files/
+
+    For ifstream and ofstream classes, ios::in and ios::out are automatically and respectively assumed, even if a mode that does not include them is passed as second argument to the open member function (the flags are combined).
+
+    Copying from One file to Another
+        ifstream in("document1.txt");
+        ofstream out("document2.txt");
+        string str;
+        while(getline(in,str))
+        {
+            out<<str;
+        }
+        in.close(); // <---
+        out.close(); // <---
+
+        // position to the nth byte of fileObject (assumes ios::beg)
+        fileObject.seekg( n );
+
+        // position n bytes forward in fileObject
+        fileObject.seekg( n, ios::cur );
+
+        // position n bytes back from end of fileObject
+        fileObject.seekg( n, ios::end );
+
+        // position at end of fileObject
+        fileObject.seekg( 0, ios::end );
+
+    Using ENDL will cause the buffer to be FLUSH. So use "\n" for performance reasons
+    Closing the file will flush the buffer.
+
+    Output in C++ may be buffered.
+    This means that anything that is output to a file stream may not be written to disk immediately.
+    Instead, several output operations may be batched and handled together.
+    This is done primarily for performance reasons.
+    When a buffer is written to disk, this is called flushing the buffer.
+    One way to cause the buffer to be flushed is to close the file -- the contents of the buffer will be flushed to disk, and then the file will be closed.
+
+    Buffering is usually not a problem, but in certain circumstance it can cause complications for the unwary.
+    The main culprit in this case is when there is data in the buffer, and then program terminates immediately (either by crashing, or by calling exit()).
+    In these cases, the destructors for the file stream classes are not executed, which means the files are never closed, which means the buffers are never flushed.
+    In this case, the data in the buffer is not written to disk, and is lost forever.
+    This is why it is always a good idea to explicitly close any open files before calling exit().
+
+    It is possible to flush the buffer manually using the ostream::flush() function or sending std::flush to the output stream.
+    Either of these methods can be useful to ensure the contents of the buffer are written to disk immediately, just in case the program crashes.
+
+    One interesting note is that std::endl; also flushes the output stream.
+    Consequently, overuse of std::endl (causing unnecessary buffer flushes) can have performance impacts when doing buffered I/O where flushes are expensive (such as writing to a file).
+    For this reason, performance conscious programmers will often use ‘\n’ instead of std::endl to insert a newline into the output stream, to avoid unnecessary flushing of the buffer.
+
+56:
+What is string::npos
+http://www.cplusplus.com/reference/string/string/npos/
+
+    npos is a static member constant value with the greatest possible value for an element of type size_t.
+
+    This value, when used as the value for a len (or sublen) parameter in string's member functions, means "until the end of the string"

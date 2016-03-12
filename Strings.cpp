@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <string>
 using namespace std;
 
@@ -20,19 +21,18 @@ int main()
 
     int *a;
     int *b; 
-   // *a = 5;
+    // *a = 5;
     /*
-    cout<<a<<endl;
-    cout<<*a<<endl;
-    cout<<b<<endl;
-    cout<<*b<<endl;
-    
-    char test[9];
-    std::string str("HelloWorld");
+       cout<<a<<endl;
+       cout<<*a<<endl;
+       cout<<b<<endl;
+       cout<<*b<<endl;
 
-    str.copy(test, 5);
-    cout << test << endl;
-    */
+       char test[9];
+       std::string str("HelloWorld");
+       str.copy(test, 5);
+       cout << test << endl;
+     */
 
     // Modifying a string
     {
@@ -66,6 +66,46 @@ int main()
         int a = 5;
         int Arr[a];
         cout << sizeof(Arr) << endl;
+    }
+
+    // Getting multi-words input from CIN
+    {
+        string wordsList;
+        cout << "Enter a multi word string: " << endl;
+
+        // Flush the new line characters if any
+        //cin.ignore();
+        //cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        getline(cin, wordsList);
+
+        cout << wordsList << endl;
+    }
+
+    // Getting multi-lines input from CIN
+    {
+        std::vector<std::string> lines;
+        std::string line;
+        cout << "Enter a multi line string: " << endl;
+
+        // If you want to ignore the leading whitespaces then
+        //while (getline(cin >> ws, line)
+        while (getline(cin, line))
+        {
+            if (!line.empty())
+            {
+                lines.push_back(line);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        for (string str : lines)
+        {
+            cout << str << endl;
+        }
     }
 
     cout <<  endl;
