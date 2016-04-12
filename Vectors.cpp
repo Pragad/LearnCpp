@@ -1,7 +1,77 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <algorithm> // For sort
 using namespace std;
+
+// Utility function to print a vector
+template <typename T>
+void printVector(T dataVecs)
+{
+    cout << endl;
+
+    // VERY IMP
+    //for (auto data : dataVecs)
+    //for(size_t i = 0; i < dataVecs.size(); i++)
+    for(vector<string>::size_type i = 0; i < dataVecs.size(); i++)
+    {
+        //cout << data << endl;
+        cout << dataVecs[i] << endl;
+    }
+    cout << endl;
+    cout << endl;
+}
+
+struct MeetingTime
+{
+    int startTime;
+    int endTime;
+
+    MeetingTime(double sT, double eT) : startTime(sT),
+                                        endTime(eT) { }
+
+    /*
+    bool operator < (const MeetingTime& meetTime) const
+    {
+        return (startTime < meetTime.startTime);
+    }
+
+    bool operator > (const MeetingTime& meetTime) const
+    {
+        return (areDoubleGreater(endTime, meetTime.endTime));
+    }
+    */
+
+    bool operator < (const MeetingTime& meetTime) const
+    {
+        return (startTime < meetTime.startTime);
+    }
+
+    bool operator > (const MeetingTime& meetTime) const
+    {
+        return (endTime < meetTime.endTime);
+    }
+};
+
+// TODO:
+struct MyMeetStrtEndComp
+{
+    bool operator()( const MeetingTime& lx, const MeetingTime& rx ) const {
+        cout << "Comp: " << lx.startTime << "; " << rx.endTime << endl;
+        return lx.startTime >= rx.endTime;
+    }
+};
+
+
+void printMeetingVector(vector<MeetingTime> meetings)
+{
+    cout << "List of Meetings: " << endl;
+    for (auto meeting : meetings)
+    {
+        cout << meeting.startTime << "-" << meeting.endTime << endl;
+    }
+    cout << endl;
+}
 
 int main()
 {
@@ -84,6 +154,26 @@ int main()
         cout << &vecInts[1] << endl;
         cout << &vecInts[2] << endl;
         cout << (&vecInts + 1)<< endl;
+    }
+
+    // Struct objects sorted by two parameters
+    {
+        vector<struct MeetingTime> meetingsStrTimeSort = {{9, 10}, {14, 16}, {8, 12},  {12, 16},  {10, 12}};
+        vector<struct MeetingTime> meetingsEndTimeSort = meetingsStrTimeSort;
+        
+        printMeetingVector(meetingsStrTimeSort);
+        sort(meetingsStrTimeSort.begin(), meetingsStrTimeSort.end());
+        printMeetingVector(meetingsStrTimeSort);
+
+        printMeetingVector(meetingsEndTimeSort);
+        sort(meetingsEndTimeSort.begin(), meetingsEndTimeSort.end(), greater<MeetingTime>());
+        printMeetingVector(meetingsEndTimeSort);
+
+        MeetingTime tmp = {11, 13};
+        auto itr = std::upper_bound(meetingsEndTimeSort.begin(), meetingsEndTimeSort.end(), tmp, MyMeetStrtEndComp());
+
+        cout << "Itr: " << (*itr).startTime << "-" << (*itr).endTime << endl;
+
     }
     cout << endl;
 }

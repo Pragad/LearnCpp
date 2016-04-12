@@ -1,3 +1,119 @@
+0.  What are Classes
+1.  Using namespace std;
+2.  How to split a string
+3.  Use of cin ignore
+4.  Why to use nested class
+5.  NULL pointer - nullptr
+6.  Print contents of a vector:
+7.  Convert string to Upper Case:
+8.  Switch can't be used on strings:
+9.  Copy String to Char array
+10.  Char * vs Char []
+11.  Char * assignment
+12.  Passing Array requires number of elements. Arrays decay into pointers.
+13.  Deleting Array of objects using delete[]. delete[] vs delete
+14.  Setting pointers to NULL after delete
+15.  cout << new int[0] << endl; Allocating new with size 0
+16.  Default value of a boolean in a struct
+17.  Clearing a Char array in C
+18.  Re-declaration of default parameter
+19.  IMP: Char array vs NULL terminated String
+19b.  Why should SCANF never be used
+19c.  But I heard that char a[] was identical to char *a.
+20.  Find Substring
+21.  Combining vector of strings:
+22.  Convert String to Int - C++
+23.  Align std out
+24.  IMP: Why Pointers
+25.  Garbage Collection:
+26.  C++ References:
+27.  Smart Pointer:
+28.  C++ Cast:
+29.  C++ to Java:
+30.  Finding all subsets of a Vector of Vector
+31.  double vs float
+32.  C++ Count occurrences of a char
+33.  C++ Cin:
+34.  C++ Empty String:
+35.  Stack Unwinding
+36.  RAII:
+37.  Branch Prediction:
+38.  Monitors in C++
+39.  PThreads:
+40.  Convert Vector to Array and Array to Vector
+41.  Initialization of a normal array with one default value
+42.  Templates: Template keyword vs Class keyword
+43.  comparing int with size_t
+44.  Unicode vs Ascii
+45.  Where are Class Members stored in memory
+46.  C++ Class vs C Struct Memory Layout
+47.  Pass by Value vs Const Reference
+48.  Virtual Function and Pure Virtual Functions
+49.  Virtual Functions
+51.  Reading Multiple words from cin
+52.  Reading multiple lines from cin
+53.  Using size_t for loops
+54.  size_t vs size_type
+55.  File IO
+57.  Meaning of const
+57a.  Const vs ReadOnly
+57b.  Const in C vs C++
+58.  Reason to pass a pointer by reference
+59.  Returning by reference:
+60.  Sorting a vector of objects
+61.  Find rightmost set bit
+62.  #define vs typedef vs Enum
+62a.  C++ Const vs #Define
+62a.  C++ semantics of `static const` vs `const`
+62b.  C++ Const Read Only
+62b.  Const defaults to Internal Linkage in C++ and External Linkage in C
+62c.  When to use unnamed namespace
+62d.  Superiority of unnamed namespace over static
+63.  Dynamic Array in C++
+63b.  TWOD Vector in C++
+64.  Time in C++
+65.  Ordered Data Set
+66.  Tail Recursion
+67.  Extern Variable; Static vs Extern
+68.  vector<bool> vs bitset
+69.  Reading from file, donot use EOF for checking
+70.  Struct assignment vs memcpy
+71.  Why 2's complement is used to represent negative numbers
+72.  Extern Linkage and Intern linkage and NO linkage
+73.  How a Computer Compiles and Executes a C++ Program
+74.  When / Why to use stringstream
+75.  Steps involved for execution of a C program
+75a.  Storage Classes - Static, Extern, Auto and Register
+76.  Abstract Class vs Interface
+77.  Can abstract class be instantiated
+78.  C++ new int[0] - will it allocate memory
+79.  C++ new vs C malloc
+80.  How is memory allocated to Vectors
+81.  Where Global Variables and Pointers are stored
+82.  Where are the Variable Names stored
+83.  What is Type Safe
+84.  What is the name of the --> operator
+85.  Why is ::operator new[] necessary when ::operator new is enough
+86.  Allocator vs New
+87.  What is RTTI and Why is it necessary
+88.  When to use static methods
+89.  Freeing memory twice
+90.  C++ Memory management New operator vs Operator new 
+91.  STACK VS HEAP
+92.  Different behavior of Code Valid in C and C++
+93.  Case Only Labels: Jumping over initialization
+94.  What uses are there for “placement new”?
+95.  Is there a "placement delete"?
+96.  Shared Pointers, Weak Pointers and Scoped Pointers
+97.  Vector - Accessing member elements using "at()" vs "[]"
+98.  Created Vectors of User defined size
+99.  How to use memset or fill_n to initialize a dynamic two dimensional array in C++
+
+------------------------------------------------------------------------------------------
+0. 
+What are Classes
+    Classes are a collection of functions which operate on data.
+
 1.
 Using namespace std;
 http://stackoverflow.com/questions/1452721/why-is-using-namespace-std-considered-bad-practice
@@ -26,7 +142,8 @@ http://stackoverflow.com/questions/236129/split-a-string-in-c
     }
 
 
-    std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> split(const std::string &s, char delim)
+    {
         std::vector<std::string> elems;
         split(s, delim, elems);
         return elems;
@@ -246,9 +363,41 @@ http://stackoverflow.com/questions/6210450/the-compiler-is-complaining-about-my-
 19.
 IMP: Char array vs NULL terminated String
 http://stackoverflow.com/questions/11229477/are-all-char-arrays-automatically-null-terminated
+http://stackoverflow.com/questions/12019947/null-termination-of-char-array
+
+    VERY NICE LINK. Read all examples here
+http://c-faq.com/charstring/index.html
 
     Only string literals get null-terminated, and that means that char x[]="asdf" is an array of 5 elements.
     char arrays are not automatically NULL terminated
+
+    Also, WE have to make sure there is space for NULL character.
+    If you type more than four characters then the extra characters and the null terminator will be written outside the end of the array, overwriting memory not belonging to the array.
+    This is a buffer overflow.
+
+19b.
+Why should SCANF never be used
+http://stackoverflow.com/questions/12019947/null-termination-of-char-array
+
+    This is a great example of why scanf("%s") is dangerous and should never be used.
+    It doesn't know about the size of your array which means there is no way to use it safely.
+    Instead, avoid scanf and use something safer, like fgets():
+
+        fgets() reads in at most one less than size characters from stream and stores them into the buffer pointed to by s.
+        Reading stops after an EOF or a newline.
+        If a newline is read, it is stored into the buffer.
+        A terminating null byte ('\0') is stored after the last character in the buffer.
+
+19c.
+But I heard that char a[] was identical to char *a.
+http://c-faq.com/aryptr/aryptr2.html
+       - The array declaration char a[6] requests that space for six characters be set aside, to be known by the name ``a''.
+         That is, there is a location named ``a'' at which six characters can sit
+       - The pointer declaration char *p, on the other hand, requests a place which holds a pointer, to be known by the name ``p''.
+       - VERY IMP: ``pointer arithmetic and array indexing [that] are equivalent in C, pointers and arrays are different.'')
+
+    3. If they're so different, then why are array and pointer declarations interchangeable as function formal parameters? 
+       - Since arrays decay immediately into pointers, an array is never actually passed to a function.
 
 20.
 Find Substring
@@ -284,9 +433,9 @@ http://stackoverflow.com/questions/7663709/convert-string-to-int-c
     So instead of
         atoi( str.c_str() )
     you can use
-        std::stoi( str )
-    where str is your number as std::string.
-    There are version for all flavours of numbers: long stol(string), float stof(string), double stod(string)
+    std::stoi( str )
+where str is your number as std::string.
+There are version for all flavours of numbers: long stol(string), float stof(string), double stod(string)
 
 23.
 Align std out
@@ -297,7 +446,7 @@ http://stackoverflow.com/questions/2485963/c-alignment-when-printing-cout
 
 24.
 IMP: Why Pointers
-http://stackoverflow.com/questions/22146094/why-should-i-use-a-pointer-rather-than-the-object-itself?rq=1
+http://stackoverflow.com/questions/22146094/why-should-i-use-a-pointer-rather-than-the-object-itself
 
     I'm coming from a Java background and have started working with objects in C++.
     But one thing that occurred to me is that people often use pointers to objects rather than the objects themselves, for example this declaration:
@@ -321,11 +470,12 @@ http://stackoverflow.com/questions/22146094/why-should-i-use-a-pointer-rather-th
         You should only use dynamic storage duration when you need it. That is, you should always prefer creating objects with automatic storage duration when you can.
 
         The main two situations in which you might require dynamic allocation:
-        You need the object to outlive the current scope - that specific object at that specific memory location, not a copy of it.
-        If you're okay with copying/moving the object (most of the time you should be), you should prefer an automatic object.
+            1. You need the object to outlive the current scope - that specific object at that specific memory location, not a copy of it.
+               If you're okay with copying/moving the object (most of the time you should be), you should prefer an automatic object.
 
-        You need to allocate a lot of memory, which may easily fill up the stack.
-        It would be nice if we didn't have to concern ourselves with this (most of the time you shouldn't have to), as it's really outside the purview of C++, but unfortunately we have to deal with the reality of the systems we're developing for.
+            2. You need to allocate a lot of memory, which may easily fill up the stack.
+               It would be nice if we didn't have to concern ourselves with this (most of the time you shouldn't have to), as it's really outside the purview of C++, but unfortunately we have to deal with the reality of the systems we're developing for.
+
         When you do absolutely require dynamic allocation, you should encapsulate it in a smart pointer or some other type that performs RAII (like the standard containers).
         Smart pointers provide ownership semantics of dynamically allocated objects.
         Take a look at std::unique_ptr and std::shared_ptr, for example.
@@ -335,26 +485,27 @@ http://stackoverflow.com/questions/22146094/why-should-i-use-a-pointer-rather-th
         However, there are other more general uses for raw pointers beyond dynamic allocation, but most have alternatives that you should prefer.
         As before, always prefer the alternatives unless you really need pointers.
 
-        You need reference semantics.
+     1. You need reference semantics.
         Sometimes you want to pass an object using a pointer (regardless of how it was allocated) because you want the function to which you're passing it to have access that that specific object (not a copy of it).
         However, in most situations, you should prefer reference types to pointers, because this is specifically what they're designed for.
         Note this is not necessarily about extending the lifetime of the object beyond the current scope, as in situation 1 above.
         As before, if you're okay with passing a copy of the object, you don't need reference semantics.
 
-        You need polymorphism.
+     2. You need polymorphism.
         You can only call functions polymorphically (that is, according to the dynamic type of an object) through a pointer or reference to the object.
         If that's the behaviour you need, then you need to use pointers or references.
         Again, references should be preferred.
-        You want to represent that an object is optional by allowing a nullptr to be passed when the object is being omitted.
+
+     3. You want to represent that an object is optional by allowing a nullptr to be passed when the object is being omitted.
         If it's an argument, you should prefer to use default arguments or function overloads.
         Otherwise, you should prefer use a type that encapsulates this behaviour, such as boost::optional (or perhaps soon, std::optional - Edit std::optional is voted out of the current C++14 draft n3797).
 
-        You want to decouple compilation units to improve compilation time.
+     4. You want to decouple compilation units to improve compilation time.
         The useful property of a pointer is that you only require a forward declaration of the pointed-to type (to actually use the object, you'll need a definition).
         This allows you to decouple parts of your compilation process, which may significantly improve compilation time.
         See the Pimpl idiom.
 
-        You need to interface with a C library or a C-style library.
+     5. You need to interface with a C library or a C-style library.
         At this point, you're forced to use raw pointers.
         The best thing you can do is make sure you only let your raw pointers loose at the last possible moment.
         You can get a raw pointer from a smart pointer, for example, by using its get member function.
@@ -366,27 +517,27 @@ http://stackoverflow.com/questions/5009869/how-to-implement-garbage-collection-i
 
     Garbage collection in C and C++ are both difficult topics for a few reasons:
 
-    Pointers can be typecast to integers and vice-versa.
+    1. Pointers can be typecast to integers and vice-versa.
     This means that I could have a block of memory that is reachable only by taking an integer, typecasting it to a pointer, then dereferencing it.
     A garbage collector has to be careful not to think a block is unreachable when indeed it still can be reached.
 
-    Pointers are not opaque. Many garbage collectors, like stop-and-copy collectors, like to move blocks of memory around or compact them to save space.
+    2. Pointers are not opaque. Many garbage collectors, like stop-and-copy collectors, like to move blocks of memory around or compact them to save space.
     Since you can explicitly look at pointer values in C and C++, this can be difficult to implement correctly.
     You would have to be sure that if someone was doing something tricky with typecasting to integers that you correctly updated the integer if you moved a block of memory around.
 
-    Memory management can be done explicitly. Any garbage collector will need to take into account that the user is able to explicitly free blocks of memory at any time.
+    3. Memory management can be done explicitly. Any garbage collector will need to take into account that the user is able to explicitly free blocks of memory at any time.
 
-    In C++, there is a separation between allocation/deallocation and object construction/destruction.
+    4. In C++, there is a separation between allocation/deallocation and object construction/destruction.
     A block of memory can be allocated with sufficient space to hold an object without any object actually being constructed there.
     A good garbage collector would need to know, when it reclaims memory, whether or not to call the destructor for any objects that might be allocated there.
     This is especially true for the standard library containers, which often make use of std::allocator to use this trick for efficiency reasons.
 
-    Memory can be allocated from different areas.
+    5. Memory can be allocated from different areas.
     C and C++ can get memory either from the built-in freestore (malloc/free or new/delete), or from the OS via mmap or other system calls, and, in the case of C++, from get_temporary_buffer or return_temporary_buffer.
     The programs might also get memory from some third-party library.
     A good garbage collector needs to be able to track references to memory in these other pools and (possibly) would have to be responsible for cleaning them up.
 
-    Pointers can point into the middle of objects or arrays.
+    6. Pointers can point into the middle of objects or arrays.
     In many garbage-collected languages like Java, object references always point to the start of the object.
     In C and C++ pointers can point into the middle of arrays, and in C++ into the middle of objects (if multiple inheritance is used). This can greatly complicate the logic for detecting what's still reachable.
 
@@ -521,6 +672,27 @@ http://stackoverflow.com/questions/728972/finding-all-the-subsets-of-a-set
         For {1, 2}, take {{}, {1}}, add 2 to each subset to get {{2}, {1, 2}} and take the union with {{}, {1}} to get {{}, {1}, {2}, {1, 2}}
     Repeat till you reach n
 
+31.
+double vs float
+http://stackoverflow.com/questions/2386772/difference-between-float-and-double
+http://programmers.stackexchange.com/questions/188721/when-do-you-use-float-and-when-do-you-use-double
+
+    - As the name implies, a double has 2x the precision of float[1]. In general a double has 15 to 16 decimal digits of precision, while float only has 7
+    - Also, the maximum value of float is only about 3e38, but double is about 1.7e308, so using float can hit Infinity much easier than double for something simple e.g. computing 60!
+
+    float should only be used if you need to operate on a lot of floating-point numbers (think in the order of thousands or more) and analysis of the algorithm has shown that the reduced range and accuracy don't pose a problem.
+
+    long double can be used if you need more range or accuracy than double, and if it provides this on your target platform.
+
+    In summary, float and long double should be reserved for use by the specialists, with double for "every-day" use.
+
+Double Float Comparison
+http://stackoverflow.com/questions/17333/most-effective-way-for-float-and-double-comparison
+    bool AreSame(double a, double b)
+    {
+        return fabs(a - b) < EPSILON;
+    }
+
 32.
 C++ Count occurrences of a char
 http://stackoverflow.com/questions/3867890/count-character-occurrences-in-a-string
@@ -635,6 +807,10 @@ http://stackoverflow.com/questions/2331316/what-is-stack-unwinding
 RAII:
 http://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
 http://www.tomdalling.com/blog/software-design/resource-acquisition-is-initialisation-raii-explained/
+http://stackoverflow.com/questions/6500313/why-should-c-programmers-minimize-use-of-new?rq=1
+
+    In C++ there's a neat construct called a destructor.
+    This mechanism allows you to manage resources by aligning the lifetime of the resource with the lifetime of a variable.
 
     It's a really terrible name for an incredibly powerful concept, and perhaps one of the number 1 things that C++ developers miss when they switch to other languages.
     There has been a bit of a movement to try to rename this concept as Scope-Bound Resource Management, though it doesn't seem to have caught on just yet.
@@ -727,14 +903,14 @@ http://stackoverflow.com/questions/20824229/when-to-use-pthread-exit-and-when-to
     The pthread_exit method terminates your main function and thread in a controlled way. main has the particularity that ending main otherwise would be terminating your whole process including all other threads.
 
 40.
-Convert Vector to Array
+Convert Vector to Array and Array to Vector
 http://stackoverflow.com/questions/2923272/how-to-convert-vector-to-array-c
 
     There's a fairly simple trick to do so, since the spec now guarantees vectors store their elements contiguously:
         std::vector<double> v;
         double* a = &v[0];
 
-    Cover array to vector:
+    Convert array to vector:
 http://stackoverflow.com/questions/8777603/what-is-the-simplest-way-to-convert-array-to-vector
 
         int x[3]={1, 2, 3};
@@ -748,6 +924,18 @@ http://stackoverflow.com/questions/8777603/what-is-the-simplest-way-to-convert-a
     
     As the function take a REFERENCE, we should first store in a variable before passing it. Can’t pass a value to a reference.
 
+Converting String to Vector of Chars
+http://stackoverflow.com/questions/8263926/how-to-copy-stdstring-into-stdvectorchar
+
+        std::string str = "hello";
+        std::vector<char> data(str.begin(), str.end());
+
+    If you already have a vector and want to add the characters at the end, you need a back inserter:
+
+        std::string str = "hello";
+        std::vector<char> data = /* ... */;
+        std::copy(str.begin(), str.end(), std::back_inserter(data));
+
 41.
 Initialization of a normal array with one default value
 http://stackoverflow.com/questions/1065774/c-c-initialization-of-a-normal-array-with-one-default-value
@@ -758,6 +946,13 @@ http://stackoverflow.com/questions/1065774/c-c-initialization-of-a-normal-array-
 
     In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>):
         std::fill_n(array, 100, -1);
+
+Initialize TwoD (two dimensional) array with 0
+    int a[100][200] = {{0}};
+
+    OR 
+
+    fill_n( a, 100*200, 0 );
 
 42.
 Templates: Template keyword vs Class keyword
@@ -793,6 +988,25 @@ http://stackoverflow.com/questions/19212306/whats-the-difference-between-ascii-a
 45.
 Where are Class Members stored in memory
 http://stackoverflow.com/questions/15572411/where-are-member-functions-stored-for-an-object
+http://stackoverflow.com/questions/22119360/class-members-and-member-functions-memory-location/22119456#22119456
+http://stackoverflow.com/questions/1169858/global-memory-management-in-c-in-stack-or-heap
+http://www.cs.uwm.edu/classes/cs315/Bacon/Lecture/HTML/ch10s04.html
+
+    Typically a process has 5 different areas of memory allocated
+
+        Code - text segment
+        Initialized data – data segment
+        Uninitialized data – bss segment
+        Heap
+        Stack
+
+    The size of the text and data segments are known as soon as compilation or assembly is completed. The stack and heap segments, on the other hand, grow and shrink during program execution.
+
+    In the assembler's point of view, all variables are global.
+    The notion of a variable's scope in C or Java is enforced by the compiler, not the hardware.
+    Hardware knows only about memory addresses, and the compiler must keep track of which addresses are used by each subprogram.
+
+    member functions don't eat any additional space in the object. If it is non-virtual, it is just a plain function (in the code segment)
 
     Member functions or pointers to them aren't stored in the object.
     (virtual functions are typically called through a pointer stored in a table to which an object has a single pointer to) This would be a huge waste of memory. 
@@ -803,6 +1017,24 @@ http://stackoverflow.com/questions/15572411/where-are-member-functions-stored-fo
     Size of a C++ Object is determined by Class’s data members and base classes
     Only non-virtual data members occupy space.
     Each instance of derived class will contain a complete copy of the instance data of the base class
+
+http://stackoverflow.com/questions/5037701/where-are-const-objects-stored
+http://programmers.stackexchange.com/questions/142475/how-does-const-storage-work-item-2-scott-myers-effective-c
+    Compilers wouldn't set aside data memory for const objects of integer type: they would trade it for program memory.
+
+    Automatic variables are either stored on the stack or in a register. Doesn't matter if they're const or not.
+
+    Static variables are stored in program memory.
+    There may be multiple blocks of program memory, some read-only and some not.
+    Declaring a variable const may affect which block something is stored in.
+
+    Variables allocated with new will be on the heap. Doesn't matter if it's const or not.
+
+    STATIC MEMBER FUNCTIONS:
+        http://stackoverflow.com/questions/10952385/distinguish-if-a-c-static-method-is-called-by-the-class-or-by-an-object
+        Can be called either using an object or just with the Class Name
+
+    CALLING A MEMBER FUNCTION WILL BE A JUMP INSTRUCTION TO THAT FUNCTION
 
 46.
 C++ Class vs C Struct Memory Layout
@@ -817,7 +1049,8 @@ http://stackoverflow.com/questions/422830/structure-of-a-c-object-in-memory-vs-a
     It has no virtual functions
     It has no base classes
 
-47. Pass by Value vs Const Reference
+47.
+Pass by Value vs Const Reference
 http://stackoverflow.com/questions/2582797/why-pass-by-const-reference-instead-of-by-value
 http://stackoverflow.com/questions/1567138/const-t-arg-vs-t-arg/1567186#1567186
 
@@ -826,7 +1059,8 @@ http://stackoverflow.com/questions/1567138/const-t-arg-vs-t-arg/1567186#1567186
 
     Use const T & arg if sizeof(T)>sizeof(void*) and use T arg if sizeof(T) <= sizeof(void*)
 
-48. Virtual Function and Pure Virtual Functions
+48.
+Virtual Function and Pure Virtual Functions
 http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained?rq=1
 
     A virtual function or virtual method is a function or method whose behavior can be overridden within an inheriting class by a function with the same signature 
@@ -885,7 +1119,8 @@ http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained?rq=1
         b) interfaces
         These are 'empty' classes where all functions are pure virtual and hence you have to derive and then implement all of the functions.
 
-49. Virtual Functions
+49.
+Virtual Functions
     Each time you create a class that contains virtual functions, or you derive from a class that contains virtual functions, the compiler creates a VTABLE for that class
     In that table it places the addresses of all the functions that are declared virtual in this class or in the base class
 
@@ -898,11 +1133,13 @@ http://stackoverflow.com/questions/620137/do-the-parentheses-after-the-type-name
     If called on a trivial struct/class (e.g. struct Thing { int i; };) then new Thing; is like malloc(sizeof(Thing)); whereas new Thing(); is like calloc(sizeof(Thing)); - it gets zero initialized.
 
 
-51. Reading Multiple words from cin
+51.
+Reading Multiple words from cin
 
     std::getline(cin, wordsList);
 
-52. Reading multiple lines from cin
+52.
+Reading multiple lines from cin
 
         while (getline(cin, line))
         {
@@ -916,7 +1153,8 @@ http://stackoverflow.com/questions/620137/do-the-parentheses-after-the-type-name
             }
         }
 
-53. Using size_t for loops
+53.
+Using size_t for loops
 http://www.embedded.com/electronics-blogs/programming-pointers/4026076/Why-size-t-matters
 http://stackoverflow.com/questions/1951519/when-should-i-use-stdsize-t
 http://stackoverflow.com/questions/19732319/difference-between-size-t-and-unsigned-int
@@ -959,7 +1197,8 @@ http://stackoverflow.com/questions/131803/unsigned-int-vs-size-t
         Almost all 32-bit operators on these platforms require two instructions, if not more, because they work with the 32 bits in two 16-bit chunks.
         For example, moving a 32-bit long usually requires two machine instructions -- one to move each 16-bit chunk.
 
-54. size_t vs size_type
+54.
+size_t vs size_type
 http://stackoverflow.com/questions/918567/size-t-vs-containersize-type
 
     size_type - C++
@@ -971,7 +1210,8 @@ http://stackoverflow.com/questions/918567/size-t-vs-containersize-type
     This is how SIZE_TYPE should be used
         for(vector<string>::size_type i = 0; i < dataVecs.size(); i++)
 
-55. File IO
+55.
+File IO
 http://www.cplusplus.com/doc/tutorial/files/
 
     For ifstream and ofstream classes, ios::in and ios::out are automatically and respectively assumed, even if a mode that does not include them is passed as second argument to the open member function (the flags are combined).
@@ -1029,3 +1269,1564 @@ http://www.cplusplus.com/reference/string/string/npos/
     npos is a static member constant value with the greatest possible value for an element of type size_t.
 
     This value, when used as the value for a len (or sublen) parameter in string's member functions, means "until the end of the string"
+
+57.
+Meaning of const
+http://stackoverflow.com/questions/1143262/what-is-the-difference-between-const-int-const-int-const-and-int-const
+http://www.gotw.ca/gotw/006.htm
+http://stackoverflow.com/questions/455518/how-many-and-which-are-the-uses-of-const-in-c
+
+        int* - pointer to int
+        int const * - pointer to const int
+        int * const - const pointer to int
+        int const * const - const pointer to const int
+
+    Now the first const can be on either side of the type so:
+
+        const int * == int const *
+        const int * const == int const * const
+
+    Since the point object is passed by value, there is little or no benefit to declaring it const.
+    Normally const pass-by-value is unuseful and misleading at best.
+
+
+    CONST MEMBER FUNCTION:
+        const int* const Method3(const int* const&) const;
+    The final const means that the function Method3 does not modify the non mutable members of its class.
+
+    CONST variable can either be stored in CODE segment and just copied over.
+
+    c1 is different from the other two constants in that it is initialized with a literal value.
+    This lets compiler put that value everywhere the constant is used, like this:
+        int x = z + c1;
+    can be replaced by
+        int x = z + 1; <--- This is constant folding
+
+    This means that the compiler does not need to allocate space and store 1 in it.
+
+    c3 and c4 are different: one is calculated using a function, and the other one is supplied from a different compilation unit.
+    This means that the compiler can no longer perform the substitution the way it could with c1: the values of the c3 and c4 are not known to the compiler.
+    Therefore the compiler generates code for
+
+        int x = z + c4;
+    in the same way as if c4 were a variable stored in some place in memory.
+
+
+57a.
+Const vs ReadOnly
+http://stackoverflow.com/questions/4486442/how-does-const-differ-in-c-and-c
+http://stackoverflow.com/questions/4486326/does-const-just-mean-read-only-or-something-more
+
+    By declaring a variable as const you indicate compiler that you have no intentions of modifying that variable. But it does not mean others don't have
+
+    const does not mean read only, because you can write const volatile, that would mean it could change by itself anytime, but I have no intentions to modify it.
+
+    EDIT: here is a classical example: consider I'm writing the code that reads current time from a memory-mapped port. Consider that RTC is mapped to memory DWORD 0x1234.
+
+        const volatile DWORD* now = *(DWORD*)0x1234;
+
+    It's const because it's a read-only port, and it's volatile because each time I will read it it will change
+
+     It reminds you as you look at function prototypes of the contract that your functions expect.
+     Your compiler will yell at you if you carelessly break it.
+     (But not if you intentionally break it, as with the above cast.)
+
+    const means that you promise not to mutate the variable.
+    It could still be changed.
+        class A {
+          public:
+            A(const int& a);
+            int getValue() const;
+            void setValue(int b);
+          private:
+            const int& a;
+        };
+        A::A(a) : a(a) {}
+        int A::getValue() const {
+            return a;
+        }
+        void A::setValue(int b) {
+            a = b;  // error
+        }
+
+        int main() {
+            int my_a = 0;
+            A a(my_a);
+            std::cout << a.getValue() << std::endl;  // prints 0
+            my_a = 42;
+            std::cout << a.getValue() << std::endl;  // prints 42
+        }
+
+    No method A::* may change a, but main can.
+
+57b.
+Const in C vs C++
+http://stackoverflow.com/questions/4486442/how-does-const-differ-in-c-and-c
+
+    const in C cannot be used to build constant expressions.
+
+    For example :
+        #include <stdio.h>
+        int main()
+        {
+           int i = 2;
+           const int C = 2;
+           switch(i)
+           {
+              case C  : printf("Hello") ;
+              break;
+
+              default : printf("World");
+           }
+        }
+
+    doesn't work in C because case label does not reduce to an integer constant.
+
+58.
+Reason to pass a pointer by reference
+http://stackoverflow.com/questions/10240161/reason-to-pass-a-pointer-by-reference-in-c
+
+    Linked List, changing the HEAD pointer.
+
+    You would want to pass a pointer by reference if you have a need to modify the pointer rather than the object that the pointer is pointing to.
+
+    This is similar to why double pointers are used; using a reference to a pointer is slightly safer than using pointers.
+
+
+    50% of C++ programmers like to set their pointers to null after a delete:
+
+    template<typename T>    
+    void moronic_delete(T*& p)
+    {
+        delete p;
+        p = nullptr;
+    }
+
+    Without the reference, you would only be changing a local copy of the pointer, not affecting the caller.
+
+59.
+Returning by reference:
+http://stackoverflow.com/questions/752658/is-the-practice-of-returning-a-c-reference-variable-evil
+
+        int& getInt(void)
+        {
+            int i;
+            return i;
+        }
+
+    That is all sorts of evil. The stack-allocated i will go away and you are referring to nothing. This is semi-evil:
+
+        int& getInt(void)
+        {
+            int *i = new int;
+            return *i;
+        }
+
+    Because now the client has to eventually do the strange:
+
+        int& myInt = getInt(); // note the &.
+        int badInt = getInt(); // the & will be easy to miss (source of problems).
+        delete &myInt; // must delete.
+        delete &badInt; // won't work. badInt was a copy of the allocated int, which
+                        // is now lost forever
+
+    I think the best way to do something like that is just:
+
+        int *getInt(void)
+        {
+            return new int;
+        }
+
+    And now the client stores a pointer:
+
+        int *myInt = getInt(); // has to be a pointer
+        int& weirdInt = *getInt(); // but this works too if you really want.
+        delete myInt; // being a pointer, this is easy to do.
+        delete &weirdInt; // works.
+
+    Now for members of classes, & is powerful, such as operator chaining (cout's <<), or operator[].
+
+    What is evil is making a reference to a dynamically allocated object and losing the original pointer. When you new an object you assume an obligation to have a guaranteed delete.
+
+    But have a look at, eg, operator<<: that must return a reference, or
+
+        cout << "foo" << "bar" << "bletch" << endl ;
+
+    won't work.
+
+60.
+Sorting a vector of objects
+http://stackoverflow.com/questions/1380463/sorting-a-vector-of-custom-objects
+
+        struct MyStruct
+        {
+            int key;
+            std::string stringValue;
+
+            MyStruct(int k, const std::string& s) : key(k), stringValue(s) {}
+
+            bool operator < (const MyStruct& str) const
+            {
+                return (key < str.key);
+            }
+        };
+
+    Using this method means you can simply sort the vector as follows:
+
+        std::sort(vec.begin(), vec.end());
+
+    DESCENDING ORDER:
+        struct MyStruct
+        {
+            int key;
+            std::string stringValue;
+
+            MyStruct(int k, const std::string& s) : key(k), stringValue(s) {}
+
+            bool operator > (const MyStruct& str) const
+            {
+                return (key > str.key);
+            }
+        };
+
+    And you should call sort as:
+        std::sort(vec.begin(), vec.end(), greater<MyStruct>())
+
+        struct Xgreater
+        {
+            bool operator()( const X& lx, const X& rx ) const {
+                return lx.x < rx.x;
+            }
+        };
+        std::sort( my_vec.begin(), my_vec.end(), Xgreater() );
+
+61.
+Find rightmost set bit
+http://www.geeksforgeeks.org/position-of-rightmost-set-bit/
+http://stackoverflow.com/questions/20026243/find-2-missing-numbers-in-an-array-of-integers-with-two-missing-values
+
+        log2(n&-n)+1;
+
+    Find leftmost set bit
+        x = x &(~(x-1));
+
+62. 
+#define vs typedef vs Enum
+http://stackoverflow.com/questions/1666353/are-typedef-and-define-the-same-in-c
+
+    #define is a preprocessor token: the compiler itself will never see it.
+    typedef is a compiler token: the preprocessor does not care about it.
+
+    typedef obeys scoping rules just like variables, whereas
+    define stays valid until the end of the file (or until a matching undef
+
+        typedef int* int_p1;
+        int_p1 a, b, c;  // a, b, and c are all int pointers.
+
+        #define int_p2 int*
+        int_p2 a, b, c;  // only the first is a pointer!
+
+        typedef int a10[10];
+        a10 a, b, c; // create three 10-int arrays
+
+http://stackoverflow.com/questions/1674032/static-const-vs-define-vs-enum
+        static const int var = 5;
+        #define var 5
+        enum { var = 5 };
+
+    Ignoring issues about the choice of name, then:
+        If you need to pass a pointer around, you must use (1).
+        Since (2) is apparently an option, you don't need to pass pointers around.
+        Both (1) and (3) have a symbol in the debugger's symbol table - that makes debugging easier. It is more likely that (2) will not have a symbol, leaving you wondering what it is.
+        (1) cannot be used as a dimension for arrays at global scope; both (2) and (3) can.
+        (1) cannot be used as a dimension for static arrays at function scope; both (2) and (3) can.
+        Under C99, all of these can be used for local arrays. Technically, using (1) would imply the use of a VLA (variable-length array), though the dimension referenced by 'var' would of course be fixed at size 5.
+        (1) cannot be used in places like switch statements; both (2) and (3) can.
+        (1) cannot be used to initialize static variables; both (2) and (3) can.
+        (2) can change code that you didn't want changed because it is used by the preprocessor; both (1) and (3) will not have unexpected side-effects like that.
+        You can detect whether (2) has been set in the preprocessor; neither (1) nor (3) allows that.
+
+    So, in most contexts, prefer the 'enum' over the alternatives.
+    Otherwise, the first and last bullet points are likely to be the controlling factors — and you have to think harder if you need to satisfy both at once.
+
+    If you were asking about C++, then you'd use option (1) — the static const — every time
+
+62a.
+C++ Const vs #Define vs Enum
+http://stackoverflow.com/questions/1637332/static-const-vs-define
+http://stackoverflow.com/questions/1674032/static-const-vs-define-vs-enum
+
+    And, finally, in C++ const is preferable.
+    At least because such constants are typed and scoped.
+    There are simply no reasons to prefer #define over const, aside from few exceptions.
+
+    String constants, BTW, are one example of such an exception.
+    With #defined string constants one can use compile-time concatenation feature of C/C++ compilers, as in
+        #define OUT_NAME "output"
+        #define LOG_EXT ".log"
+        #define TEXT_EXT ".txt"
+
+        const char *const log_file_name = OUT_NAME LOG_EXT;
+        const char *const text_file_name = OUT_NAME TEXT_EXT;
+
+    It depends on what you need the value for.
+    You (and everyone else so far) omitted the third alternative:
+
+        (1) static const int var = 5;
+        (2) #define var 5
+        (3) enum { var = 5 };
+
+    Ignoring issues about the choice of name, then:
+        * If you need to pass a pointer around, you must use (1).
+        Since (2) is apparently an option, you don't need to pass pointers around.
+        Both (1) and (3) have a symbol in the debugger's symbol table - that makes debugging easier. It is more likely that (2) will not have a symbol, leaving you wondering what it is.
+        (1) cannot be used as a dimension for arrays at global scope; both (2) and (3) can.
+        (1) cannot be used as a dimension for static arrays at function scope; both (2) and (3) can.
+        Under C99, all of these can be used for local arrays. Technically, using (1) would imply the use of a VLA (variable-length array), though the dimension referenced by 'var' would of course be fixed at size 5.
+        (1) cannot be used in places like switch statements; both (2) and (3) can.
+        (1) cannot be used to initialize static variables; both (2) and (3) can.
+        (2) can change code that you didn't want changed because it is used by the preprocessor; both (1) and (3) will not have unexpected side-effects like that.
+        * You can detect whether (2) has been set in the preprocessor; neither (1) nor (3) allows that.
+
+    So, in most contexts, prefer the 'enum' over the alternatives.
+    Otherwise, the first and last bullet points are likely to be the controlling factors — and you have to think harder if you need to satisfy both at once.
+
+    If you were asking about C++, then you'd use option (1) — the static const — every time
+
+62a.
+C++ semantics of `static const` vs `const`
+http://stackoverflow.com/questions/3709207/c-semantics-of-static-const-vs-const
+
+Question:
+    In C++ specifically, what are the semantic differences between for example:
+        static const int x = 0 ;
+    and
+        const int x = 0 ;
+    for both static as a linkage and a storage class specifier (i.e. inside and outside a function).
+
+Solution:
+    At file scope, no difference in C++.
+    const makes internal linkage the default, and all global variables have static lifetime.
+    But the first variant has the same behavior in C, so that may be a good reason to use it.
+
+    Within a function, the second version can be computed from parameters, in C or C++ it doesn't have to be a compile-time constant like some other languages require.
+
+    Within a class, basically the same thing as for functions, an instance const value can be computed in the ctor-initializer-list.
+    A static const is set during startup initialization and remains unchanged for the rest of the program.
+    (Note: the code for static members looks a little different because declaration and initialization are separated.)
+
+    Remember, in C++, const means read-only, not constant.
+    If you have a pointer-to-const then other parts of the program may change the value while you're not looking.
+    If the variable was defined with const, then no one can change it after initialization but initialization can still be arbitrarily complex.
+
+62b.
+C++ Const Read Only
+
+62b.
+Const defaults to Internal Linkage in C++ and External Linkage in C
+Thinking in C++ Pg 288
+
+62c.
+When to use unnamed namespace
+http://stackoverflow.com/questions/5312213/uses-of-unnamed-namespace-in-c
+C++ Primer - Pg 431
+Thinking in C++ - Pg 289
+
+    When you want an object to be available only for that SPECIFIC file and not for the entire progrgam.
+
+    The names of global functions, global variables, and classes are still in a single global name space.
+    The static keyword gives you some control over this by allowing you to give variables and functions internal linkage (make them file static).
+    A namespace definition can be “continued” over multiple header files
+
+    According to Stroustrup, you should use it in places where in old C you would have made static globals.
+    The idea is that the items in question can be "global" to the source file they are in, but not pollute the namespace of any other source files in your compilation.
+
+    In other words, you shouldn't be creating static globals in C++.
+    You should be using unnamed namespaces instead.
+
+62d.
+Superiority of unnamed namespace over static
+http://stackoverflow.com/questions/4422507/superiority-of-unnamed-namespace-over-static
+
+Question:
+    The project makes frequent use of unnamed namespaces.
+    For example, something like this may occur in a class definition file:
+
+        // newusertype.cc
+        namespace {
+          const int SIZE_OF_ARRAY_X;
+          const int SIZE_OF_ARRAY_Y;
+          bool getState(userType*,otherUserType*);
+        }
+
+        newusertype::newusertype(...) {...
+
+    What are the design considerations that might cause one to use an unnamed namespace? What are the advantages and disadvantages?
+
+Solution:
+http://en.cppreference.com/w/cpp/language/namespace#Unnamed_namespaces
+    SINCE C++11
+    Unnamed namespaces as well as all namespaces declared directly or indirectly within an unnamed namespace have internal linkage, which means that any name that is declared within an unnamed namespace has internal linkage. 
+
+    The use of the static keyword is deprecated when declaring objects in a namespace scope; the unnamed-namespace provides a superior alternative.
+
+    Unnamed namespace is superior to static keyword, primarily because the keyword static applies only to the variables declarations and functions, not to the user-defined types.
+
+    The following code is valid in C++
+       //legal code
+       static int sample_function() { /* function body */ }
+       static int sample_variable;
+
+    But this code is NOT valid:
+       //illegal code
+       static class sample_class { /* class body */ };
+       static struct sample_struct { /* struct body */ };
+
+    So the solution is, unnamed-namespace, which is this,
+       //legal code
+       namespace 
+       {  
+            class sample_class { /* class body */ };
+            struct sample_struct { /* struct body */ };
+       }
+
+62e.
+Why Static still exists
+http://stackoverflow.com/questions/8460327/why-are-anonymous-namespaces-not-a-sufficient-replacement-for-namespace-static
+
+    unnamed namespaces place entities into different namespaces (in addition to affecting their linkage).
+    static only affects the linkage, leaving the namespace of which functions and variables are a member of unchanged.
+63.
+Dynamic Array in C++
+Variable Length arrays
+http://stackoverflow.com/questions/1204521/dynamic-array-in-stack
+http://stackoverflow.com/questions/14989674/dynamic-array-without-new-operator
+
+    Below Code is standard C99. This is because C99 allows you to declare arrays dynamically that way.
+    To clarify, this is also standard C99:
+        #include <stdio.h>
+
+        int main()
+        {
+            int x = 0;
+
+            scanf("%d", &x);
+
+            char pz[x]; 
+        }
+
+    This is not standard anything:
+        #include <iostream>
+        int main()
+        {
+            int x = 0;
+            std::cin >> x;
+            char pz[x]; 
+        }
+    It cannot be standard C++ because that required constant array sizes, and it cannot be standard C because C does not have std::cin (or namespaces, or classes, etc...)
+
+    To make it standard C++, do this:
+        int main()
+        {
+            const int x = 12; // x is 12 now and forever...
+            char pz[x]; // ...therefore it can be used here
+        }
+
+    If you want a dynamic array, you can do this:
+        #include <iostream>
+
+        int main()
+        {
+            int x = 0;
+            std::cin >> x;
+
+            char *pz = new char[x];
+
+            delete [] pz;
+        }
+
+    But you should do this:
+        #include <iostream>
+        #include <vector>
+
+        int main()
+        {
+            int x = 0;
+            std::cin >> x;
+
+            std::vector<char> pz(x);
+        }
+
+63b.
+TWOD Vector in C++
+http://stackoverflow.com/questions/17663186/initializing-a-two-dimensional-stdvector
+
+        vector< vector<int> > myTwoDVec(rows, vector<int> (cols, 5));
+
+
+64.
+Time in C++
+http://www.cplusplus.com/reference/ctime/tm/
+http://code.runnable.com/U2DKRsrlaUEEYt4f/get-the-current-local-time-with-ctime-for-c%2B%2B
+
+        time_t rawTime = time(nullptr);   // get time now
+        //time_t rawTime = time(0);   // get time now
+        struct tm *locTime = localtime(& rawTime); // Convert to tm struct
+        cout << "Year: " << locTime->tm_year + 1900 << endl;
+        cout << "Mon : " << locTime->tm_mon + 1 << endl;
+        cout << "Hour: " << locTime->tm_hour << endl;
+        cout << "Min : " << locTime->tm_min << endl;
+        cout << "Sec : " << locTime->tm_sec << endl;
+
+65.
+Ordered Data Set
+http://stackoverflow.com/questions/17296570/best-data-structure-for-ordered-list-performance
+
+    There are at least two efficient solutions:
+
+        Append elements to a vector; sort the vector; scan the vector.
+        Insert elements into a priority_queue; drain it.
+
+    The vector has the advantage of O(N) load time (vs. O(N log N) for the priority_queue). (Note that it still takes O(N log N) overall, due to the sort).
+
+    The priority_queue has the advantage of freeing memory as you drain it. This doesn't reduce the maximum memory footprint, and is probably of negligible benefit, but it's worth trying anyway
+
+
+66. 
+Tail Recursion
+http://stackoverflow.com/questions/33923/what-is-tail-recursion
+
+    In traditional recursion, the typical model is that you perform your recursive calls first, and then you take the return value of the recursive call and calculate the result.
+    In this manner, you don't get the result of your calculation until you have returned from every recursive call.
+
+    In tail recursion, you perform your calculations first, and then you execute the recursive call, passing the results of your current step to the next recursive step.
+    Basically, the return value of any given recursive step is the same as the return value of the next recursive call.
+
+    The consequence of this is that once you are ready to perform your next recursive step, you don't need the current stack frame any more.
+    This allows for some optimization.
+    In fact, with an appropriately written compiler, you should never have a stack overflow snicker with a tail recursive call.
+    Simply reuse the current stack frame for the next recursive step. I'm pretty sure Lisp does this.
+
+67. 
+Extern Variable; Static vs Extern
+http://stackoverflow.com/questions/10422034/when-to-use-extern-in-c
+Thinking in C++ PG 288
+
+    It is useful when you share a variable between a few modules. You define it in one module, and use extern in the others.
+
+    For example:
+    in file1.cpp:
+
+        int global_int = 1;
+
+    in file2.cpp:
+        extern int global_int;
+        //in some function
+        cout << "global_int = " << global_int;
+
+    In addition, the visibility of a is global, across all translation units.
+    In terms of visibility, the opposite of static (visible only in this translation unit) is extern, which explicitly states that the visibility of the name is across all translation units.
+    So the above definition is equivalent to saying
+        extern int a = 0;
+
+68.
+vector<bool> vs bitset
+http://stackoverflow.com/questions/17794569/why-is-vectorbool-not-a-stl-container
+http://stackoverflow.com/questions/4156538/how-can-stdbitset-be-faster-than-stdvectorbool
+
+    Note: vector<bool> is overloaded and not very efficient (i.e. this structure was optimized for size not speed)
+
+    Measurements on Visual Studio 2010 show that std::bitset is not generally faster than std::vector<bool>
+    For space-optimization reasons, the C++ standard (as far back as C++98) explicitly calls out vector<bool> as a special standard container where each bool uses only one bit of space rather than one byte as a normal bool would (implementing a kind of "dynamic bitset").
+    In exchange for this optimization it doesn't offer all the capabilities and interface of a normal standard container.
+
+69.
+Reading from file, donot use EOF for checking
+http://stackoverflow.com/questions/5605125/why-is-iostreameof-inside-a-loop-condition-considered-wrong
+
+    Because iostream::eof will only return true after reading the end of the stream. It does not indicate, that the next read will be the end of the stream.
+
+    Consider this (and assume then next read will be at the end of the stream):
+
+        while(!inStream.eof()){
+          int data;
+          // yay, not end of stream yet, now read ...
+          inStream >> data;
+          // oh crap, now we read the end and *only* now the eof bit will be set (as well as the fail bit)
+          // do stuff with (now uninitialized) data
+        }
+
+    Against this:
+        int data;
+        while(inStream >> data){
+          // when we land here, we can be sure that the read was successful.
+          // if it wasn't, the returned stream from operator>> would be converted to false
+          // and the loop wouldn't even be entered
+          // do stuff with correctly initialized data (hopefully)
+        }
+
+70.
+Struct assignment vs memcpy
+http://stackoverflow.com/questions/5383318/struct-assignment-or-memcpy
+
+    struct1 = struct2;
+    VS
+    memcpy(&struct1, &struct2, sizeof(mystruct_t));
+
+    USE struct1=struct2;
+    notation is not only more concise, but also shorter and leaves more optimization opportunities to the compiler.
+    The semantic meaning of = is an assignment, while memcpy just copies memory.
+    That's a huge difference in readability as well, although memcpy does the same in this case.
+
+    Also, if the structure is heavily padded, assignment might make the compiler emit something more efficient, since it doesn't have to copy the padding (and it knows where it is),
+    but mempcy() doesn't so it will always copy the exact number of bytes you tell it to copy.
+
+
+    MEMCPY is a SHALLOW COPY
+    is a shallow copy. In other words, if you have a char * pointing to a specific string, both structures will point to the same string.
+
+71.
+Why 2's complement is used to represent negative numbers
+http://stackoverflow.com/questions/1125304/why-is-twos-complement-used-to-represent-negative-numbers?rq=1
+http://stackoverflow.com/questions/1049722/what-is-2s-complement
+    
+    - Makes addition with negative numbers simple
+    - When register size increases from (say) 4 to 8, easy to just take MSB and copy it throughout.
+
+    - Eg 1: 5 + (-2) would be
+      0 101
+      1 010
+      -----
+      1 111 <--- Wrong
+
+    - With 2's complement: -2 would be 1101 + 1 = 1110
+      0 101
+      1 110
+      -----
+     10 011 = 3 (Discard the extra carry bit)
+
+    Additionally, in the "intuitive" storage method, there are two zeroes:
+
+    0000  "zero"
+    1000  "negative zero"
+
+    Which are intuitively the same number but have two different values when stored. Every application will need to take extra steps to make sure that non-zero values are also not negative zero.
+
+    There's another bonus with storing ints this way, and that's when you need to extend the width of the register the value is being stored in.
+    With two's complement, storing a 4-bit number in a 8-bit register is a matter of repeating its most significant bit:
+
+        0001 (one, in four bits)
+    00000001 (one, in eight bits)
+        1110 (negative two, in four bits)
+    11111110 (negative two, in eight bits)
+
+    It's just a matter of looking at the sign bit of the smaller word and repeating it until it pads the width of the bigger word.
+
+    With your method you would need to clear the existing bit, which is an extra operation in addition to padding:
+
+        0001 (one, in four bits)
+    00000001 (one, in eight bits)
+        1010 (negative two, in four bits)
+    10000010 (negative two, in eight bits)
+
+    You still need to set those extra 4 bits in both cases, but in the "intuitive" case you need to clear the 5th bit as well.
+    It's one tiny extra step in one of the most fundamental and common operations present in every application.
+
+72.
+Extern Linkage and Intern linkage and NO linkage
+
+    External linkage means the symbol (function or global variable) is accessible throughout your program and
+    internal linkage means that it's only accessible in one translation unit
+
+    INTERNAL LINAKGE:
+        Internal linkage means that storage is created to represent the identifier only for the file being compiled.
+        Other files may use the same identifier name with internal linkage, or for a global variable, and no conflicts will be found by the linker - separate storage is created for each identifier.
+        Internal linkage is specified by the keyword static in C and C++.
+
+        Note that instead of using static for internal linkage it is better to use anonymous namespaces into which you can also put classes.
+        The linkage for anonymous namespaces has changed between C++98 and C++11 but the main thing is that they are unreachable from other translation units.
+
+            namespace {
+               int i; // external linkage but unreachable from other translation units.
+               class invisible_to_others { };
+            }
+
+    EXTERNAL LINKAGE:
+        External linkage means that a single piece of storage is created to represent the identifier for all files being compiled.
+        The storage is created once, and the linker must resolve all other references to that storage.
+        Global variables and function names have external linkage.
+        These are accessed from other files by declaring them with the keyword extern.
+        Variables defined outside all functions (with the exception of const in C++) and function definitions default to external linkage.
+        You can specifically force them to have internal linkage using the static keyword.
+        You can explicitly state that an identifier has external linkage by defining it with the extern keyword.
+        Defining a variable or function with extern is not necessary in C, but it is sometimes necessary for const in C++.
+
+    NO LINKAGE:
+        Automatic (local) variables exist only temporarily, on the stack, while a function is being
+        called. The linker doesn’t know about automatic variables, and they have no linkage
+
+
+73.
+How a Computer Compiles and Executes a C++ Program
+http://sites.psu.edu/bdk5043/wp-content/uploads/sites/11448/2014/04/process_description.pdf
+http://stackoverflow.com/questions/6264249/how-does-the-compilation-linking-process-work
+        1. C++ Code -> (Preprocessor) -> Modified C++ Code -> (Compiler) -> Assembly Code -> (Assembler) -> Binary Code -> (Linker links with other external libs) -> Executable file
+           -> (Loader) -> Gets loaded in main meory from disk
+                    
+    CALLING A MEMBER FUNCTION WILL BE A JUMP INSTRUCTION TO THAT FUNCTION
+
+74.
+When / Why to use stringstream
+http://stackoverflow.com/questions/20594520/what-exactly-does-stringstream-do
+
+    ostringstream os;
+    os << "dec: " << 15 << " hex: " << std::hex << 15 << endl;
+    cout<<os.str()<<endl;
+
+    Sometimes it is very convenient to use stringstream to convert bettween strings and other numerical types.
+
+75.
+Steps involved for execution of a C program
+http://www.thegeekstuff.com/2011/10/c-program-to-an-executable/
+Thinking in C++ - Pg 167
+
+    All global objects implicitly have static storage class, so if you say (at file scope),
+        int a = 0;
+    then storage for a will be in the program’s static data area, and the initialization for a will occur once, before main( ) is entered
+
+    Each separate C file is a translation unit.
+    That is, the compiler is run separately on each translation unit, and when it is running it is aware of only that unit.
+    Thus, any information you provide by including header files is quite important because it provides the compiler’s understanding of the rest of your program.
+
+    External References should be resolved at Link Time
+    For each translation unit, the compiler creates an object file, with an extension of .o or .obj or something similar.
+    These object files, along with the necessary start-up code, must be collected by the linker into the executable program.
+    During linking, all the external references must be resolved.
+    For example, in Libtest.c, functions like initialize( ) and fetch( ) are declared (that is, the compiler is told what they look like) and used, but not defined.
+    They are defined elsewhere, in Lib.c.
+    Thus, the calls in Libtest.c are external references.
+    The linker must, when it puts all the object files together, take the unresolved external references and find the addresses they actually refer to.
+    Those addresses are put in to replace the external references.
+
+75a.
+Storage Classes - Static, Extern, Auto and Register
+Thinking in C++
+
+    The auto specifier is almost never used because it tells the compiler that this is a local variable.
+    The compiler can always determine this fact from the context in which the variable is defined, so auto is redundant.
+
+    A register variable is a local (auto) variable, along with a hint to the compiler that this particular variable will be heavily used, so the compiler ought to keep it in a register if it can.
+
+76.
+Abstract Class vs Interface
+http://stackoverflow.com/questions/479142/when-to-use-an-interface-instead-of-an-abstract-class-and-vice-versa
+http://stackoverflow.com/questions/197893/why-an-abstract-class-implementing-an-interface-can-miss-the-declaration-impleme
+
+
+    Interface:
+        - Interfaces have no implementation.
+        - A class implementing an interface should implements all its functions.
+        
+    - Abstract class have some implementation.
+
+When to use Abstract Class vs Interface
+http://stackoverflow.com/questions/56867/interface-vs-base-class
+
+    Theoretically you can override them from a higher base class, but essentially an interface allows you to add on only the things you need into a class without the need for inheritance.
+
+    Use abstract clases and inheritance if you can make the statement "A is a B".
+    Use interfaces if you can make the statement "A is capable of [doing] as", or also, abstract for what a class is, interface for what a class can do.
+    For example, we can say a triangle is a polygon but it makes no sense to say a triangle is capable of being a polygon
+
+        public class Dog : Mammal
+        public class Cat : Mammal
+        public class Giraffe : Mammal
+        public class Rhinoceros : Mammal
+        public class Hippopotamus : Mammal
+
+        public interface IPettable
+        {
+            IList<Trick> Tricks{get; set;}
+            void Bathe();
+            void Train(Trick t);
+        }
+
+    The implementation for the above contract will not be the same between a cat and dog; putting their implementations in an abstract class to inherit will be a bad idea.
+
+    Your Dog and Cat definitions should now look like:
+
+        public class Dog : Mammal, IPettable
+        public class Cat : Mammal, IPettable
+
+77.
+Can abstract class be instantiated
+http://stackoverflow.com/questions/13670991/interview-can-we-instantiate-abstract-class
+
+        abstract class My {
+            public void myMethod() {
+                System.out.print("Abstract");
+            }
+        }
+
+    Poly.java:
+
+        class Poly extends My {
+            public static void main(String a[]) {
+                My m = new My() {};
+                m.myMethod();
+            }
+        }
+
+    Now, compile both your source files:
+
+        javac My.java Poly.java
+
+    Now in the directory where you compiled the source code, you will see the following class files:
+
+        My.class
+        Poly$1.class  // Class file corresponding to anonymous subclass
+        Poly.class
+
+    See that class - Poly$1.class. It's the class file created by the compiler corresponding to the anonymous subclass you instantiated using the below code:
+
+        new My() {};
+
+    So, it's clear that there is a different class being instantiated. It's just that, that class is given a name only after compilation by the compiler
+
+http://stackoverflow.com/questions/2091426/why-cant-we-create-objects-for-an-abstract-class-in-c/2091633#2091633
+    They can't be instantiated for the simple reason that they're missing those methods.
+
+    An abstract class is a description that is incomplete.
+    It indicates what things need to be filled out to make it complete but without those bits its not complete.
+
+    My first example was a chess game:
+    The game has lots of pieces of different type (King,Queen,Pawn ... etc).
+
+    But there are no actual objects of type piece, but all objects are instances of objects derived from piece.
+    How can you have an object of something that is not fully defined.
+    There is not point in creating an object of piece as the game does not know how it moves (that is the abstract part). It knows it can move but not how it does it.
+
+    Classes are a collection of functions which operate on data.
+    Functions themselves contain no memory in a class. The following class:
+
+        struct dumb_class
+        {
+            void foo(){}
+            void bar(){}
+            void baz(){}
+            // .. for all eternity
+
+            int i;
+        };
+    Has a size of int.
+    No matter how many functions you have ever, this class will only take up the space it takes to operate on an int.
+    When you call a function in this class, the compiler will pass you a pointer to the place where the data in the class is stored; this is the this pointer.
+
+    So, the function lie in memory somewhere, loaded once at the beginning of your program, and wait to be called with data to operate on.
+
+    Virtual functions are different.
+    The C++ standard does not mandate how the behavior of the virtual functions should go about, only what that behavior should be.
+    Typically, implementations use what's called a virtual table, or vtable for short.
+    A vtable is a table of function pointers, which like normal functions, only get allocated once.
+
+    Take this class, and assume our implementor uses vtables:
+
+        struct base { virtual void foo(void); };
+        struct derived { virtual void foo(void); };
+
+    The compiler will need to make two vtables, one for base and one for derived.
+    They will look something like this:
+
+        typedef /* some generic function pointer type */ func_ptr;
+
+        func_ptr __baseTable[] = {&base::foo}; 
+        func_ptr __derivedTable[] = {&derived::foo}; 
+
+    How does it use this table? When you create an instance of a class above, the compiler slips in a hidden pointer, which will point to the correct vtable.
+    So when you say:
+        derived d;
+        base* b = &d;
+        b->foo();
+
+    Upon executing the last line, it goes to the correct table (__derivedTable in this case), goes to the correct index (0 in this case), and calls that function.
+    As you can see, that will end up calling derived::foo, which is exactly what should happen.
+
+    Note, for later, this is the same as doing derived::foo(b), passing b as the this pointer.
+
+    So, when virtual methods are present, the class of the size will increase by one pointer (the pointer to the vtable.)
+    Multiple inheritance changes this a bit, but it's mostly the same. You can get more details at C++-FAQ.
+
+    Now, to your question. I have:
+        struct base { virtual void foo(void) = 0; }; // notice the = 0
+        struct derived { virtual void foo(void); };
+
+    and base::foo has no implementation.
+    This makes base::foo a pure abstract function.  So, if I were to call it, like above:
+
+        derived d;
+        base* b = &d;
+        base::foo(b);
+
+    What behavior should we expect? Being a pure virtual method, base::foo doesn't even exist.
+    The above code is undefined behavior, and could do anything from nothing to crashing, with anything in between. (Or worse.)
+
+78.
+C++ new int[0] - will it allocate memory
+http://stackoverflow.com/questions/1087042/c-new-int0-will-it-allocate-memory?rq=1
+
+    When the value of the expression in a direct-new-declarator is zero, the allocation function is called to allocate an array with no elements.
+    The effect of dereferencing a pointer returned as a request for zero size is undefined.
+    Even if the size of the space requested [by new] is zero, the request can fail.
+
+http://stackoverflow.com/questions/9058103/memory-allocation-on-c-object-creation
+        class C {
+         int i;
+         int j;
+        };
+
+        void f() {
+         C *c = new C;
+         C *c2 = new C[2];
+         C (*c3)[2] = new C[2][2];
+        }
+
+    c is allocated with 8 bytes;
+
+    c2 is allocated with 8*2+4 bytes;
+
+    c3 is allocated with 8*2*2+4 bytes. 
+
+    A lot of compilers use the 4 bytes before the pointer returned from new[] to store the number of objects actually being allocated.
+    This is all implementation dependent
+
+79.
+C++ new vs C malloc
+http://www.tutorialspoint.com/cplusplus/cpp_dynamic_memory.htm
+
+    The main advantage of new over malloc() is that new doesn't just allocate memory, it constructs objects which is prime purpose of C++.
+
+80.
+How is memory allocated to Vectors
+http://stackoverflow.com/questions/12507114/how-does-a-stack-allocated-vector-expand-in-c
+
+    Internally, a vector<string> will most likely consist of a string* pointing at the actual data and probably two more size_t members indicating occupied and reserved memory.
+    All the rest will be on the heap.
+    Therefore, sizeof(vector<string>) is fixed, and the allocation on the stack won't change.
+
+    std::vector internaly maintains a pointer to heap allocated space that is resized as necessary. The footprint on the stack doesn't change.
+
+http://stackoverflow.com/questions/10366474/where-does-a-stdvector-allocate-its-memory
+        Does a std::vector allocate memory for its elements on the heap?
+    Yes. Or more accurately it allocates based on the allocator you pass in at construction. You didn't specify one, so you get the default allocator. By default, this will be the heap.
+
+        But how does it free that heap memory?
+    Through its destructor when it goes out of scope. (Note that a pointer to a vector going out of scope won't trigger the destructor).
+
+    The main advantage of new over malloc() is that new doesn't just allocate memory, it constructs objects which is prime purpose of C++.
+
+    All containers in the STL are parameterized with template arguments, usually the last argument is called A or Allocator and defaults to std::allocator<...> where ... represents the type of the value stored within the container.
+
+    The Allocator is a class that is used to provide memory and build/destroy the elements in this memory area.
+    It can allocate memory from a pool or directly from the heap, whichever you build the allocator from.
+    By default the std::allocator<T> is a simple wrapper around ::operator new and will thus allocate memory on the heap as you inferred.
+
+    The memory is allocated on demand, and is deallocated at the very least when the vector's destructor is called.
+    C++11 introduces shrink_to_fit to release memory sooner too.
+    Finally, when the vector outgrow its current capacity, a new (larger) allocation is made, the objects are moved to it, and the old allocation is released
+
+http://stackoverflow.com/questions/8036474/allocating-vectors-memory-on-heap-or-stack
+        vector<Type> vect;
+    will allocate the vector, i.e. the header info, on the stack, but the elements on the free store ("heap").
+
+        vector<Type> *vect = new vector<Type>;
+    allocates everything on the free store.
+
+        vector<Type*> vect;
+    will allocate the vector on the stack and a bunch of pointers on the free store, but where these point is determined by how you use them (you could point element 0 to the free store and element 1 to the stack, say).
+
+NICE LINK ON HOW VECTOR MEMORY ALLOCATION HAPPENS
+https://frogatto.com/2009/11/17/how-cs-vector-works-the-gritty-details/
+
+    begin points to the start of the buffer.
+    It is fairly easy to understand. You can get it using the begin() member of vector.
+
+    end points to one past the end of the valid, initialized elements of the vector.
+    Note that it points one past the end, making it so that end – begin = size. You can retrieve the end pointer using the end() function and the size() function is the same as evaluating end() – begin().
+    capacity pointers to one past the end of the buffer.
+
+    Therefore, compared to arrays, vectors consume more memory in exchange for the ability to manage storage and grow dynamically in an efficient way.
+
+What should your store in a Vector
+    Built-ins like integers can be stored easily, of course.
+    But what about objects of class type?
+    Suppose you are programming a particle system and have a particle class, and want to store a long list of particles, what is the best way to do it? One way is to store a vector<particle>, another is to store a vector<particle*> — that is, don’t store the particles themselves directly in the vector, but store pointers to particles.
+
+    How do you choose which?
+        Generally, the larger and bulkier the object is, the more likely it is you want to store pointers to it, rather than the object itself.
+        Storing a vector<int*> would be very inefficient, since the pointers would be as large or larger than the integers and you’d have to have the overhead of the memory allocations too.
+        But for a large object, like Frogatto’s custom_object class, a vector<custom_object*> is probably what we want.
+        Note that to store an object directly, it must be copyable, i.e. have accessible copy constructors and assignment operators.
+
+81.
+Where Global Variables and Pointers are stored
+http://stackoverflow.com/questions/3113668/location-of-pointers-and-global-variables-in-c
+
+    Compile
+        When a file is compiled, variables with "program duration" (static or global variables) which are defined within that "compilation unit" (in rough terms, the "c file") determine how much global space this program needs, and how it is initialized.
+
+    Link
+        When the linker creates your executable, it combines this information and puts it into sections of the executable used for that purpose.
+        The linker then goes through and changes all references to that data to where it will put that data in the process's memory space when the program is loaded.
+        So the pointers to the global data will be like constants in your source file; no memory needs to be set aside for them.
+
+        For zero-initialized or uninitialized global data, just the amount of space needed for such data is stored. For initialized data, the initial values are stored.
+
+    Load
+        When your program is loaded, the loader will look into the program file to tell how much zero-initialized data is needs, and sets aside enough of the process's memory space for it, and initializes it all to binary zero.
+        For the initialized data, it sets aside memory for that and initializes it to the initial values saved in the exe file. It also sets aside areas for the heap (used by malloc()) and the stack.
+
+    Dynamic Libraries
+        If your code is in a dynamic library, the linker can't know where it will put the global data.
+        In this case, it creates sections in the library to tell it where the references to the global data are, and the loader takes care of changing the references to point to the right place when it loads the file (this is why you pass -fPIC on the gcc command line for dlls).
+        But since this is done at load time, by the time your program runs the placement of the data is known, so the loader knows where that data will be pointers to global data can still act as constants in your program.
+
+    Dynamic Loading
+        If you link dynamically to a dll, the loader doesn't know about it, so you have to call functions which know how to load a dll and get the address of its exported data and functions.
+
+Where are my Varibles stored in memory in  C
+http://stackoverflow.com/questions/14588767/where-in-memory-are-my-variables-stored-in-c
+    You got some of these right, but whoever wrote the questions tricked you on at least one question:
+
+        global variables -------> data (correct)
+        Global Variables - Global variables can be in a couple places, depending on how they're set up - for example, const globals may be in a read-only section of the executable.
+        "Normal" globals are in a read-write section of the executable.
+
+        static variables -------> data (correct)
+
+        constant data types -----> code and/or data.
+        in the GCC compiler, on most machines, read-only variables, constants, and jump tables are placed in the text section
+        Consider string literals for a situation when a constant itself would be stored in the data segment, and references to it would be embedded in the code
+
+        local variables(declared and defined in functions) --------> stack (correct)
+
+        variables declared and defined in main function -----> Also stack (the teacher was trying to trick you)
+
+        pointers(ex: char *arr, int *arr) -------> heap data or stack, depending on the context.
+        C lets you declare a global or a static pointer, in which case the pointer itself would end up in the data segment.
+        Pointers - Pointers are just a type of variable, so they can be wherever you want them to be (on the heap if you malloc() them, on the stack if they're local variables, or in the data section if they're global).
+
+        dynamically allocated space(using malloc, calloc, realloc) --------> heap
+
+82.
+Where are the Variable Names stored
+http://stackoverflow.com/questions/14612314/how-are-variable-names-stored-in-memory-in-c
+http://www.csee.umbc.edu/~chang/cs313.s02/stack.shtml
+
+    A C compiler first creates a symbol table, which stores the relationship between the variable name and where it's located in memory.
+    When compiling, it uses this table to replace all instances of the variable with a specific memory location
+
+    Variable names don't exist anymore after the compiler runs (barring special cases like exported globals in shared libraries or debug symbols).
+    The entire act of compilation is intended to take those symbolic names and algorithms represented by your source code and turn them into native machine instructions.
+    So yes, if you have a global variable_name, and compiler and linker decide to put it at 0xaaaaaaaa, then wherever it is used in the code, it will just be accessed via that address.
+
+    So to answer your literal questions:
+
+        How does the compiler recognize that the string "variable_name" is associated with that particular memory address?
+
+    The toolchain (compiler & linker) work together to assign a memory location for the variable.
+    It's the compiler's job to keep track of all the references, and linker puts in the right addresses later.
+
+        Is the string "variable_name" stored somewhere in memory?
+
+    Only while the compiler is running.
+
+        Does the compiler just substitute variable_name for 0xaaaaaaaa whenever it sees it, and if so, wouldn't it have to use memory in order to make that substitution?
+
+    Yes, that's pretty much what happens, except it's a two-stage job with the linker.
+    And yes, it uses memory, but it's the compiler's memory, not anything at runtime for your program.
+
+    An example might help you understand. Let's try out this program:
+
+        int x = 12;
+
+        int main(void)
+        {
+            return x;
+        }
+
+    Pretty straightforward, right? OK. Let's take this program, and compile it and look at the disassembly:
+        $ cc -Wall -Werror -Wextra -O3    example.c   -o example
+        $ otool -tV example
+        example:
+        (__TEXT,__text) section
+        _main:
+        0000000100000f60    pushq   %rbp
+        0000000100000f61    movq    %rsp,%rbp
+        0000000100000f64    movl    0x00000096(%rip),%eax
+        0000000100000f6a    popq    %rbp
+        0000000100000f6b    ret
+
+    See that movl line? It's grabbing the global variable (in an instruction-pointer relative way, in this case). No more mention of x.
+
+    Now let's make it a bit more complicated and add a local variable:
+
+        int x = 12;
+
+        int main(void)
+        {  
+            volatile int y = 4;
+            return x + y;
+        }
+
+    The disassembly for this program is:
+        (__TEXT,__text) section
+        _main:
+        0000000100000f60    pushq   %rbp
+        0000000100000f61    movq    %rsp,%rbp
+        0000000100000f64    movl    $0x00000004,0xfc(%rbp)
+        0000000100000f6b    movl    0x0000008f(%rip),%eax
+        0000000100000f71    addl    0xfc(%rbp),%eax
+        0000000100000f74    popq    %rbp
+        0000000100000f75    ret
+
+    Now there are two movl instructions and an addl instruction.
+    You can see that the first movl is initializing y, which it's decided will be on the stack (base pointer - 4).
+    Then the next movl gets the global x into a register eax, and the addl adds y to that value.
+    But as you can see, the literal x and y strings don't exist anymore.
+    They were conveniences for you, the programmer, but the computer certainly doesn't care about them at execution time.
+
+VERY NICE LINK ON HOW A FUNCTION CALL ACTUALLY HAPPENS
+http://www.csee.umbc.edu/~chang/cs313.s02/stack.shtml
+    Return Value of More than 4 bytes
+        Return values of 4 bytes or less are stored in the EAX register. If a return value with more than 4 bytes is needed, then the caller passes an "extra" first argument to the callee. This extra argument is address of the location where the return value should be stored. I.e., in C parlance the function call:
+
+           x = foo(a, b, c) ;
+
+        is transformed into the call:
+
+           foo(&x, a, b, c) ;
+
+83.
+What is Type Safe
+http://stackoverflow.com/questions/260626/what-is-type-safe
+http://stackoverflow.com/questions/2140369/what-is-type-safety-and-what-are-the-type-safe-alternatives
+
+    Type safety means that the compiler can check whether you're using the right types.
+    For example, if you're using printf, you could accidentally crash your program by writing this:
+        printf("The meaning of life is %s", 42);
+    because 42 is an integer, not a string
+
+    when you call memcpy, the function (and compiler) only sees two pointers in memory, and will happily start copying data. This means you can mix incompatible data types like this:
+        SomeClass a;
+        AnotherClass b;
+        memcpy((void*)&a, (void*)&b, sizeof(b));
+
+    Type safety means that the compiler will validate types while compiling, and throw an error if you try to assign the wrong type to a variable.
+    Some simple examples:
+        // Fails, Trying to put an integer in a string
+        String one = 1;
+        // Also fails.
+        int foo = "bar";
+
+    This also applies to method arguments, since you are passing explicit types to them:
+        int AddTwoNumbers(int a, int b)
+        {
+            return a + b;
+        }
+
+    If I tried to call that using:
+        int Sum = AddTwoNumbers(5, "5");
+
+    The compiler would throw an error, because I am passing a string ("5"), and it is expecting an integer.
+
+84.
+What is the name of the --> operator
+http://stackoverflow.com/questions/1642028/what-is-the-name-of-the-operator?rq=1
+
+    while (x --> 0) // x goes to 0
+
+    --> is not an operator. It is in fact two separate operators, -- and >.
+    while( (x--) > 0 )
+
+85.
+Why is ::operator new[] necessary when ::operator new is enough
+http://stackoverflow.com/questions/24603142/why-is-operator-new-necessary-when-operator-new-is-enough?rq=1
+
+    ::operator new[] and ~delete[] facilitate memory usage debugging, being a central point to audit allocation and deallocation operations;
+    you can then ensure the array form is used for both or neither.
+
+    operator new can reasonably expect that an object will be constructed at the exact address returned, but operator new[] cannot.
+    The first bytes of the allocation block might be used for a size "cookie", the array might be sparsely initialized, etc.
+
+86.
+Allocator vs New
+http://stackoverflow.com/questions/5628059/c-stl-allocator-vs-operator-new
+
+    For general programming, yes you should use new and delete.
+
+    However, if you are writing a library, you should not! I don't have your textbook, but I imagine it is discussing allocators in the context of writing library code.
+
+    Users of a library may want control over exactly what gets allocated from where.
+    If all of the library's allocations went through new and delete, the user would have no way to have that fine-grained level of control.
+
+    All STL containers take an optional allocator template argument.
+    The container will then use that allocator for its internal memory needs.
+    By default, if you omit the allocator, it will use std::allocator which uses new and delete (specifically, ::operator new(size_t) and ::operator delete(void*)).
+
+    This way, the user of that container can control where memory gets allocated from if they desire.
+
+http://stackoverflow.com/questions/31358804/whats-the-advantage-of-using-stdallocator-instead-of-new-in-c
+    new T[N] doesn't allow you control over what constructors are called.
+    And it forces you to construct all your objects at the same time.
+    This is terrible for the purposes of, for example, std::vector where you only want to allocate occasionally.
+
+    With a raw memory allocator, you can allocate a certain amount of memory, which determines your capacity.
+    Then, as the user adds items to the vector (using the constructor of their choice), you can construct objects in place in this memory.
+
+    sometimes you want to separate allocation and construction into two steps (and similarly to separate destruction and deallocation into two steps).
+    If you don't want to do that, don't use an allocator, use new instead.
+
+        Q. In which cases can it be used and when should it be used instead of new and delete?
+
+    When you need the behaviour of an allocator, not the behaviour of new and delete, obviously! The typical case is when implementing a container.
+
+    Consider the following code:
+        std::vector<X> v;
+        v.reserve(4);        // (1)
+        v.push_back( X{} );  // (2)
+        v.push_back( X{} );  // (3)
+        v.clear();           // (4)
+
+    Here line (1) must allocate enough memory for four objects, but not construct them yet.
+    Then lines (2) and (3) must construct objects into the allocated memory.
+    Then line (4) must destroy those objects, but not deallocate the memory. Finally, in the vector's destructor, all the memory can be deallocated.
+
+    So the vector cannot just use new X() or delete &m_data[1] to create and destroy the objects, it must perform allocation/deallocation separately from construction/destruction.
+    A container's allocator template argument defines the policy that should be used for (de)allocating memory and constructing/destructing objects, allowing the container's use of memory to be customised.
+    The default policy is the std::allocator type.
+
+    So you use an allocator when an allocator is required (such as when using a container) and you use std::allocator when you don't want to provide a custom allocator and just want the standard one.
+
+    You don't use an allocator as a replacement for new and delete
+
+87. 
+What is RTTI and Why is it necessary
+
+    Run-time type information (RTTI) is a mechanism that allows the type of an object to be determined during program execution.
+
+    There are three main C++ language elements to run-time type information:
+    1. The dynamic_cast operator.
+       Used for conversion of polymorphic types.
+
+    2. The typeid operator.
+       Used for identifying the exact type of an object.
+
+    3. The type_info class.
+       Used to hold the type information returned by the typeid operator.
+
+http://stackoverflow.com/questions/18590086/use-of-rtti-in-c
+    It enables you to identify the dynamic type of a object at run time.
+    You can use it when checking post-condtions:
+
+        class Clonable
+        {
+            virtual Clonable* doClone() const = 0;
+        public:
+            Clonable* clone() const
+            {
+                Clonable* results = doClone();
+                assert( typeid(*results) == typeid(*this) );
+                return results;
+            }
+        };
+
+    It can also be used as an index into a map of factory functions: in C++11, you have std::type_index with which you can wrap it; in earlier versions, you wrote your own:
+
+        std::map<std::type_index, Base* (*)()> factoryMap;
+
+    The fact that the output of std::type_info::name() isn't specified, however, limits its utility much more that one would like.
+
+
+    Here is an example: Sometimes you would want to (though you should avoid to) downcast polymorphic objects. In many cases, you do not know at compile time whether this cast will be valid every time you do it:
+
+        struct Base { virtual ~Base() {} };
+        struct A : Base {};
+        struct B : Base {};
+
+        void foo(Base * base)
+        {
+            A * a = dynamic_cast<A *>(base); // RTTI magic here!
+            if(a != nullptr)
+            {
+                // do something with a
+            }
+        }
+
+    Notice that RTTI comes at the cost of runtime checks and thus performance loss, but you probably already know that if you are familiar with the concept.
+
+
+88.
+When to use static methods
+http://stackoverflow.com/questions/2671496/java-when-to-use-static-methods
+
+    So in a class Car you might have a method double convertMpgToKpl(double mpg) which would be static, because one might want to know what 35mpg converts to, even if nobody has ever built a Car.
+    But void setMileage(double mpg) (which sets the efficiency of one particular Car) can't be static since it's inconceivable to call the method before any Car has been constructed.
+
+89.
+Freeing memory twice
+http://stackoverflow.com/questions/2468853/freeing-memory-twice
+http://stackoverflow.com/questions/3117615/why-free-crashes-when-called-twice
+
+    Freeing memory does not set the pointer to null.
+    The pointer remains pointing to the memory it used to own, but which has now had ownership transferred back to the heap manager.
+    The heap manager may have since reallocated the memory your stale pointer is pointing to.
+
+        thread A allocated and freed memory at address 42.
+        thread B allocated memory a address 42 and started using it.
+        thread A freed that memory a second time.
+        thread C allocated memory a address 42 and started using it.
+
+        Malloc some memory -- adds the bookkeeping data.
+        Free it -- memory is returned to pool.
+        You or someone else malloc's some more memory, which might or might not include or line up with the old allocation.
+        You free the old pointer again.
+
+90.
+C++ Memory management
+New operator vs Operator new 
+http://www.bogotobogo.com/cplusplus/memoryallocation.php
+
+    1. new operator:
+        - It allocates enough memory to hold an object of the type requested.
+        - It calls a constructor to initialize an object in the memory that was allocated.
+
+
+    So, what function is the new calling?
+    It is operator new.
+        void * operator new (size_t size);
+
+    The return type is void*.
+    Since this function returns a pointer to raw which is not typed and uninitialized memory large enough to hold an object of the specified type.
+    The size_t specifies how much memory to allocate.
+
+    It's rare but there is a chance we may want to call operator new directly.
+        void *pRawMemory = operator new(sizeof(string));
+
+
+    Operator New:
+        The operator new returns a pointer to a chunk of memory enough to hole a string object.
+        The operator new is similar to malloc in that it's responsible only for allocating memory.
+        It knows nothing about constructors.
+        All operator new understands is memory allocation. That's it. 
+
+Delete Operator and Operator Delete 
+    When we use a delete expression to delete a dynamically allocated object:
+        delete ptr;
+
+    two things happen.
+    First, the appropriate destructor is run on the object to which ptr points.
+    Then, the memory used by the object is freed by calling a operator delete function.
+
+    Overloaded versions of operator new and operator delete
+        Note that operator new and operator delete apply only to allocations for single objects.
+        Memory for array is allocated by operator new[] and deallocated by operator delete[].
+        Also note that heap memory for STL containers is managed by the containers' allocator objects, not by new and delete directly.
+
+        There are two overloaded versions of operator new and operator delete functions:
+
+        void *operator new(size_t);	// allocate an object
+        void *perator new[](size_t);  	// allocate an array
+
+        void *operator delete(void*);	// free an object
+        void *perator delete[](void*); 	// free an array
+
+    Malloc vs New
+        Malloc just allocates memory. New allocates memory as well as constructs the object
+91.
+STACK VS HEAP
+http://stackoverflow.com/questions/79923/what-and-where-are-the-stack-and-heap?rq=1
+
+    Each thread gets a stack, while there's typically only one heap for the application (although it isn't uncommon to have multiple heaps for different types of allocation).
+
+    Q. What is their scope?
+        The stack is attached to a thread, so when the thread exits the stack is reclaimed.
+        The heap is typically allocated at application startup by the runtime, and is reclaimed when the application (technically process) exits
+
+    Q. What determines the size of each of them?
+        The size of the stack is set when a thread is created.
+        The size of the heap is set on application startup, but can grow as space is needed (the allocator requests more memory from the operating system).
+
+    Q. What makes one faster?
+
+        The stack is faster because the access pattern makes it trivial to allocate and deallocate memory from it (a pointer/integer is simply incremented or decremented),
+        while the heap has much more complex bookkeeping involved in an allocation or free.
+
+        Also, each byte in the stack tends to be reused very frequently which means it tends to be mapped to the processor's cache, making it very fast.
+        Another performance hit for the heap is that the heap, being mostly a global resource, typically has to be multi-threading safe,
+        i.e. each allocation and deallocation needs to be - typically - synchronized with "all" other heap accesses in the program.
+
+92.
+Different behavior of Code Valid in C and C++
+http://stackoverflow.com/questions/12887700/can-code-that-is-valid-in-both-c-and-c-produce-different-behavior-when-compile?rq=1
+
+        #include <stdio.h>
+
+        int  sz = 80;
+
+        int main(void)
+        {
+            struct sz { char c; };
+
+            int val = sizeof(sz);      // sizeof(int) in C,
+                                       // sizeof(struct sz) in C++
+            printf("%d\n", val);
+            return 0;
+        }
+
+        #include <stdio.h>
+
+        struct f { };
+
+        int main() {
+            f();
+        }
+
+        int f() {
+            return printf("hello");
+        }
+
+    In C++ this will print nothing because a temporary f is created and destroyed, but in C it will print hello because functions can be called without having been declared.
+
+    In case you were wondering about the name f being used twice, the C and C++ standards explicitly allows this, and to make an object you have to say struct f to disambiguate if you want the structure, or leave off struct if you want the function.
+
+93.
+Case Only Labels: Jumping over initialization
+http://stackoverflow.com/questions/92396/why-cant-variables-be-declared-in-a-switch-statement?rq=1
+
+    Case statements are only 'labels'.
+    This means the compiler will interpret this as a jump directly to the label.
+    In C++, the problem here is one of scope.
+    Your curly brackets define the scope as everything inside the 'switch' statement.
+    This means that you are left with a scope where a jump will be performed further into the code skipping the initialization.
+    The correct way to handle this is to define a scope specific to that case statement and define your variable within it.
+
+        switch (val)
+        {   
+        case VAL:  
+        {
+          // This will work
+          int newVal = 42;  
+          break;
+        }
+        case ANOTHER_VAL:  
+        ...
+        break;
+        }
+
+94.
+What uses are there for “placement new”?
+http://stackoverflow.com/questions/222557/what-uses-are-there-for-placement-new?rq=1
+
+    We use it with custom memory pools.
+
+    Placement new allows you to construct an object on memory that's already allocated.
+
+    You may want to do this for optimizations (it is faster not to re-allocate all the time) but you need to re-construct an object multiple times.
+    If you need to keep re-allocating it might be more efficient to allocate more than you need, even though you don't want to use it yet.
+
+    Devex gives a good example:
+
+        Standard C++ also supports placement new operator, which constructs an object on a pre-allocated buffer.
+        This is useful when building a memory pool, a garbage collector or simply when performance and exception safety are paramount (there's no danger of allocation failure since the memory has already been allocated, and constructing an object on a pre-allocated buffer takes less time):
+
+        char *buf  = new char[sizeof(string)]; // pre-allocated buffer
+        string *p = new (buf) string("hi");    // placement new
+        string *q = new string("hi");          // ordinary heap allocation
+
+    You may also want to be sure there can be no allocation failure at a certain part of critical code (maybe you work on a pacemaker for example).
+    In that case you would want to use placement new.
+
+    Deallocation in placement new:
+        You should not deallocate every object that is using the memory buffer.
+        Instead you should delete[] only the original buffer. You would have to then call the destructors directly of your classes manually.
+
+95.
+Is there a "placement delete"?
+http://www.stroustrup.com/bs_faq2.html#placement-delete
+
+    No, but if you need one you can write your own.
+
+    Consider placement new used to place objects in a set of arenas
+            class Arena {
+            public:
+                    void* allocate(size_t);
+                    void deallocate(void*);
+                    // ...
+            };
+
+            void* operator new(size_t sz, Arena& a)
+            {
+                    return a.allocate(sz);
+            }
+
+            Arena a1(some arguments);
+            Arena a2(some arguments);
+
+    Given that, we can write
+
+            X* p1 = new(a1) X;
+            Y* p2 = new(a1) Y;
+            Z* p3 = new(a2) Z;
+            // ...
+
+    But how can we later delete those objects correctly? The reason that there is no built-in "placement delete" to match placement new is that there is no general way of assuring that it would be used correctly. Nothing in the C++ type system allows us to deduce that p1 points to an object allocated in Arena a1. A pointer to any X allocated anywhere can be assigned to p1.
+
+    However, sometimes the programmer does know, and there is a way:
+
+            template<class T> void destroy(T* p, Arena& a)
+            {
+                    if (p) {
+                            p->~T();		// explicit destructor call
+                            a.deallocate(p);
+                    }
+            }
+
+    Now, we can write:
+
+            destroy(p1,a1);
+            destroy(p2,a2);
+            destroy(p3,a3);
+
+    If an Arena keeps track of what objects it holds, you can even write destroy() to defend itself against mistakes.
+
+96.
+Auto, Unique, Shared Pointers, Weak Pointers and Scoped Pointers
+    auto_ptr, unique_ptr and shared_ptr
+
+97.
+Vector - Accessing member elements using "at()" vs "[]"
+http://stackoverflow.com/questions/9376049/vectorat-vs-vectoroperator
+    Vector.at() is SLOWER than vector[]
+
+    IMP: Use vector.at() when INDEX is not in your control.
+
+98.
+Created Vectors of User defined size
+http://stackoverflow.com/questions/10559283/how-to-create-a-vector-of-user-defined-size
+
+    // create a vector with 20 integer elements
+    std::vector<int> arr(20);
+
+99.
+How to use memset or fill_n to initialize a dynamic two dimensional array in C++
+http://stackoverflow.com/questions/36506331/how-to-use-memset-or-fill-n-to-initialize-a-dynamic-two-dimensional-array-in-c
+
+    I think that your main problem here is that you don't have an array of int values.
+    You have an array of pointers to ints.
+
+    You probably should start with int* abc = new int[rows * cols]; and work from there, if I understand what you are trying to achieve here.
+    
+To Read
+http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
+http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
+http://stackoverflow.com/questions/8547778/why-is-one-loop-so-much-slower-than-two-loops?rq=1

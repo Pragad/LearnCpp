@@ -1,6 +1,9 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
+// Allocate Memory to a 2D array using NEW
+// Riverbed phone interview
 int** allocate ( int row, int col )
 {
     if (row < 0)
@@ -67,6 +70,19 @@ void printTwoDPtrToPtr(int** array, uint32_t rows, uint32_t cols)
     }
 }
 
+void printTwoDVec(vector< vector<int> > twoDVec)
+{
+    cout << "Two D Vector" << endl;
+    for (uint32_t i = 0; i < twoDVec.size(); i++)
+    {
+        for (uint32_t j = 0; j < twoDVec[i].size(); j++)
+        {
+            cout << twoDVec[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
 int main()
 {
     // How to allocate a 2-D array in C++
@@ -102,6 +118,14 @@ int main()
     // VERY IMP: the below will fail.
     // Can't cast 'int (*)[5]' to 'int**'
     //printTwoDPtrToPtr((int**)twoD, rows, cols);
+
+    // Initialize 2D array to 0
+    {
+        rows = 3;
+        cols = 4;
+        vector< vector<int> > myTwoDVec(rows, vector<int> (cols, 5));
+        printTwoDVec(myTwoDVec);
+    }
     cout << endl;
     return 0;
 }

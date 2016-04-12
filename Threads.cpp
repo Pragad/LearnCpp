@@ -3,6 +3,31 @@
 #include <mutex>
 using namespace std;
 
+// A Global variable x that will be shared by the threads
+uint32_t x = 0;
+
+void incrementX()
+{
+    for (uint32_t i = 0; i < 100; i++)
+    {
+        x = x + 1;
+    }
+}
+
+mutex mtx2;
+void incrementXMtx()
+{
+    unique_lock<mutex> lock(mtx2);
+    for (uint32_t i = 0; i < 100; i++)
+    {
+        x = x + 1;
+    }
+}
+
+// Race Condition Here.
+// We can't predict the order of execution.
+// The order of execution depends on thread scheduling algorithm
+// Multiple Runs of the same program will give different output
 void printChars(uint32_t num, char ch)
 {
     for (uint32_t i = 0; i < num; i++)
@@ -27,17 +52,42 @@ void printCharsMutex(uint32_t num, char ch)
 
 int main()
 {
-    thread th1 (printChars, 10, '*');
-    thread th2 (printChars, 10, '$');
+    // Example 1
+    {
+        cout << "Without Mutex" << endl;
+        thread th1 (printChars, 10, '*');
+        thread th2 (printChars, 10, '$');
 
-    th1.join();
-    th2.join();
+        th1.join();
+        th2.join();
 
-    thread th3 (printCharsMutex, 10, '*');
-    thread th4 (printCharsMutex, 10, '$');
+        cout << "With Mutex" << endl;
+        thread th3 (printCharsMutex, 10, '*');
+        thread th4 (printCharsMutex, 10, '$');
 
-    th3.join();
-    th4.join();
+        // Main will wait for the threads to finish execution before continuing its work
+        th3.join();
+        th4.join();
+    }
+
+    // Example 2
+    {
+        x = 0;
+        thread th5 (incrementX);
+        thread th6 (incrementX);
+
+        th5.join();
+        th6.join();
+        cout << "Without Mutex X Val: " << x << endl;
+
+        x = 0;
+        thread th7 (incrementXMtx);
+        thread th8 (incrementXMtx);
+
+        th7.join();
+        th8.join();
+        cout << "With Mutex X Val: " << x << endl;
+    }
 
     cout << endl;
     return 0;

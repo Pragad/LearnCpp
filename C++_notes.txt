@@ -332,7 +332,7 @@ Polymorphism vs Overriding vs Overloading:
 
 3. What is Polymorphism:
     - Polymorphism is the ability to an object to decide what it should.
-    - Simple example would be to consider "Shapes" class. And the class has methods like Area and Cirumferance.
+   - Simple example would be to consider "Shapes" class. And the class has methods like Area and Cirumferance.
     - We can have subclasses like Square, Rectangle.
     - To find the area of all the shapes, we can just give Shapes.area(). Based on what shape it is, we will get the respective Area.
 
@@ -479,14 +479,6 @@ http://stackoverflow.com/questions/17434/when-should-you-use-friend-in-c
     - The storage is created once, and the linker must resolve all other references to that storage.
     - Global variables and function names have external linkage.
     - These are accessed from other files by declaring them with the keyword extern.
-
-10. Abstract Class vs Interface:
-    Interface:
-        - Interfaces have no implementation.
-        - A class implementing an interface should implements all its functions.
-        
-    - Abstract class have some implementation.
-
 
 11. Copy Constructor vs Assignment Operator:
     A copy constructor is used to initialize a previously uninitialized object from some other object's data.
@@ -924,7 +916,7 @@ http://programmers.stackexchange.com/questions/284113/i-need-a-data-structure-fo
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 OS NOTES:
-1. Differentiate Threads and Processes
+0. Differentiate Threads and Processes
     Both processes and threads are independent sequences of execution.
     The typical difference is that threads (of the same process) run in a shared memory space, while processes run in separate memory spaces.
 
@@ -935,6 +927,22 @@ OS NOTES:
     5. New threads are easily created; new processes require duplication of the parent process.
     6. Threads can exercise considerable control over threads of the same process; processes can only exercise control over child processes.
     7. Changes to the main thread (cancellation, priority change, etc.) may affect the behavior of the other threads of the process; changes to the parent process does not affect child processes.
+
+1. What is a Race Condition
+http://stackoverflow.com/questions/34510/what-is-a-race-condition
+    A race condition occurs when two or more threads can access shared data and they try to change it at the same time.
+    Because the thread scheduling algorithm can swap between threads at any time, you don't know the order in which the threads will attempt to access the shared data.
+    Therefore, the result of the change in data is dependent on the thread scheduling algorithm, i.e. both threads are "racing" to access/change the data.
+
+    Problems often occur when one thread does a "check-then-act"
+    (e.g. "check" if the value is X, then "act" to do something that depends on the value being X) and another thread does something to the value in between the "check" and the "act". E.g:
+        if (x == 5) // The "Check"
+        {
+           y = x * 2; // The "Act"
+
+           // If another thread changed x in between "if (x == 5)" and "y = x * 2" above,
+           // y will not be equal to 10.
+        }
 
 2. Mutex vs Semaphores:
     http://www.geeksforgeeks.org/mutex-vs-semaphore/
@@ -1023,9 +1031,113 @@ http://stackoverflow.com/questions/266168/simple-example-of-threading-in-c
         t1.join();
     }
 
+4b.
+Thread Join vs Detach
+    If a thread is detached then the Main thread does not wait for the thread to finish its execution
+
 5. Hard Link vs Soft Link
     http://stackoverflow.com/questions/185899/what-is-the-difference-between-a-symbolic-link-and-a-hard-link
 
+    Underneath the file system files are represented by inodes (or is it multiple inodes not sure)
+
+    A file in the file system is basically a link to an inode.
+    A hard link then just creates another file with a link to the same underlying inode.
+
+    When you delete a file it removes one link to the underlying inode. The inode is only deleted (or deletable/over-writable) when all links to the inode have been deleted.
+
+    A symbolic link is a link to another name in the file system.
+
+    Once a hard link has been made the link is to the inode.
+    deleting renaming or moving the original file will not affect the hard link as it links to the underlying inode.
+    Any changes to the data on the inode is reflected in all files that refer to that inode.
+
+    Note: Hard links are only valid within the same File System. Symbolic links can span file systems as they are simply the name of another file.
+
+    Create two files:
+
+    $ touch blah1; touch blah2
+
+    Enter some Data into them:
+
+    $ echo "Cat" > blah1
+    $ echo "Dog" > blah2
+
+    (Actually, I could have used echo in the first place, as it creates the files if they don't exist... but never mind that.)
+
+    And as expected:
+
+    $cat blah1; cat blah2
+    Cat
+    Dog
+
+    Let's create hard and soft links:
+
+    $ ln blah1 blah1-hard
+    $ ln -s blah2 blah2-soft
+
+    Let's see what just happened:
+
+    $ ls -l
+
+    blah1
+    blah1-hard
+    blah2
+    blah2-soft -> blah2
+
+    Changing the name of blah1 does not matter:
+
+    $ mv blah1 blah1-new
+    $ cat blah1-hard
+    Cat
+
+    blah1-hard points to the inode, the contents, of the file - that wasn't changed.
+
+    $ mv blah2 blah2-new
+    $ ls blah2-soft
+    blah2-soft
+    $ cat blah2-soft  
+    cat: blah2-soft: No such file or directory
+
+    The contents of the file could not be found because the soft link points to the name, that was changed, and not to the contents.
+    Likewise, If blah1 is deleted, blah1-hard still holds the contents; if blah2 is deleted, blah2-soft is just a link to a non-existing file.
+
+What is an Inode ?
+    It is the metadata about a file.
+    It is a data structure that holds all relevant information about a file.
+
+    File -> iNode -> Actual Data
+    Inodes link to the physical data
+
+    IMP: iNodes track broken up pieces of a file.
+    iNode can tell ALL the blocks  that contain the data
+
+    iNode contains indirect referencing if the FILE is too big
+
+    inode is a Unix thing
+
+    Microsoft uses - FILE RECORD ATTRIBUTES
+    Apple use - Catalog FILES
+
+A file system can run out of space in two ways :
+
+    No space for adding new data is left
+    All the Inodes are consumed.
+
+    Well, the first way is pretty obvious but we need to look at the second way.
+    Yes, its possible that a case arises where we have free storage space but still we cannot add any new data in file system because all the Inodes are consumed.
+    This may happen in a case where file system contains very large number of very small sized files.
+    This will consume all the Inodes and though there would be free space from a Hard-disk-drive point of view but from file system point of view no Inode available to store any new file.
+
+Super block:
+    All iNodes are stored in the iNode table which is the Superblock
+
+What doesn't iNode have the File name
+    Multiple file names can map to the same file.
+    File name is stores in the respective Directory.
+
+Filesytem Basics
+    - In unix everything is a file
+      Even non-file devices such as terminals, printers, and disks themselves are abstracted and accessed via names in the file system. 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 NETWORKS:
 http://www.hardwaresecrets.com/how-tcp-ip-protocol-works-part-1/
