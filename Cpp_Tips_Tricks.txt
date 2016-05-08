@@ -46,6 +46,7 @@
 43.  comparing int with size_t
 44.  Unicode vs Ascii
 45.  Where are Class Members stored in memory
+45b. Memory Layout - Code Segment Data Segment Stack Heap
 46.  C++ Class vs C Struct Memory Layout
 47.  Pass by Value vs Const Reference
 48.  Virtual Function and Pure Virtual Functions
@@ -108,6 +109,22 @@
 97.  Vector - Accessing member elements using "at()" vs "[]"
 98.  Created Vectors of User defined size
 99.  How to use memset or fill_n to initialize a dynamic two dimensional array in C++
+100. Unique Lock
+101. Condition Variable
+102. Lock_guard vs Unique_lock
+103. Recursive Mutex
+104. Lock vs Mutex vs Condition Variable
+105. Need for THIS Pointer
+106. Sort Unordered Map
+107. IMP: Using [] operator in unordered_map inserts the element if not present.
+108. Create a vector of userdefined size and initialize with default values
+109. Copy from one vector to another
+110. Copy Constructor vs Assignment Operator:
+111. Volatile keyword:
+112. How do you declare an interface in C++
+113. Multiple Inheritence in C++
+114. Exception handling in C++
+
 
 ------------------------------------------------------------------------------------------
 0. 
@@ -802,7 +819,6 @@ http://stackoverflow.com/questions/2331316/what-is-stack-unwinding
     This is done by the compiler inserting calls to destructors of automatic (stack) variables.
     Now this is a very powerful concept leading to the technique called RAII, that is Resource Acquisition Is Initialization, that helps us manage resources like memory, database connections, open file descriptors, etc. in C++.
 
-
 36.
 RAII:
 http://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
@@ -1036,6 +1052,23 @@ http://programmers.stackexchange.com/questions/142475/how-does-const-storage-wor
 
     CALLING A MEMBER FUNCTION WILL BE A JUMP INSTRUCTION TO THAT FUNCTION
 
+45b.
+Memory Layout - Code Segment Data Segment Stack Heap
+    http://www.geeksforgeeks.org/memory-layout-of-c-program/
+
+    Text / Code Segment:
+        Machine instructions gets stored here
+        Code segment, also known as text segment contains machine code of the compiled program.
+        The text segment of an executable object file is often read-only segment that prevents a program from being accidentally modified.
+
+    DATA Segment:
+        - Has Initialized and Uninitialized segments
+        Data segment stores program data.
+        This data could be in form of initialized or uninitialized variables, and it could be local or global.
+        Data segment is further divided into four sub-data segments (initialized data segment, uninitialized or .bss data segment, stack, and heap)
+
+
+
 46.
 C++ Class vs C Struct Memory Layout
 http://stackoverflow.com/questions/422830/structure-of-a-c-object-in-memory-vs-a-struct
@@ -1062,6 +1095,18 @@ http://stackoverflow.com/questions/1567138/const-t-arg-vs-t-arg/1567186#1567186
 48.
 Virtual Function and Pure Virtual Functions
 http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained?rq=1
+
+    - What a Virtual function will do is,
+        - It will make its CLASS a polymorphic base class. 
+        - So we can have derived classes that can override the virtual methods in the base class.
+
+    - What a PURE Virtual function will do is,
+        http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained
+        - When you want SOMEONE TO DEFINE ALL THE METHODS in your class.
+        - It will make the base Class ABSTRACT. And any class that derives it MUST have an 
+          implementation for the virtual function.
+        - A pure virtual function or pure virtual method is a virtual function that is
+          REQUIRED to be implemented by a derived class that is not abstract"
 
     A virtual function or virtual method is a function or method whose behavior can be overridden within an inheriting class by a function with the same signature 
 
@@ -1119,10 +1164,78 @@ http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained?rq=1
         b) interfaces
         These are 'empty' classes where all functions are pure virtual and hence you have to derive and then implement all of the functions.
 
+    Purpose of Virtual in C++
+        - When you want to OVERRIDE an method in base class AND
+            - CALL it using a base class pointer
+        You use virtual functions when you want to override a certain behavior (read method) for your derived class rather than the one implemented for the base class and
+    you want to do so at run-time through a pointer to the base class. 
+
+
 49.
 Virtual Functions
+http://stackoverflow.com/questions/2391679/why-do-we-need-virtual-methods-in-c
+
     Each time you create a class that contains virtual functions, or you derive from a class that contains virtual functions, the compiler creates a VTABLE for that class
     In that table it places the addresses of all the functions that are declared virtual in this class or in the base class
+
+    Why VIRTUAL Methods in C++
+        Let's say you have these two classes:
+
+        class Animal
+        {
+        public:
+        void eat() { std::cout << "I'm eating generic food."; }
+        }
+
+        class Cat : public Animal
+        {
+        public:
+        void eat() { std::cout << "I'm eating a rat."; }
+        }
+
+        In your main function:
+
+        Animal *animal = new Animal;
+        Cat *cat = new Cat;
+
+        animal->eat(); // outputs: "I'm eating generic food."
+        cat->eat();    // outputs: "I'm eating a rat."
+
+        So far so good right? Animals eat generic food, cats eat rats, all without virtual.
+
+        Let's change it a little now so that eat() is called via an intermediate function (a trivial function just for this example):
+
+        //this can go at the top of the main.cpp file
+        void func(Animal *xyz) { xyz->eat(); }
+
+        Now our main function is:
+
+        Animal *animal = new Animal;
+        Cat *cat = new Cat;
+
+        func(animal); // outputs: "I'm eating generic food."
+        func(cat);    // outputs: "I'm eating generic food."
+
+        Uh oh... we passed a Cat into func(), but it won't eat rats. Should you overload func() so it takes a Cat* ? If you have to derive more animals from Animal they would all need their own func().
+
+        The solution is to make eat() a virtual function:
+
+        class Animal
+        {
+        public:
+        virtual void eat() { std::cout << "I'm eating generic food."; }
+        }
+        class Cat : public Animal
+        {
+        public:
+        void eat() { std::cout << "I'm eating a rat."; }
+        }
+
+        Main:
+
+        func(animal); // outputs: "I'm eating generic food."
+        func(cat);    // outputs: "I'm eating a rat."
+
 
 50. new vs new()
 http://stackoverflow.com/questions/620137/do-the-parentheses-after-the-type-name-make-a-difference-with-new
@@ -1514,6 +1627,10 @@ http://stackoverflow.com/questions/20026243/find-2-missing-numbers-in-an-array-o
 #define vs typedef vs Enum
 http://stackoverflow.com/questions/1666353/are-typedef-and-define-the-same-in-c
 
+    A typedef is generally preferred unless there's some odd reason that you specifically need a macro.
+
+    macros do textual substitution, which can do considerable violence to the semantics of the code.
+
     #define is a preprocessor token: the compiler itself will never see it.
     typedef is a compiler token: the preprocessor does not care about it.
 
@@ -1696,11 +1813,23 @@ http://stackoverflow.com/questions/8460327/why-are-anonymous-namespaces-not-a-su
 
     unnamed namespaces place entities into different namespaces (in addition to affecting their linkage).
     static only affects the linkage, leaving the namespace of which functions and variables are a member of unchanged.
+
 63.
 Dynamic Array in C++
 Variable Length arrays
 http://stackoverflow.com/questions/1204521/dynamic-array-in-stack
 http://stackoverflow.com/questions/14989674/dynamic-array-without-new-operator
+http://stackoverflow.com/questions/5368531/why-cant-i-create-an-array-of-size-n
+
+    int n;
+    cin >> n;
+    int array[n];
+
+    This will work if use g++. g++ support VLAs as an extension. However ISO C++ mandates size of an array to be a constant expression i.e the size must be known at compile time.
+
+        Why is it that C++ don't allow you to create array of dynamic length in stack memory?
+
+    Simple answer "Because the standard says so". Even the upcoming C++ Standard (C++0x) is not going to allow Variable Length Arrays.
 
     Below Code is standard C99. This is because C99 allows you to declare arrays dynamically that way.
     To clarify, this is also standard C99:
@@ -2821,11 +2950,249 @@ http://stackoverflow.com/questions/10559283/how-to-create-a-vector-of-user-defin
 How to use memset or fill_n to initialize a dynamic two dimensional array in C++
 http://stackoverflow.com/questions/36506331/how-to-use-memset-or-fill-n-to-initialize-a-dynamic-two-dimensional-array-in-c
 
+    1.
     I think that your main problem here is that you don't have an array of int values.
     You have an array of pointers to ints.
 
     You probably should start with int* abc = new int[rows * cols]; and work from there, if I understand what you are trying to achieve here.
+
+    2.
+        int **abc = new int*[rows];
+        for (uint32_t i = 0; i < rows; i++)
+        {
+            abc[i] = new int[cols];
+            std::fill_n(abc[i], cols, 1);
+        }
     
+100.
+Unique Lock
+http://www.cplusplus.com/reference/mutex/unique_lock/
+
+    A unique lock is an object that manages a mutex object with unique ownership in both states: locked and unlocked.
+
+    On construction (or by move-assigning to it), the object acquires a mutex object, for whose locking and unlocking operations becomes responsible.
+
+    The object supports both states: locked and unlocked.
+
+    This class guarantees an unlocked status on destruction (even if not called explicitly). Therefore it is especially useful as an object with automatic duration, as it guarantees the mutex object is properly unlocked in case an exception is thrown.
+
+101.
+Condition Variable
+http://www.cplusplus.com/reference/condition_variable/condition_variable/wait/
+    wait()
+    notify_one()
+
+102.
+Lock_guard vs Unique_lock
+http://stackoverflow.com/questions/20516773/stdunique-lockstdmutex-or-stdlock-guardstdmutex
+
+    lock_guard and unique_lock are pretty much the same thing; lock_guard is a restricted version with a limited interface.
+
+    A lock_guard always holds a lock from its construction to its destruction.
+    A lock_guard can't transfer ownership of a lock
+    A unique_lock can be created without immediately locking, can unlock at any point in its existence, and can transfer ownership of the lock from one instance to another.
+
+    So you always use lock_guard, unless you need the capabilities of unique_lock.
+    A condition_variable needs a unique_lock.
+
+103.
+Recursive Mutex
+    The same lock can be obtained by the same thread multiple times.
+
+104.
+Lock vs Mutex vs Condition Variable
+http://stackoverflow.com/questions/1055398/differences-between-conditional-variables-mutexes-and-locks
+
+    "mutex" is the actual low-level synchronizing primitive.
+    You can take a mutex and then release it, and only one thread can take it at any single time (hence it is a synchronizing primitive).
+    A recursive mutex is one which can be taken by the same thread multiple times, and then it needs to be released as many times by the same thread before others can take it.
+
+    A "lock" here is just a C++ wrapper class that takes a mutex in its constructor and releases it at the destructor.
+    It is useful for establishing synchronizing for C++ scopes.
+
+    A condition variable is a more advanced / high-level form of synchronizing primitive which combines a lock with a "signaling" mechanism.
+    It is used when threads need to wait for a resource to become available.
+    A thread can "wait" on a CV and then the resource producer can "signal" the variable, in which case the threads who wait for the CV get notified and can continue execution.
+    A mutex is combined with CV to avoid the race condition where a thread starts to wait on a CV at the same time another thread wants to signal it; then it is not controllable whether the signal is delivered or gets lost.
+
+105.
+Need for THIS Pointer
+http://stackoverflow.com/questions/577243/is-there-any-reason-to-use-this
+    1. When the name of the formal argument is same as actual argument.
+    2. For templates
+
+    The only place where it really makes a difference is in templates in derived classes:
+
+        template<typename T>
+        class A {
+        protected:
+          T x;
+        };
+
+        template<typename T>
+        class B : A<T> {
+        public:
+          T get() {
+            return this->x;
+          }
+        };
+
+    Due to details in the name lookup in C++ compilers, it has to be made explicitly clear that x is a (inherited) member of the class, most easily done with this->x.
+    But this is a rather esoteric case, if you don't have templated class hierarchies you don't really need to explicitly use this to access members of a class.
+
+106.
+Sort Unordered Map
+http://stackoverflow.com/questions/24212356/why-stl-unordered-map-and-unordered-set-cannot-be-sorted-by-stl-algorithms
+
+    unordered containers store internally hashed data and thus it's not possible to order them after the hash has been generated.
+
+    In order to sort the data you can use an additional non-hashed container (e.g. map or set) and either use them along with the unordered version (so you can use the normal one to sort the data and the unordered one to have fast per-item access) or you can do something like
+
+    std::map<int, int> ordered(unordered.begin(), unordered.end());
+    for(auto it = ordered.begin(); it != ordered.end(); ++it)
+         std::cout << it->second;
+
+107.
+IMP: Using [] operator in unordered_map inserts the element if not present.
+http://www.cplusplus.com/reference/unordered_map/unordered_map/operator[]/
+    
+    If k matches the key of an element in the container, the function returns a reference to its mapped value.
+
+    If k does not match the key of any element in the container, the function inserts a new element with that key and returns a reference to its mapped value.
+    Notice that this always increases the container size by one, even if no mapped value is assigned to the element (the element is constructed using its default constructor).
+
+    IMP: Use .at() method instead
+
+108. 
+Create a vector of userdefined size and initialize with default values
+
+    vector<int32_t> sumArr1(divNum, 0);
+    vector<uint32_t> sumArr1(4, 0);
+
+109.
+Copy from one vector to another
+http://stackoverflow.com/questions/644673/fast-way-to-copy-one-vector-into-another
+
+    1) vector a = b;
+    2) vector<int> new_(original);
+
+110.
+Copy Constructor vs Assignment Operator:
+    A copy constructor is used to initialize a previously uninitialized object from some other object's data.
+
+    A(const A& rhs) : data_(rhs.data_) {}
+
+    An assignment operator is used to replace the data of a previously initialized object with some other object's data.
+
+    A& operator=(const A& rhs) {data_ = rhs.data_; return *this;}
+
+    Copy constructor is called when a new object is created from an existing object, as a copy of the existing object (see this G-Fact). And assignment operator is called when an already initialized object is assigned a new value from another existing object.
+    t2 = t1;  // calls assignment operator, same as "t2.operator=(t1);"
+    Test t3 = t1;  // calls copy constructor, same as "Test t3(t1);"
+
+111.
+Volatile keyword:
+http://stackoverflow.com/questions/246127/why-is-volatile-needed-in-c
+
+112.
+How do you declare an interface in C++
+    Make a class with pure virtual methods. Use the interface by creating another class that overrides those virtual methods.
+
+    class IDemo
+    {
+        public:
+            virtual ~IDemo() {}
+            virtual void OverrideMe() = 0;
+    }
+
+    class Child : public IDemo
+    {
+        public:
+            virtual void OverrideMe()
+            {
+                //do stuff
+            }
+    }   
+
+113.
+Multiple Inheritence in C++
+http://www.geeksforgeeks.org/multiple-inheritance-in-c/
+    IT creates the Diamond problem.
+         A
+        /  \
+       B    C
+        \  /
+         D
+
+    - Can be solved by making the BASE class virtual.
+
+114.
+Exception handling in C++
+http://stackoverflow.com/questions/7480146/difference-between-exception-handling-in-c-and-java
+    Question:
+        In Java, if a specific line of code causes the program to crash, then the exception is caught and the program continues to execute.
+
+        However, in C++, if I have a piece of code that causes the program to crash, like:
+
+        try
+        {
+            int x = 6;
+            int *p = NULL;
+            p = reinterpret_cast<int*>(x);
+
+            *p = 10; // the program crashed here
+
+            cout << "x = " << *p << endl;
+        }
+        catch(const char* Message)
+        {
+            cout << "There is an run-time error";
+        }
+
+        Then the program still crash and the exception is not caught
+
+    Answer:
+        The line that crashes is dereferencing an invalid pointer.
+        In C++ this will not throw an exception. Instead it is undefined behaviour.
+
+        There's no such thing as a null pointer exception in C++, unlike Java which will throw a null pointer exception.
+        Instead dereferencing an invalid pointer will lead to undefined behaviour.
+
+    How to use exception in C++ - Example
+      try
+      {
+        int* myarray= new int[1000];
+      }
+      catch (exception& e)
+      {
+        cout << "Standard exception: " << e.what() << endl;
+      }
+
+115.
+Side effects of macros:
+https://gcc.gnu.org/onlinedocs/cpp/Duplication-of-Side-Effects.html
+
+        Many C programs define a macro min, for “minimum”, like this:
+         #define min(X, Y)  ((X) < (Y) ? (X) : (Y))
+
+        When you use this macro with an argument containing a side effect, as shown here,
+         next = min (x + y, foo (z));
+
+        it expands as follows:
+         next = ((x + y) < (foo (z)) ? (x + y) : (foo (z)));
+
+        foo (z) gets executed twice.
+
+116. Macros vs Inline Function:
+http://stackoverflow.com/questions/1137575/inline-functions-vs-preprocessor-macros
+
+    - Macros are not type safe, and can be expanded regardless of whether they are syntatically correct - the compile phase will report errors resulting from macro expansion problems.
+    - Macros can be used in context where you don't expect, resulting in problems
+    - Macros are more flexible, in that they can expand other macros - whereas inline functions don't necessarily do this.
+    - Macros can result in side effects because of their expansion, since the input expressions are copied wherever they appear in the pattern.
+    - Inline function are not always guaranteed to be inlined - some compilers only do this in release builds, or when they are specifically configured to do so. Also, in some cases inlining may not be possible.
+    - Inline functions can provide scope for variables (particularly static ones), preprocessor macros can only do this in code blocks {...}, and static variables will not behave exactly the same way.
+ 
 To Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
