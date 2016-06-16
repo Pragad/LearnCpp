@@ -23,6 +23,7 @@
 20.  Find Substring
 21.  Combining vector of strings:
 22.  Convert String to Int - C++
+22b. Convert INT to STRING
 23.  Align std out
 24.  IMP: Why Pointers
 25.  Garbage Collection:
@@ -103,7 +104,7 @@
 91.  STACK VS HEAP
 92.  Different behavior of Code Valid in C and C++
 93.  Case Only Labels: Jumping over initialization
-94.  What uses are there for “placement new”?
+94.  What uses are there for placement new?
 95.  Is there a "placement delete"?
 96.  Shared Pointers, Weak Pointers and Scoped Pointers
 97.  Vector - Accessing member elements using "at()" vs "[]"
@@ -124,7 +125,12 @@
 112. How do you declare an interface in C++
 113. Multiple Inheritence in C++
 114. Exception handling in C++
-
+115. Side effects of macros:
+116. Macros vs Inline Function:
+117. What is Arithmetic Overflow and Underflow
+118. How to detect integer overflow in C/C++
+119. Usage of Templates Function and Class
+120. Passing a 2D array to a C++ function
 
 ------------------------------------------------------------------------------------------
 0. 
@@ -454,6 +460,11 @@ http://stackoverflow.com/questions/7663709/convert-string-to-int-c
 where str is your number as std::string.
 There are version for all flavours of numbers: long stol(string), float stof(string), double stod(string)
 
+22b.
+Convert INT to STRING
+
+    string strNum = to_string(number);
+
 23.
 Align std out
 http://stackoverflow.com/questions/2485963/c-alignment-when-printing-cout
@@ -675,19 +686,6 @@ http://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-c
 29.
 C++ to Java:
 http://stackoverflow.com/questions/5732224/just-enough-java-for-hadoop
-
-30.
-Finding all subsets of a Vector of Vector
-http://stackoverflow.com/questions/728972/finding-all-the-subsets-of-a-set
-
-    It's very simple to do this recursively.
-    The basic idea is that for each element, the set of subsets can be divided equally into those that contain that element and those that don't, and those two sets are otherwise equal.
-        For n=1, the set of subsets is {{}, {1}}
-        For n>1, find the set of subsets of 1,...,n-1 and make two copies of it. For one of them, add n to each subset. Then take the union of the two copies.
-    Edit To make it crystal clear:
-        The set of subsets of {1} is {{}, {1}}
-        For {1, 2}, take {{}, {1}}, add 2 to each subset to get {{2}, {1, 2}} and take the union with {{}, {1}} to get {{}, {1}, {2}, {1, 2}}
-    Repeat till you reach n
 
 31.
 double vs float
@@ -1890,8 +1888,8 @@ http://stackoverflow.com/questions/5368531/why-cant-i-create-an-array-of-size-n
 TWOD Vector in C++
 http://stackoverflow.com/questions/17663186/initializing-a-two-dimensional-stdvector
 
+        std::vector::vector(count, value)
         vector< vector<int> > myTwoDVec(rows, vector<int> (cols, 5));
-
 
 64.
 Time in C++
@@ -2615,7 +2613,7 @@ http://stackoverflow.com/questions/31358804/whats-the-advantage-of-using-stdallo
     sometimes you want to separate allocation and construction into two steps (and similarly to separate destruction and deallocation into two steps).
     If you don't want to do that, don't use an allocator, use new instead.
 
-        Q. In which cases can it be used and when should it be used instead of new and delete?
+Q. In which cases can it be used and when should it be used instead of new and delete?
 
     When you need the behaviour of an allocator, not the behaviour of new and delete, obviously! The typical case is when implementing a container.
 
@@ -3183,7 +3181,8 @@ https://gcc.gnu.org/onlinedocs/cpp/Duplication-of-Side-Effects.html
 
         foo (z) gets executed twice.
 
-116. Macros vs Inline Function:
+116.
+Macros vs Inline Function:
 http://stackoverflow.com/questions/1137575/inline-functions-vs-preprocessor-macros
 
     - Macros are not type safe, and can be expanded regardless of whether they are syntatically correct - the compile phase will report errors resulting from macro expansion problems.
@@ -3193,6 +3192,170 @@ http://stackoverflow.com/questions/1137575/inline-functions-vs-preprocessor-macr
     - Inline function are not always guaranteed to be inlined - some compilers only do this in release builds, or when they are specifically configured to do so. Also, in some cases inlining may not be possible.
     - Inline functions can provide scope for variables (particularly static ones), preprocessor macros can only do this in code blocks {...}, and static variables will not behave exactly the same way.
  
+117.
+What is Arithmetic Overflow and Underflow
+http://stackoverflow.com/questions/6360049/what-are-arithmetic-underflow-and-overflow-in-c
+
+    The situation where an integer outside the allowed range requires more bits than can be stored is called an overflow.
+
+    Underflow
+        Similarly, with real numbers, an exponent that is too small to be stored causes an underflow.
+
+        The condition in a computer program that can occur when the true result of a floating point operation is smaller in magnitude (that is, closer to zero) than the smallest value representable as a normal floating point number in the target datatype.
+
+118.
+How to detect integer overflow in C/C++
+http://stackoverflow.com/questions/199333/how-to-detect-integer-overflow-in-c-c
+http://www.cplusplus.com/articles/DE18T05o/
+
+    Overflow can only occur when sign of numbers being added is the same (which will always be the case in unsigned numbers)
+    signed overflow can be easily detected by seeing that its sign is opposite to that of the operands.
+
+    For addition, any two operands will result in (at most) one bit more than the largest operand's highest one-bit. For example:
+        bool addition_is_safe(uint32_t a, uint32_t b) {
+            size_t a_bits=highestOneBitPosition(a), b_bits=highestOneBitPosition(b);
+            return (a_bits<32 && b_bits<32);
+        }
+
+    For multiplication, any two operands will result in (at most) the sum of the bits of the operands. For example:
+        bool multiplication_is_safe(uint32_t a, uint32_t b) {
+            size_t a_bits=highestOneBitPosition(a), b_bits=highestOneBitPosition(b);
+            return (a_bits+b_bits<=32);
+        }
+
+    Similarly, you can estimate the maximum size of the result of a to the power of b like this:
+        bool exponentiation_is_safe(uint32_t a, uint32_t b) {
+            size_t a_bits=highestOneBitPosition(a);
+            return (a_bits*b<=32);
+        }
+
+    (Substitute the number of bits for your target integer, of course.)
+
+    I'm not sure of the fastest way to determine the position of the highest one-bit in a number, here's a brute-force method:
+        size_t highestOneBitPosition(uint32_t a) {
+            size_t bits=0;
+            while (a!=0) {
+                ++bits;
+                a>>=1;
+            };
+            return bits;
+        }
+
+119.
+Usage of Templates Function and Class
+http://www.codeproject.com/Articles/257589/An-Idiots-Guide-to-Cplusplus-Templates-Part#ClassTempl
+
+    // Read a request
+    GetData<DataType>(&_chain, sizeof(header), resultData);
+
+    template<class T>
+    int GetData(Chain* chain, uint32_t offset, T*& pStruct)
+    {
+        uint8_t* pData = NULL;
+
+        Chk(chain->getDataVolatile(offset, sizeof(T), pData));
+        pStruct = reinterpret_cast<T*>(pData);
+    }
+
+120.
+Passing a 2D array to a C++ function
+http://stackoverflow.com/questions/8767166/passing-a-2d-array-to-a-c-function
+
+    FIXED SIZE
+
+    1. Pass by reference
+
+        template <size_t rows, size_t cols>
+        void process_2d_array_template(int (&array)[rows][cols])
+        {
+            std::cout << __func__ << std::endl;
+            for (size_t i = 0; i < rows; ++i)
+            {
+                std::cout << i << ": ";
+                for (size_t j = 0; j < cols; ++j)
+                    std::cout << array[i][j] << '\t';
+                std::cout << std::endl;
+            }
+        }
+
+        In C++ passing the array by reference without losing the dimension information is probably the safest, since one needn't worry about the caller passing an incorrect dimension (compiler flags when mismatching).
+        However, this isn't possible with dynamic (freestore) arrays; it works for automatic (usually stack-living) arrays only i.e. the dimensionality should be known at compile time.
+
+    2. Pass by pointer
+
+        void process_2d_array_pointer(int (*array)[5][10])
+        {
+            std::cout << __func__ << std::endl;
+            for (size_t i = 0; i < 5; ++i)
+            {
+                std::cout << i << ": ";
+                for (size_t j = 0; j < 10; ++j)
+                    std::cout << (*array)[i][j] << '\t';
+                std::cout << std::endl;
+            }    
+        }
+
+    The C equivalent of the previous method is passing the array by pointer.
+    This should not be confused with passing by the array's decayed pointer type (3), which is the common, popular method, albeit less safe than this one but more flexible.
+    Like (1), use this method when all the dimensions of the array is fixed and known at compile-time.
+    Note that when calling the function the array's address should be passed process_2d_array_pointer(&a) and not the address of the first element by decay process_2d_array_pointer(a)
+
+    Variable Size
+
+    These are inherited from C but are less safe, the compiler has no way of checking, guaranteeing that the caller is passing the required dimensions.
+    The function only banks on what the caller passes in as the dimension(s).
+    These are more flexible than the above ones since arrays of different lengths can be passed to them invariably.
+
+    It is to be remembered that there's no such thing as passing an array directly to a function in C [while in C++ they can be passed as a reference (1)]; (2) is passing a pointer to the array and not the array itself.
+    Always passing an array as-is becomes a pointer-copy operation which is facilitated by array's nature of decaying into a pointer.
+
+    3. Pass by (value) a pointer to the decayed type
+
+        // int array[][10] is just fancy notation for the same thing
+        void process_2d_array(int (*array)[10], size_t rows)
+        {
+            std::cout << __func__ << std::endl;
+            for (size_t i = 0; i < rows; ++i)
+            {
+                std::cout << i << ": ";
+                for (size_t j = 0; j < 10; ++j)
+                    std::cout << array[i][j] << '\t';
+                std::cout << std::endl;
+            }
+        }
+
+    Although int array[][10] is allowed, I'd not recommend it over the above syntax since the above syntax makes it clear that the identifier array is a single pointer to an array of 10 integers, while this syntax looks like it's a 2D array but is the same pointer to an array of 10 integers.
+    Here we know the number of elements in a single row (i.e. the column size, 10 here) but the number of rows is unknown and hence to be passed as an argument.
+    In this case there's some safety since the compiler can flag when a pointer to an array with second dimension not equal to 10 is passed.
+    The first dimension is the varying part and can be omitted.
+
+    4. Pass by pointer to a pointer
+
+        // int *array[10] is just fancy notation for the same thing
+        void process_pointer_2_pointer(int **array, size_t rows, size_t cols)
+        {
+            std::cout << __func__ << std::endl;
+            for (size_t i = 0; i < rows; ++i)
+            {
+                std::cout << i << ": ";
+                for (size_t j = 0; j < cols; ++j)
+                    std::cout << array[i][j] << '\t';
+                std::cout << std::endl;
+            }
+        }
+
+    Again there's an alternative syntax of int *array[10] which is the same as int **array.
+    In this syntax the [10] is ignored as it decays into a pointer thereby becoming int **array.
+    Perhaps it is just a cue to the caller that the passed array should have at least 10 columns, even then row count is required.
+    In any case the compiler doesn't flag for any length/size violations (it only checks if the type passed is a pointer to pointer), hence requiring both row and column counts as parameter makes sense here.
+
+    Note: (4) is the least safest option since it hardly has any type check and the most inconvenient.
+    One cannot legitimately pass a 2D array to this function; C-FAQ condemns the usual workaround of doing int x[5][10]; process_pointer_2_pointer((int**)&x[0][0], 5, 10); as it may potentially lead to undefined behaviour due to array flattening.
+    The right way of passing an array in this method brings us to the inconvenient part i.e. we need an additional (surrogate) array of pointers with each of its element pointing to the respective row of the actual, to-be-passed array; this surrogate is then passed to the function (see below); all this for getting the same job done as the above methods which are more safer, cleaner and perhaps faster.
+
+
+
+
 To Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
