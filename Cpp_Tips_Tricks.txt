@@ -18,6 +18,7 @@
 17.  Clearing a Char array in C
 18.  Re-declaration of default parameter
 19.  IMP: Char array vs NULL terminated String
+     C FAQs
 19b.  Why should SCANF never be used
 19c.  But I heard that char a[] was identical to char *a.
 20.  Find Substring
@@ -195,12 +196,24 @@ http://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-i
 
         cin.ignore(256, '\n');
 
+        // cin returns false if an input operation fails, that is, if
+        // something other than an int (the type of input_var) is entered.
+        while (!(cin >> input_var)) {
+          cout << "Please enter numbers only." << endl;
+          cin.clear();              // Both lines are very important
+          cin.ignore(10000,'\n'); 
+        }
+
     The cin.clear() clears the error flag on cin (so that future I/O operations will work correctly), and then
     cin.ignore(10000, '\n') skips to the next newline (to ignore anything else on the same line as the non-number so that it does not cause another parse failure).
     It will only skip up to 10000 characters, so the code is assuming the user will not put in a very long, invalid line.
 
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+    Essentially, for std::cin statements you use ignore before you do a getline call, because when a user inputs something with std::cin, they hit enter and a '\n' char gets into the cin buffer.
+    Then if you use getline, it gets the newline char instead of the string you want.
+    So you do a std::cin.ignore(1000,'\n') and that should clear the buffer up to the string that you want.
+    (The 1000 is put there to skip over a specific amount of chars before the specified break point, in this case, the \n newline character.)
 
     std::ws
     Discards leading whitespace from an input stream.
@@ -273,14 +286,15 @@ http://stackoverflow.com/questions/650162/why-switch-statement-cannot-be-applied
 Copy String to Char array
 http://stackoverflow.com/questions/13294067/how-to-convert-string-to-char-array-in-c
 
-    string tmp = "cat";
-    char tab2[1024];
-    strcpy(tab2, tmp.c_str());
+        string tmp = "cat";
+        char tab2[1024];
+        strcpy(tab2, tmp.c_str());
+
     For safety, you might prefer:
-    string tmp = "cat";
-    char tab2[1024];
-    strncpy(tab2, tmp.c_str(), sizeof(tab2));
-    tab2[sizeof(tab2) - 1] = 0;
+        string tmp = "cat";
+        char tab2[1024];
+        strncpy(tab2, tmp.c_str(), sizeof(tab2));
+        tab2[sizeof(tab2) - 1] = 0;
 
 10.
 Char * vs Char []
@@ -292,6 +306,24 @@ http://stackoverflow.com/questions/1704407/what-is-the-difference-between-char-s
     puts the literal string in read-only memory and copies the string to newly allocated memory on the stack. Thus making
         s[0] = 'J';
     legal.
+
+    First off, in function arguments, they are exactly equivalent:
+        void foo(char *x);
+        void foo(char x[]); // exactly the same in all respects (note! this only applies if the brackets are empty)
+
+    char s[] = "hello";
+    Creates one object - a char array of size 6, called s, initialised with the values 'h', 'e', 'l', 'l', 'o', '\0'.
+    Where this array is allocated in memory, and how long it lives for, depends on where the declaration appears.
+    If the declaration is within a function, it will live until the end of the block that it is declared in, and almost certainly be allocated on the stack; if it's outside a function, it will probably be stored within an "initialised data segment" that is loaded from the executable file into writeable memory when the program is run.
+
+    On the other hand, this declaration:
+        char *s ="hello";
+    Creates two objects:
+        a read-only array of 6 chars containing the values 'h', 'e', 'l', 'l', 'o', '\0', which has no name and has static storage duration (meaning that it lives for the entire life of the program); and
+        a variable of type pointer-to-char, called s, which is initialised with the location of the first character in that unnamed, read-only array.
+
+    The unnamed read-only array is typically located in the "text" segment of the program, which means it is loaded from disk into read-only memory, along with the code itself.
+    The location of the s pointer variable in memory depends on where the declaration appears (just like in the first example)
 
 11.
 Char * assignment
@@ -309,12 +341,41 @@ http://stackoverflow.com/questions/2559896/how-are-arrays-passed
 13. 
 Deleting Array of objects using delete[]. delete[] vs delete
 http://stackoverflow.com/questions/703691/how-does-delete-know-its-an-array
+http://stackoverflow.com/questions/197675/how-does-delete-know-the-size-of-the-operand-array?lq=1
 
     The compiler doesn't know it's an array, it's trusting the programmer. Deleting a pointer to a single int with delete [] would result in undefined behavior.
+
+        Foo* set = new Foo[100];
+        // ...
+        delete [] set;
+
+    When you allocate memory on the heap, your allocator will keep track of how much memory you have allocated.
+    This is usually stored in a "head" segment just before the memory that you get allocated.
+    That way when it's time to free the memory, the de-allocator knows exactly how much memory to free.
+
+    If the runtime libraries (not the OS, really) can keep track of the number of things in the array, then why do we need the delete[] syntax at all? Why can't a single delete form be used to handle all deletes?
+        The answer to this goes back to C++'s roots as a C-compatible language (which it no longer really strives to be.)
+        Stroustrup's philosophy was that the programmer should not have to pay for any features that they aren't using.
+        If they're not using arrays, then they should not have to carry the cost of object arrays for every allocated chunk of memory.
+
+        That is, if your code simply does
+            Foo* foo = new Foo;
+
+        then the memory space that's allocated for foo shouldn't include any extra overhead that would be needed to support arrays of Foo.
+
+        Since only array allocations are set up to carry the extra array size information, you then need to tell the runtime libraries to look for that information when you delete the objects.
+        That's why we need to use
+            delete[] bar;
+
+        instead of just
+            delete bar;
+
+        if bar is a pointer to an array.
 
 14.
 Setting pointers to NULL after delete
 http://stackoverflow.com/questions/1931126/is-it-good-practice-to-null-a-pointer-after-deleting-it
+http://stackoverflow.com/questions/9169774/what-happens-in-a-double-delete
 
     Double delete causes an undefined behavior. So setting a pointer to NULL will overcome that.
     Deleting a NULL pointer is a Void operation
@@ -328,19 +389,31 @@ http://stackoverflow.com/questions/1931126/is-it-good-practice-to-null-a-pointer
         delete foo; // Deletes the object
         delete foo; // Undefined behavior
 
+    Under the hood, any memory manager has to maintain some metadata about each block of data it allocates, in a way that allows it to look up the metadata from the pointer that malloc/new returned.
+    Typically this takes the form of a structure at fixed offset before the allocated block.
+    This structure can contain a "magic number" -- a constant that is unlikely to occur by pure chance.
+    If the memory manager sees the magic number in the expected place, it knows that the pointer provided to free/delete is most likely valid.
+    If it doesn't see the magic number, or if it sees a different number that means "this pointer was recently freed", it can either silently ignore the free request, or it can print a helpful message and abort.
+    Either is legal under the spec, and there are pro/con arguments to either approach.
+
+    If the memory manager doesn't keep a magic number in the metadata block, or doesn't otherwise check the sanity of the metadata, then anything can happen.
+    Depending on how the memory manager is implemented, the result is most likely a crash without a helpful message, either immediately in the memory manager logic, somewhat later the next time the memory manager tries to allocate or free memory, or much later and far away when two different parts of the program each think they have ownership of the same chunk of memory.
+
 15.
 cout << new int[0] << endl; Allocating new with size 0
 http://stackoverflow.com/questions/1087042/c-new-int0-will-it-allocate-memory
 
     When the value of the expression in a direct-new-declarator is zero, the allocation function is called to allocate an array with no elements.
-    From 3.7.3.1/2
-    The effect of dereferencing a pointer returned as a request for zero size is undefined.
 
-    That means you can do it, but you can not legally (in a well defined manner across all platforms) dereference the memory that you get - you can only pass it to array delete - and you should delete it.
+    From 3.7.3.1/2
+        The effect of dereferencing a pointer returned as a request for zero size is undefined.
+
+        That means you can do it, but you can not legally (in a well defined manner across all platforms) dereference the memory that you get - you can only pass it to array delete - and you should delete it.
 
 16.
 Default value of a boolean in a struct
 http://stackoverflow.com/questions/3845353/what-will-be-the-default-value-of-an-uninitialized-boolean-value-in-c
+http://stackoverflow.com/questions/16782103/initializing-default-values-in-a-struct
 
     The value of the bool will is undefined. It will be whatever else was on the stack before it, which is sometimes zeroed out if nothing has used it previously.
     But again, it is undefined, which means it can be either true or false.
@@ -351,7 +424,14 @@ http://stackoverflow.com/questions/3845353/what-will-be-the-default-value-of-an-
           fool_bool() {
             b1 = true;
             b2 = false;
-          }  };
+        }  };
+
+    In C++ 11 default value can be given inside the struct itself:
+        struct foo {
+            bool a = true;
+            bool b = true;
+            bool c;
+         } bar;
 
 17.
 Clearing a Char array in C
@@ -397,6 +477,94 @@ http://c-faq.com/charstring/index.html
     Also, WE have to make sure there is space for NULL character.
     If you type more than four characters then the extra characters and the null terminator will be written outside the end of the array, overwriting memory not belonging to the array.
     This is a buffer overflow.
+
+Q1:
+    Why doesn't strcat(string, '!'); work?
+
+A1:
+    There is a very real difference between characters and strings, and strcat concatenates strings.
+
+    A character constant like '!' represents a single character.
+    A string literal between double quotes usually represents multiple characters.
+    A string literal like "!" seems to represent a single character, but it actually contains two: the ! you requested, and the \0 which terminates all strings in C.
+
+    Characters in C are represented by small integers corresponding to their character set values (see also question 8.6).
+    Strings are represented by arrays of characters; you usually manipulate a pointer to the first character of the array.
+    It is never correct to use one when the other is expected. To append a ! to a string, use
+        strcat(string, "!");
+
+Q2:
+     I'm checking a string to see if it matches a particular value. Why isn't this code working?
+
+        char *string;
+        ...
+        if(string == "value") {
+            /* string matches "value" */
+            ...
+        }
+
+A2:
+    Strings in C are represented as arrays of characters, and C never manipulates (assigns, compares, etc.) arrays as a whole.
+    The == operator in the code fragment above compares two pointers--the value of the pointer variable string and a pointer to the string literal "value"--to see if they are equal, that is, if they point to the same place.
+    They probably don't, so the comparison never succeeds.
+
+    To compare two strings, you generally use the library function strcmp:
+        if(strcmp(string, "value") == 0) {
+            /* string matches "value" */
+            ...
+        }
+
+Q3:
+    If I can say 
+        char a[] = "Hello, world!";
+
+    why can't I say
+        char a[14];
+        a = "Hello, world!";
+
+A3:
+    Strings are arrays, and you can't assign arrays directly. Use strcpy instead:
+        strcpy(a, "Hello, world!");
+
+Q4:
+    I can't get strcat to work. I tried
+        char *s1 = "Hello, ";
+        char *s2 = "world!";
+        char *s3 = strcat(s1, s2);
+
+    but I got strange results.
+
+A4:
+    The main problem here is that space for the concatenated result is not properly allocated.
+    C does not provide an automatically-managed string type.
+    C compilers allocate memory only for objects explicitly mentioned in the source code (in the case of strings, this includes character arrays and string literals).
+    The programmer must arrange for sufficient space for the results of run-time operations such as string concatenation, typically by declaring arrays, or by calling malloc.
+
+    strcat performs no allocation; the second string is appended to the first one, in place.
+    The first (destination) string must be writable and have enough room for the concatenated result.
+    Therefore, one fix would be to declare the first string as an array:
+
+        char s1[20] = "Hello, ";
+
+    Since strcat returns the value of its first argument (s1, in this case), the variable s3 in the question above is superfluous; after the call to strcat, s1 contains the result.
+
+    The original call to strcat in the question actually has two problems: the string literal pointed to by s1, besides not being big enough for any concatenated text, is not necessarily writable at all.
+
+Q5.
+    I'm reading strings typed by the user into an array, and then printing them out later.
+    When the user types a sequence like \n, why isn't it being handled properly?
+
+A5:
+    Character sequences like \n are interpreted at compile time.
+    When a backslash and an adjacent n appear in a character constant or string literal, they are translated immediately into a single newline character.
+    (Analogous translations occur, of course, for the other character escape sequences.)
+    When you're reading strings from the user or a file, however, no interpretation like this is performed: a backslash is read and printed just like any other character, with no particular interpretation.
+
+Q6: C vs C++
+    I think something's wrong with my compiler: I just noticed that sizeof('a') is 2, not 1 (i.e. not sizeof(char)).
+
+A6:
+    Perhaps surprisingly, character constants in C are of type int, so sizeof('a') is sizeof(int) (though this is another area where C++ differs)
 
 19b.
 Why should SCANF never be used
@@ -447,7 +615,6 @@ http://stackoverflow.com/questions/1985978/combining-a-vector-of-strings
             string a = accumulate( vec.begin(), vec.end(), string("") );
             cout << a << endl;
 
-
 22.
 Convert String to Int - C++
 http://stackoverflow.com/questions/7663709/convert-string-to-int-c
@@ -456,9 +623,11 @@ http://stackoverflow.com/questions/7663709/convert-string-to-int-c
     So instead of
         atoi( str.c_str() )
     you can use
-    std::stoi( str )
-where str is your number as std::string.
-There are version for all flavours of numbers: long stol(string), float stof(string), double stod(string)
+        std::stoi( str )
+    where str is your number as std::string.
+
+    There are version for all flavours of numbers:
+        long stol(string), float stof(string), double stod(string)
 
 22b.
 Convert INT to STRING
@@ -1918,7 +2087,6 @@ http://stackoverflow.com/questions/17296570/best-data-structure-for-ordered-list
 
     The priority_queue has the advantage of freeing memory as you drain it. This doesn't reduce the maximum memory footprint, and is probably of negligible benefit, but it's worth trying anyway
 
-
 66. 
 Tail Recursion
 http://stackoverflow.com/questions/33923/what-is-tail-recursion
@@ -3353,7 +3521,44 @@ http://stackoverflow.com/questions/8767166/passing-a-2d-array-to-a-c-function
     One cannot legitimately pass a 2D array to this function; C-FAQ condemns the usual workaround of doing int x[5][10]; process_pointer_2_pointer((int**)&x[0][0], 5, 10); as it may potentially lead to undefined behaviour due to array flattening.
     The right way of passing an array in this method brings us to the inconvenient part i.e. we need an additional (surrogate) array of pointers with each of its element pointing to the respective row of the actual, to-be-passed array; this surrogate is then passed to the function (see below); all this for getting the same job done as the above methods which are more safer, cleaner and perhaps faster.
 
+121.
+Custom Comparator for Priority Queue
+http://stackoverflow.com/questions/16111337/declaring-a-priority-queue-in-c-with-a-custom-comparator
+http://stackoverflow.com/questions/20826078/priority-queue-comparison
 
+        double computeDistanceFromOrigin(int x, int y)
+        {
+            return sqrt(((double)x * x) + ((double)y * y));
+        }
+
+        bool compGreater(pair<int, int> x, pair<int, int> y)
+        {
+            return computeDistanceFromOrigin(x.first, x.second) < computeDistanceFromOrigin(y.first, y.second);
+        }
+
+        void findKclosestPoints(vector<pair<int, int> >& pointsList, uint32_t k)
+        {
+            priority_queue< pair<int, int>, vector<pair<int, int> >, std::function<bool(pair<int, int>, pair<int, int>)> > kClosest(compGreater);
+            uint32_t i = 0;
+            for (; i < k; i++)
+            {
+                kClosest.push(pointsList[i]);
+            }
+        }
+
+122.
+C++ Erase vector element by value rather than by position
+http://stackoverflow.com/questions/3385229/c-erase-vector-element-by-value-rather-than-by-position
+
+        5 9 2 8 0 7
+
+        #include <algorithm>
+        ...
+        vec.erase(std::remove(vec.begin(), vec.end(), 8), vec.end());
+
+    Take a look at the description of remove(): It moves all values not equal to the value passed to the beginning of the range [begin,end).
+    With your example in the question you'd get 5,9,2,0,7,7.
+    As remove() however returns an iterator to the new end, vec.erase() can remove the obsolete elements (i.e. the second 7 here) if that is needed.
 
 
 To Read
