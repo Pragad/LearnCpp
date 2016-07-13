@@ -12,6 +12,8 @@
 11.  Char * assignment
 12.  Passing Array requires number of elements. Arrays decay into pointers.
 13.  Deleting Array of objects using delete[]. delete[] vs delete
+13b. What happens on delete
+13c. Is there delete in Java
 14.  Setting pointers to NULL after delete
 15.  cout << new int[0] << endl; Allocating new with size 0
 16.  Default value of a boolean in a struct
@@ -29,8 +31,11 @@
 24.  IMP: Why Pointers
 25.  Garbage Collection:
 26.  C++ References:
+26b. When to use References vs. Pointers
 27.  Smart Pointer:
 28.  C++ Cast:
+28b. Static Cast vs Reinterpret Cast
+28c. Static Cast vs Dynamic Cast
 29.  C++ to Java:
 30.  Finding all subsets of a Vector of Vector
 31.  double vs float
@@ -53,6 +58,8 @@
 47.  Pass by Value vs Const Reference
 48.  Virtual Function and Pure Virtual Functions
 49.  Virtual Functions
+49b. How Virtual Functions Work
+50.  new vs new()
 51.  Reading Multiple words from cin
 52.  Reading multiple lines from cin
 53.  Using size_t for loops
@@ -94,6 +101,7 @@
 80.  How is memory allocated to Vectors
 81.  Where Global Variables and Pointers are stored
 82.  Where are the Variable Names stored
+82b. Where in memory are return values stored in memory
 83.  What is Type Safe
 84.  What is the name of the --> operator
 85.  Why is ::operator new[] necessary when ::operator new is enough
@@ -110,7 +118,7 @@
 96.  Shared Pointers, Weak Pointers and Scoped Pointers
 97.  Vector - Accessing member elements using "at()" vs "[]"
 98.  Created Vectors of User defined size
-99.  How to use memset or fill_n to initialize a dynamic two dimensional array in C++
+99.  How to use memset or fill_n to initialize a dynamic two dimensional TwoD array in C++
 100. Unique Lock
 101. Condition Variable
 102. Lock_guard vs Unique_lock
@@ -132,7 +140,19 @@
 118. How to detect integer overflow in C/C++
 119. Usage of Templates Function and Class
 120. Passing a 2D array to a C++ function
-
+121. Custom Comparator for Priority Queue
+122. C++ Erase vector element by value rather than by position
+123. Function Pointers and Callbacks
+123b. How do function pointers in C work
+124. Registering a Callback
+125. Functors in C++ 
+126. Operator Overloading in C++
+127. Scope Guard in C++
+128. C++11 introduced a standardized memory model. What does it mean?
+129. When is void* useful
+130. Virtual Destructor in C++
+131. Print Unordered Map. Get key and get value
+132. Self Referential Structures
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -371,6 +391,28 @@ http://stackoverflow.com/questions/197675/how-does-delete-know-the-size-of-the-o
             delete bar;
 
         if bar is a pointer to an array.
+
+13b.
+What happens on delete
+http://stackoverflow.com/questions/11603005/what-does-delete-command-really-do-for-memory-for-pointers-in-c
+
+    Think of memory as a big warehouse with lots of boxes to put things into.
+    When you call "new", the warehouse staff finds an unused box large enough for your needs, records that box as being owned by you (so it's not given to someone else), and gives you the number of that box so you can put your stuff into it.
+    This number would be the "pointer".
+
+    Now, when you "delete" that pointer, the reverse happens: the warehouse staff notes that this particular box is available again.
+    Contrary to real warehouse staff they aren't doing anything with the box — so if you look into it after a "delete" you might see your old stuff.
+    Or you might see somebody else’s stuff, if the box was reassigned in the meantime.
+
+    Technically, you are not allowed to look into your box once you have returned it to the pool, but this is a somewhat weird warehouse with no keys or guards, so you can still do whatever you want.
+    However, it might cause problems with the new owner of the box, so it's expected that you follow the rules.
+
+13c.
+Is there delete in Java
+
+    Java has no delete.
+    We just set the object to NULL.
+    Once the reference count has become zero the garbage collector will destroy the object.
 
 14.
 Setting pointers to NULL after delete
@@ -770,7 +812,6 @@ http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-poin
         int y = 6;
         int &r = x;
 
-
     Pointers can point nowhere (NULL), whereas reference always refer to an object.
         int *p = NULL;
         int &r = NULL; <--- compiling error
@@ -780,6 +821,71 @@ http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-poin
     Since a reference has the same address as the original variable itself, it is safe to think of a reference as another name for the same variable.
 
     There's no "reference arithmetics" (but you can take the address of an object pointed by a reference and do pointer arithmetics on it as in &obj + 5).
+
+26b.
+When to use References vs. Pointers
+http://stackoverflow.com/questions/7058339/when-to-use-references-vs-pointers
+http://stackoverflow.com/questions/21884825/reference-vs-pointer
+
+    A pointer is the address of the memory location.
+    You can change the value of that address to point at different memory addresses.
+
+    A reference is an alias of the variable.
+    You can only assign this alias during declaration.
+    You cannot change which variable the reference is an alias of after it's declared.
+
+    The following pointer assignments are not possible with references.
+        int a = 10;
+        int b = 20;
+
+        int* pInt = NULL; // A pointer pointing at nothing.
+        pInt = &a; // pInt now points at a
+        pInt = &b; // pInt now points at b
+
+    As for which one is better, it all depends on context.
+    I use references for method and function parameters.
+        void updateFoo(Foo& foo)
+
+    I use references to alias complex objects.
+        Foo& foo = bar.getBaz().getFoo(); // easy access to foo
+
+    I use pointers for dynamically allocated objects.
+        Foo* pFoo = new Foo();
+
+    New returns a pointer of whatever type you used to allocate space in memory, not a void*
+         auto p1 = new int[5];   // returns a pointer to an int pointing to the 1st element
+         auto p2 = new short[5]; // returns a pointer to a short pointing to the 1st element
+
+    I use pointers for things which may point at different values (including no value at all).
+        Foo* pFoo = NULL;
+
+        if (condition1)
+            pFoo = &foo1;
+        else (condition2)
+            pFoo = &foo2;
+
+    As a general rule, I default to references and use pointers in places where the limitations on references cause problems.
+
+    - Use reference wherever you can, pointers wherever you must.
+    - Avoid pointers until you can't.
+
+    The reason is that pointers make things harder to follow/read, less safe and far more dangerous manipulations than any other constructs.
+
+    So the rule of thumb is to use pointers only if there is no other choice.
+
+    For example, returning a pointer to an object is a valid option when the function can return nullptr in some cases and it is assumed it will.
+    That said, a better option would be to use something similar to boost::optional.
+
+    Another example is to use pointers to raw memory for specific memory manipulations.
+    That should be hidden and localized in very narrow parts of the code, to help limit the dangerous parts of the whole code base.
+
+    In your example, there is no point in using a pointer as argument because:
+        1. if you provide nullptr as the argument, you're going in undefined-behaviour-land;
+        2. the reference attribute version doesn't allow (without easy to spot tricks) the problem with 1.
+        3. the reference attribute version is simpler to understand for the user: you have to provide a valid object, not something that could be null.
+
+    If the behaviour of the function would have to work with or without a given object, then using a pointer as attribute suggests that you can pass nullptr as the argument and it is fine for the function.
+    That's kind of a contract between the user and the implementation.
 
 27.
 Smart Pointer:
@@ -837,6 +943,25 @@ http://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-c
         It can also be used to add const to an object, such as to call a member function overload.
         const_cast also works similarly on volatile, though that's less common.
 
+        const_cast is safe only if you're casting a variable that was originally non-const.
+        For example, if you have a function that takes a parameter of a const char *, and you pass in a modifiable char *, it's safe to const_cast that parameter back to a char * and modify it.
+        However, if the original variable was in fact const, then using const_cast will result in undefined behavior.
+
+            void func(const char *param, size_t sz, bool modify)
+            {
+                if(modify)
+                    strncpy(const_cast<char *>(param), sz, "new string");
+                printf("param: %s\n", param);
+            }
+
+            ...
+
+            char buffer[16];
+            const char *unmodifiable = "string constant";
+            func(buffer, sizeof(buffer), true);  // OK
+            func(unmodifiable, strlen(unmodifiable), false); // OK
+            func(unmodifiable, strlen(unmodifiable), true);  // UNDEFINED BEHAVIOR
+
     dynamic_cast is almost exclusively used for handling polymorphism.
         You can cast a pointer or reference to any polymorphic type to any other class type (a polymorphic type has at least one virtual function, declared or inherited).
         You can use it for more than just casting downwards -- you can cast sideways or even up another chain.
@@ -851,6 +976,192 @@ http://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-c
         Largely, the only guarantee you get with reinterpret_cast is that normally if you cast the result back to the original type, you will get the exact same value (but not if the intermediate type is smaller than the original type).
         There are a number of conversions that reinterpret_cast cannot do, too.
         It's used primarily for particularly weird conversions and bit manipulations, like turning a raw data stream into actual data, or storing data in the low bits of an aligned pointer.
+
+        All reinterpret_cast does is allow you to read the memory you passed in a different way.
+        You give it a memory location and you ask it to read that memory as if it was what you asked it to.
+        This is why it can only be used with pointers and references.
+
+        Let's take this code as an example:
+            #include <iostream>
+            int main()
+            {
+                float a = 12;
+                int b = *reinterpret_cast<int*>(&a);
+
+                std::cout << b;
+            }
+
+        So to break this line of code into more details *reinterpret_cast<int*>(&a);:
+            Take the reference of a
+            reinterpret_cast to an int*
+            Get back an int* that points to a
+            Deference the value of the returned pointer as int
+
+28b. 
+Static Cast vs Reinterpret Cast
+http://stackoverflow.com/questions/18544849/how-to-use-reinterpret-cast-in-c
+
+    static_casting a pointer to and from void* preserves the address.
+    That is, in the following, a, b and c all point to the same address:
+
+        int* a = new int();
+        void* b = static_cast<void*>(a);
+        int* c = static_cast<int*>(b);
+
+    reinterpret_cast only guarantees that if you cast a pointer to a different type, and then reinterpret_cast it back to the original type, you get the original value.
+
+    So in the following:
+        int* a = new int();
+        void* b = reinterpret_cast<void*>(a);
+        int* c = reinterpret_cast<int*>(b);
+
+    a and c contain the same value, but the value of b is unspecified.
+    (in practice it will typically contain the same address as a and c, but that's not specified in the standard, and it may not be true on machines with more complex memory systems.)
+
+    For casting to and from void*, static_cast should be preferred.
+
+28c.
+Static Cast vs Dynamic Cast
+http://stackoverflow.com/questions/2253168/dynamic-cast-and-static-cast-in-c
+
+static_cast< Type* >(ptr):
+    This takes the pointer in ptr and tries to safely cast it to a pointer of type Type*.
+    This cast is done at compile time.
+    It will only perform the cast if the type types are related.
+    If the types are not related, you will get a compiler error.
+
+    For example:
+        class B {};
+        class D : public B {};
+        class X {};
+
+        int main()
+        {
+          D* d = new D;
+          B* b = static_cast<B*>(d); // this works
+          X* x = static_cast<X*>(d); // ERROR - Won't compile
+          return 0;
+        }
+
+dynamic_cast< Type* >(ptr):
+    This again tries to take the pointer in ptr and safely cast it to a pointer of type Type*.
+    But this cast is executed at runtime, not compile time.
+    Because this is a run-time cast, it is useful especially when combined with polymorphic classes.
+    In fact, in certian cases the classes must be polymorphic in order for the cast to be legal.
+
+    Casts can go in one of two directions: from base to derived (B2D) or from derived to base (D2B).
+    It's simple enough to see how D2B casts would work at runtime.
+    Either ptr was derived from Type or it wasn't.
+    In the case of D2B dynamic_cast<>s, the rules are simple.
+    You can try to cast anything to anything else, and if ptr was in fact derived from Type, you'll get a Type* pointer back from dynamic_cast.
+    Otherwise, you'll get a NULL pointer.
+
+    But B2D casts are a little more complicated. Consider the following code:
+        #include <iostream>
+        using namespace std;
+
+        class Base
+        {
+        public:
+            virtual void DoIt() = 0;    // pure virtual
+            virtual ~Base() {};
+        };
+
+        class Foo : public Base
+        {
+        public:
+            virtual void DoIt() { cout << "Foo"; }; 
+            void FooIt() { cout << "Fooing It..."; }
+        };
+
+        class Bar : public Base
+        {
+        public :
+            virtual void DoIt() { cout << "Bar"; }
+            void BarIt() { cout << "baring It..."; }
+        };
+
+        Base* CreateRandom()
+        {
+            if( (rand()%2) == 0 )
+                return new Foo;
+            else
+                return new Bar;
+        }
+
+        int main()
+        {
+            for( int n = 0; n < 10; ++n )
+            {
+                Base* base = CreateRandom();
+
+                    base->DoIt();
+
+                Bar* bar = (Bar*)base;
+                bar->BarIt();
+            }
+          return 0;
+        }
+
+    main() can't tell what kind of object CreateRandom() will return, so the C-style cast Bar* bar = (Bar*)base; is decidedly not type-safe.
+    How could you fix this? One way would be to add a function like bool AreYouABar() const = 0; to the base class and return true from Bar and false from Foo.
+    But there is another way: use dynamic_cast<>:
+
+        int main()
+        {
+            for( int n = 0; n < 10; ++n )
+            {
+                Base* base = CreateRandom();
+
+                base->DoIt();
+
+                Bar* bar = dynamic_cast<Bar*>(base);
+                Foo* foo = dynamic_cast<Foo*>(base);
+                if( bar )
+                    bar->BarIt();
+                if( foo )
+                    foo->FooIt();
+            }
+          return 0;
+
+        }
+
+    The casts execute at runtime, and work by querying the object (no need to worry about how for now), asking it if it the type we're looking for.
+    If it is, dynamic_cast<Type*> returns a pointer; otherwise it returns NULL.
+
+    In order for this base-to-derived casting to work using dynamic_cast<>, Base, Foo and Bar must be what the Standard calls polymorphic types.
+    In order to be a polymorphic type, your class must have at least one virtual function.
+    If your classes are not polymorphic types, the base-to-derived use of dynamic_cast will not compile.
+
+    Example:
+        class Base {};
+        class Der : public Base {};
+
+
+        int main()
+        {
+            Base* base = new Der;
+            Der* der = dynamic_cast<Der*>(base); // ERROR - Won't compile
+
+            return 0;
+        }
+
+    Adding a virtual function to base, such as a virtual dtor, will make both Base and Der polymorphic types:
+        class Base 
+        {
+        public:
+            virtual ~Base(){};
+        };
+        class Der : public Base {};
+
+
+        int main()
+        {
+            Base* base = new Der;
+            Der* der = dynamic_cast<Der*>(base); // OK
+
+            return 0;
+        }
 
 29.
 C++ to Java:
@@ -914,7 +1225,6 @@ http://stackoverflow.com/questions/5838711/c-cin-input-with-spaces
               std::cout<<"It is a space!!!"<<std::endl;
        }
 
-
     int main()
     {
        std::string name, title;
@@ -947,7 +1257,6 @@ http://stackoverflow.com/questions/17997204/does-an-empty-string-contain-an-empt
         cout << s[0] << endl;  //output empty line
         return 0;
     }
-
 
     There's a special rule that you can access s[n] where n is the length of s.
     The result is a null character (i.e. the value that results from value-initializing the character type) and attempting to modify it causes undefined behaviour
@@ -986,11 +1295,64 @@ http://stackoverflow.com/questions/2331316/what-is-stack-unwinding
     This is done by the compiler inserting calls to destructors of automatic (stack) variables.
     Now this is a very powerful concept leading to the technique called RAII, that is Resource Acquisition Is Initialization, that helps us manage resources like memory, database connections, open file descriptors, etc. in C++.
 
+    The process of removing function entries from function call stack at run time is called Stack Unwinding.
+    Stack Unwinding is generally related to Exception Handling.
+    In C++, when an exception occurs, the function call stack is linearly searched for the exception handler, and all the entries before the function with exception handler are removed from the function call stack.
+    So exception handling involves Stack Unwinding if exception is not handled in same function (where it is thrown).
+
+    For example, output of the following program is:
+         f3() Start
+         f2() Start
+         f1() Start
+         Caught Exception: 100
+         f3() End
+
+        #include <iostream>
+        using namespace std;
+         
+        // A sample function f1() that throws an int exception 
+        void f1() throw (int) {
+          cout<<"\n f1() Start ";
+          throw 100;
+          cout<<"\n f1() End "; 
+        }
+         
+        // Another sample function f2() that calls f1()
+        void f2() throw (int) {
+          cout<<"\n f2() Start ";
+          f1();
+          cout<<"\n f2() End ";
+        }
+          
+        // Another sample function f3() that calls f2() and handles exception thrown by f1()
+        void f3() {
+          cout<<"\n f3() Start ";
+          try {
+            f2();
+          }
+          catch(int i) {
+           cout<<"\n Caught Exception: "<<i;
+          }
+          cout<<"\n f3() End";
+        }
+         
+        // A driver function to demonstrate Stack Unwinding  process
+        int main() {
+          f3();
+          
+          getchar();
+          return 0;
+        } 
+
 36.
 RAII:
 http://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
 http://www.tomdalling.com/blog/software-design/resource-acquisition-is-initialisation-raii-explained/
 http://stackoverflow.com/questions/6500313/why-should-c-programmers-minimize-use-of-new?rq=1
+
+    Smart pointers will use the RAII philosophy to ensure that heap allocated objects are destroyed any time the pointer variable is destroyed.
+    Smart pointer is a variation of RAII. RAII means resource acquisition is initialization.
+    Smart pointer acquires a resource (memory) before usage and then throws it away automatically in a destructor.
 
     In C++ there's a neat construct called a destructor.
     This mechanism allows you to manage resources by aligning the lifetime of the resource with the lifetime of a variable.
@@ -1073,8 +1435,8 @@ http://stackoverflow.com/questions/12647217/making-a-c-class-a-monitor-in-the-co
 
 39.
 PThreads:
-http://stackoverflow.com/questions/21323628/warning-cast-to-from-pointer-from-to-integer-of-different-size
-http://stackoverflow.com/questions/1640423/error-cast-from-void-to-int-loses-precision
+http://stackoverflow.com/questions/22427007/difference-between-pthread-exit-pthread-join-and-pthread-detach
+http://stackoverflow.com/questions/20824229/when-to-use-pthread-exit-and-when-to-use-pthread-join-in-linux
 
     Pthread Join and Pthread exit
 http://stackoverflow.com/questions/20824229/when-to-use-pthread-exit-and-when-to-use-pthread-join-in-linux
@@ -1084,6 +1446,19 @@ http://stackoverflow.com/questions/20824229/when-to-use-pthread-exit-and-when-to
     The join method has your thread of the main function explicitly wait for all threads that are to be "joined".
 
     The pthread_exit method terminates your main function and thread in a controlled way. main has the particularity that ending main otherwise would be terminating your whole process including all other threads.
+
+    pthread_exit:
+        pthread_exit is called from the thread itself to terminate its execution (and return a result) early.
+
+    pthread_join:
+        pthread_join is called from another thread (usually the thread that created it) to wait for a thread to terminate and obtain its return value.
+        It can be called before or after the thread you're waiting for calls pthread_exit.
+        If before, it will wait for the exit to occur. If after, it simply obtains the return value and releases the pthread_t resources.
+
+    pthread_detach:
+        pthread_detach can be called from either the thread itself or another thread, and indicates that you don't want the thread's return value or the ability to wait for it to finish.
+        This is useful because otherwise, until you call pthread_join, the pthread_t value remains valid and consumes resources - at the very least, resources to store the return value and tying up one possible value of pthread_t.
+        If you're using pthread_detach, normally you call it from either the new thread or the creating thread as soon as the new thread is created (right after pthread_create)
 
 40.
 Convert Vector to Array and Array to Vector
@@ -1166,7 +1541,10 @@ Unicode vs Ascii
 http://stackoverflow.com/questions/19212306/whats-the-difference-between-ascii-and-unicode
 
     ASCII defines 128 characters, which map to the numbers 0–127.
-    Unicode defines (less than) 221 characters, which, similarly, map to numbers 0–221 (though not all numbers are currently assigned, and some are reserved).
+    It can fit in a single 8-bit byte, the values 128 through 255 tended to be used for other characters
+
+    Unicode defines (less than) 2^21 characters, which, similarly, map to numbers 0–221 (though not all numbers are currently assigned, and some are reserved).
+    Unicode characters don't generally fit into one 8-bit byte, there are numerous ways of storing Unicode characters in byte sequences, such as UTF-32 and UTF-8
 
 45.
 Where are Class Members stored in memory
@@ -1233,8 +1611,6 @@ Memory Layout - Code Segment Data Segment Stack Heap
         Data segment stores program data.
         This data could be in form of initialized or uninitialized variables, and it could be local or global.
         Data segment is further divided into four sub-data segments (initialized data segment, uninitialized or .bss data segment, stack, and heap)
-
-
 
 46.
 C++ Class vs C Struct Memory Layout
@@ -1337,7 +1713,6 @@ http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained?rq=1
         You use virtual functions when you want to override a certain behavior (read method) for your derived class rather than the one implemented for the base class and
     you want to do so at run-time through a pointer to the base class. 
 
-
 49.
 Virtual Functions
 http://stackoverflow.com/questions/2391679/why-do-we-need-virtual-methods-in-c
@@ -1403,8 +1778,56 @@ http://stackoverflow.com/questions/2391679/why-do-we-need-virtual-methods-in-c
         func(animal); // outputs: "I'm eating generic food."
         func(cat);    // outputs: "I'm eating a rat."
 
+49b.
+How Virtual Functions Work
+http://www.learncpp.com/cpp-tutorial/125-the-virtual-table/
+http://www.go4expert.com/articles/virtual-table-vptr-t16544/
 
-50. new vs new()
+        class Base  
+         {  
+         public:  
+            virtual void function1() {cout<<"Base :: function1()\n";};  
+            virtual void function2() {cout<<"Base :: function2()\n";};  
+            virtual ~Base(){};
+        };  
+           
+        class D1: public Base  
+        {  
+        public:  
+           ~D1(){};
+           virtual void function1() { cout<<"D1 :: function1()\n";};
+        };  
+          
+        class D2: public Base  
+        {  
+        public:  
+           ~D2(){};
+           virtual void function2() { cout<< "D2 :: function2\n";};  
+        };  
+
+        int main()
+        {
+          D1 *d = new D1;;
+          Base *b = d; 
+
+          b->function1();
+          b->function2();
+
+          delete (b);
+          
+          return (0);
+        }
+
+    Here in function main b pointer gets assigned to D1's _vptr and now starts pointing to D1's vtable.
+    Then calling to a function1(), makes it's _vptr startightway calls D1's vtable function1() and so in turn calls D1's method i.e. function1() as D1 has it's own function1() defined it's class.
+
+    Where as pointer b calling to a function2(), makes it's _vptr points to D1's vatble which in-turn pointing to Base class's vtable function2 () as shown in the diagram (as D1 class does not have it's own definition or function2()).
+
+    So, now calling delete on pointer b follows the _vptr - which is pointing to D1's vtable calls it's own class's destructor i.e. D1 class's destructor and then calls the destrcutor of Base class - this as part of when dervied object gets deleted it turn deletes it's emebeded base object.
+    Thats why we must always make Base class's destrcutor as virtual if it has any virtual functions in it.
+
+50.
+new vs new()
 http://stackoverflow.com/questions/620137/do-the-parentheses-after-the-type-name-make-a-difference-with-new
 
     new Thing(); is explicit that you want a constructor called whereas new Thing; is taken to imply you don't mind if the constructor isn't called
@@ -1412,6 +1835,7 @@ http://stackoverflow.com/questions/620137/do-the-parentheses-after-the-type-name
     If used on a struct/class with a user-defined constructor, there is no difference.
     If called on a trivial struct/class (e.g. struct Thing { int i; };) then new Thing; is like malloc(sizeof(Thing)); whereas new Thing(); is like calloc(sizeof(Thing)); - it gets zero initialized.
 
+    new uses std::nothrow to check if nullptr got returned.
 
 51.
 Reading Multiple words from cin
@@ -1460,7 +1884,6 @@ http://stackoverflow.com/questions/131803/unsigned-int-vs-size-t
 
         for (size_t i = strlen (str); i-- > 0; )
 
-
     So, you ask, why not just use an unsigned int?
         Because unsigned int is not the only unsigned integral type.
         size_t could be any of unsigned char, unsigned short, unsigned int, unsigned long or unsigned long long, depending on the implementation.
@@ -1477,9 +1900,48 @@ http://stackoverflow.com/questions/131803/unsigned-int-vs-size-t
         Almost all 32-bit operators on these platforms require two instructions, if not more, because they work with the 32 bits in two 16-bit chunks.
         For example, moving a 32-bit long usually requires two machine instructions -- one to move each 16-bit chunk.
 
+    The size_t type is the unsigned integer type that is the result of the sizeof operator (and the offsetof operator),
+    so it is guaranteed to be big enough to contain the size of the biggest object your system can handle (e.g., a static array of 8Gb).
+
+    There are 5 standard unsigned integer types in C:
+        unsigned char
+        unsigned short
+        unsigned int
+        unsigned long
+        unsigned long long
+
+    with various requirements for their sizes and ranges (briefly, each type's range is a subset of the next type's range, but some of them may have the same range).
+
+    size_t is a typedef (i.e., an alias) for some unsigned type, (probably one of the above but possibly an extended unsigned integer type, though that's unlikely). It's the type yielded by the sizeof operator.
+
+    On one system, it might make sense to use unsigned int to represent sizes; on another, it might make more sense to use unsigned long or unsigned long long. (size_t is unlikely to be either unsigned char or unsigned short, but that's permitted).
+
+    The purpose of size_t is to relieve the programmer from having to worry about which of the predefined types is used to represent sizes.
+
+    Code that assumes sizeof yields an unsigned int would not be portable. Code that assumes it yields a size_t is more likely to be portable.
+
 54.
 size_t vs size_type
 http://stackoverflow.com/questions/918567/size-t-vs-containersize-type
+http://stackoverflow.com/questions/8507851/stdsize-t-vs-size-t-vs-stdstringsize-type
+
+    vector<int>::size_type x;
+        I would read it as "declare x as a variable of a type suitable for holding the size of a vector".
+        The vector defines its own type for its length, and it's always cleanest to use that if possible, rather than "guessing" and using int, unsigned int, long, unsigned long or size_t etc directly as you'd otherwise need to do
+
+    You could use size_type when using those classes if you like.
+    In most cases, you'll know that it's the same as size_t, so you might as well use that and save a bit of typing.
+    If you're writing generic code, where you don't know what the class is, then it's better to use size_type in case it's not compatible with size_t.
+
+    For example, you might want to write a container designed to hold more items than can be represented by size_t.
+    You might use some kind of big number type to represent the container's size, which isn't convertible to size_t.
+    In that case, code like size_t s = c.size() would fail to compile - you'd need to use Container::size_type instead.
+
+    The standard containers define size_type as a typedef to Allocator::size_type (Allocator is a template parameter), which for std::allocator is defined to be size_t.
+    So for the standard case, they are the same.
+
+    However, if you use a custom allocator a different underlying type could be used.
+    So container::size_type is preferable for maximum portability.
 
     size_type - C++
     For better portability
@@ -1489,6 +1951,11 @@ http://stackoverflow.com/questions/918567/size-t-vs-containersize-type
 
     This is how SIZE_TYPE should be used
         for(vector<string>::size_type i = 0; i < dataVecs.size(); i++)
+
+    size_t is defined as the type used for the size of an object and is platform dependent.
+    container::size_type is the type that is used for the number of elements in the container and is container dependent.
+
+    All std containers use size_t as the size_type, but each independent library vendor chooses a type that it finds appropriate for its container.
 
 55.
 File IO
@@ -1569,7 +2036,6 @@ http://stackoverflow.com/questions/455518/how-many-and-which-are-the-uses-of-con
     Since the point object is passed by value, there is little or no benefit to declaring it const.
     Normally const pass-by-value is unuseful and misleading at best.
 
-
     CONST MEMBER FUNCTION:
         const int* const Method3(const int* const&) const;
     The final const means that the function Method3 does not modify the non mutable members of its class.
@@ -1590,7 +2056,6 @@ http://stackoverflow.com/questions/455518/how-many-and-which-are-the-uses-of-con
 
         int x = z + c4;
     in the same way as if c4 were a variable stored in some place in memory.
-
 
 57a.
 Const vs ReadOnly
@@ -1671,7 +2136,6 @@ http://stackoverflow.com/questions/10240161/reason-to-pass-a-pointer-by-referenc
     You would want to pass a pointer by reference if you have a need to modify the pointer rather than the object that the pointer is pointing to.
 
     This is similar to why double pointers are used; using a reference to a pointer is slightly safer than using pointers.
-
 
     50% of C++ programmers like to set their pointers to null after a delete:
 
@@ -1785,9 +2249,20 @@ Find rightmost set bit
 http://www.geeksforgeeks.org/position-of-rightmost-set-bit/
 http://stackoverflow.com/questions/20026243/find-2-missing-numbers-in-an-array-of-integers-with-two-missing-values
 
-        log2(n&-n)+1;
+    log2(n&-n)+1;
+    Algorithm: (Example 18(010010))
 
-    Find leftmost set bit
+        1. Take two's complement of the given no as all bits are reverted
+        except the first '1' from right to left (10111)
+
+        2  Do an bit-wise & with original no, this will return no with the
+        required one only (00010)
+
+        3  Take the log2 of the no, you will get position -1 (1)
+
+        4  Add 1 (2)
+
+    Find rightmost set bit
         x = x &(~(x-1));
 
 62. 
@@ -1880,6 +2355,7 @@ http://stackoverflow.com/questions/1674032/static-const-vs-define-vs-enum
 62a.
 C++ semantics of `static const` vs `const`
 http://stackoverflow.com/questions/3709207/c-semantics-of-static-const-vs-const
+http://objectmix.com/c/786892-const-int-same-static-const-int.html
 
 Question:
     In C++ specifically, what are the semantic differences between for example:
@@ -1888,7 +2364,23 @@ Question:
         const int x = 0 ;
     for both static as a linkage and a storage class specifier (i.e. inside and outside a function).
 
-Solution:
+In C:
+    static determines visibility outside of a function or a variables lifespan inside.
+    So it has nothing to do with const per se.
+
+    const means that you're not changing the value after it has been initialised.
+
+    static inside a function means the variable will exist before and after the function has ended.
+
+    static outside of a function means that the scope of the symbol marked static is limited to that .c file and cannot be seen outside of it.
+
+Solution In C++:
+    In a CLASS context, static declares that there will be only 1 such class-wide data member; as opposed to there being 1 per-instance (inside every object of the class).
+    The const declares that this variable will receive a value only during its construction.
+
+    Inside a member function of a class (or for that matter, any function), static means that it's non-automatic; that is, that its value survives returning from the function (also that it can have a value prior to ever entering it, too).
+    It also means that multiple threads of execution through such a routine can contend over access to the variable.
+
     At file scope, no difference in C++.
     const makes internal linkage the default, and all global variables have static lifetime.
     But the first variant has the same behavior in C, so that may be a good reason to use it.
@@ -1905,6 +2397,13 @@ Solution:
 
 62b.
 C++ Const Read Only
+http://stackoverflow.com/questions/3709207/c-semantics-of-static-const-vs-const
+
+    "const means read-only, not constant", i.e., "Compiler, if you see someone trying to modify this const thing, bark very loudly.
+    This is the reason something can be const & volatile at the same time.
+
+    It's more "Compiler, if you see me try to modify this const thing (or give someone else permission to do so)", bark very loudly.
+    In most context, const applies to a view of the variable and not the variable itself, someone else can have a non-const view of the same variable, and the compiler will be quite silent when they modify it. 
 
 62b.
 Const defaults to Internal Linkage in C++ and External Linkage in C
@@ -1931,6 +2430,7 @@ Thinking in C++ - Pg 289
 62d.
 Superiority of unnamed namespace over static
 http://stackoverflow.com/questions/4422507/superiority-of-unnamed-namespace-over-static
+http://www.comeaucomputing.com/techtalk/#nostatic
 
 Question:
     The project makes frequent use of unnamed namespaces.
@@ -2173,12 +2673,24 @@ http://stackoverflow.com/questions/5383318/struct-assignment-or-memcpy
     The semantic meaning of = is an assignment, while memcpy just copies memory.
     That's a huge difference in readability as well, although memcpy does the same in this case.
 
-    Also, if the structure is heavily padded, assignment might make the compiler emit something more efficient, since it doesn't have to copy the padding (and it knows where it is),
-    but mempcy() doesn't so it will always copy the exact number of bytes you tell it to copy.
+    Also, if the structure is heavily padded, assignment might make the compiler emit something more efficient, since it doesn't have to copy the padding (and it knows where it is), but mempcy() doesn't so it will always copy the exact number of bytes you tell it to copy.
 
+    Beware though, that copying structs that contain pointers to heap-allocated memory can be a bit dangerous, since by doing so you're aliasing the pointer, and typically making it ambiguous who owns the pointer after the copying operation.
+
+    For these situations a "deep copy" is really the only choice, and that needs to go in a function
 
     MEMCPY is a SHALLOW COPY
     is a shallow copy. In other words, if you have a char * pointing to a specific string, both structures will point to the same string.
+
+    Since C90, you can simply use:
+        dest_struct = source_struct;
+
+    as long as the string is memorized inside an array:
+        struct xxx {
+            char theString[100];
+        };
+
+    Otherwise, if it's a pointer, you'll need to copy it by hand.
 
 71.
 Why 2's complement is used to represent negative numbers
@@ -2260,7 +2772,6 @@ Extern Linkage and Intern linkage and NO linkage
         Automatic (local) variables exist only temporarily, on the stack, while a function is being
         called. The linker doesn’t know about automatic variables, and they have no linkage
 
-
 73.
 How a Computer Compiles and Executes a C++ Program
 http://sites.psu.edu/bdk5043/wp-content/uploads/sites/11448/2014/04/process_description.pdf
@@ -2278,7 +2789,7 @@ http://stackoverflow.com/questions/20594520/what-exactly-does-stringstream-do
     os << "dec: " << 15 << " hex: " << std::hex << 15 << endl;
     cout<<os.str()<<endl;
 
-    Sometimes it is very convenient to use stringstream to convert bettween strings and other numerical types.
+    Sometimes it is very convenient to use stringstream to convert between strings and other numerical types.
 
 75.
 Steps involved for execution of a C program
@@ -2316,7 +2827,6 @@ Thinking in C++
 Abstract Class vs Interface
 http://stackoverflow.com/questions/479142/when-to-use-an-interface-instead-of-an-abstract-class-and-vice-versa
 http://stackoverflow.com/questions/197893/why-an-abstract-class-implementing-an-interface-can-miss-the-declaration-impleme
-
 
     Interface:
         - Interfaces have no implementation.
@@ -2503,6 +3013,16 @@ http://www.tutorialspoint.com/cplusplus/cpp_dynamic_memory.htm
 80.
 How is memory allocated to Vectors
 http://stackoverflow.com/questions/12507114/how-does-a-stack-allocated-vector-expand-in-c
+
+    vector<Type> vect;
+        will allocate the vector, i.e. the header info, on the stack, but the elements on the free store ("heap").
+
+    vector<Type> *vect = new vector<Type>;
+        allocates everything on the free store.
+
+    vector<Type*> vect;
+        will allocate the vector on the stack and a bunch of pointers on the free store, but where these point is determined by how you use them (you could point element 0 to the free store and element 1 to the stack, say).
+
 
     Internally, a vector<string> will most likely consist of a string* pointing at the actual data and probably two more size_t members indicating occupied and reserved memory.
     All the rest will be on the heap.
@@ -2701,6 +3221,20 @@ http://www.csee.umbc.edu/~chang/cs313.s02/stack.shtml
 
            foo(&x, a, b, c) ;
 
+82b.
+Where in memory are return values stored in memory
+http://stackoverflow.com/questions/5472008/where-in-memory-are-return-values-stored-in-memory
+
+    There is no general answer to this question, because it depends on the target architecture.
+    There is usually a Binary API Spec for any target architecture that defines that and the compiler creates codes that works according to this spec.
+    Most architectures use a register for passing the return value back, simply because it is the fastest way to do it.
+    That is only possible if the value will fit into a register, of course.
+    If not, they might use a register pair (e.g. lower 32 bit in one register, upper 32 bit in another one), or they will pass it back via the stack.
+    Some architectures never use registers and always pass back via the stack.
+    Since the caller must create a stack frame before calling the function (there are exceptions to this rule, but lets stay with the default case here), the stack frame is still there when the function returns to the caller and the caller knows how to access it, it has to know that, since it must also clean the stack frame on return.
+    On most architectures the caller cleans the stack frame, not the callee, since the caller knows how many arguments it has passed via stack (e.g. for a C function that takes a variable number of arguments), while the callee does not (not at compile time, the callee may only know that at runtime), thus it makes more sense to let the caller clean it.
+    And before doing that, the caller can read back any value of the stack frame it wishes to retrieve.
+
 83.
 What is Type Safe
 http://stackoverflow.com/questions/260626/what-is-type-safe
@@ -2858,7 +3392,6 @@ http://stackoverflow.com/questions/18590086/use-of-rtti-in-c
         }
 
     Notice that RTTI comes at the cost of runtime checks and thus performance loss, but you probably already know that if you are familiar with the concept.
-
 
 88.
 When to use static methods
@@ -3096,7 +3629,93 @@ http://www.stroustrup.com/bs_faq2.html#placement-delete
 
 96.
 Auto, Unique, Shared Pointers, Weak Pointers and Scoped Pointers
+http://stackoverflow.com/questions/569775/smart-pointers-boost-explained
+http://stackoverflow.com/questions/6876751/differences-between-unique-ptr-and-shared-ptr
+
     auto_ptr, unique_ptr and shared_ptr
+
+    Raw Pointers: Only use if you really, really, really, really, know what you are doing and have carefully hidden usage behind an interface.
+    std::auto_ptr: Obsolete never use.
+    std::unique_ptr: Singleton pointer that transfers ownership upon assignment.
+    std::shared_ptr: Reference counted pointer that does not transfer ownership upon assignment but increments its reference count. When all references leave scope or are explicitly std::shared_ptr::reset the underlying deallocator is called.
+    std::weak_ptr: A sub-type std::shared_ptr that does not increment the reference count and is invalidated when its parent std::shared_ptr no longer exists. May return and invalid reference. Always check before using.
+
+    Basic properties of smart pointers
+    It's easy when you have properties that you can assign each smart pointer. There are three important properties.
+
+        no ownership at all
+        transfer of ownership
+        share of ownership
+
+    The first means that a smart pointer cannot delete the object, because it doesn't own it. The second means that only one smart pointer can ever point to the same object at the same time. If the smart pointer is to be returned from functions, the ownership is transferred to the returned smart pointer, for example.
+
+    The third means that multiple smart pointers can point to the same object at the same time. This applies to a raw pointer too, however raw pointers lack an important feature: They do not define whether they are owning or not. A share of ownership smart pointer will delete the object if every owner gives up the object. This behavior happens to be needed often, so shared owning smart pointers are widely spread.
+
+    Some owning smart pointers support neither the second nor the third. They can therefore not be returned from functions or passed somewhere else. Which is most suitable for RAII purposes where the smart pointer is kept local and is just created so it frees an object after it goes out of scope.
+
+    Share of ownership can be implemented by having a copy constructor. This naturally copies a smart pointer and both the copy and the original will reference the same object. Transfer of ownership cannot really be implemented in C++ currently, because there are no means to transfer something from one object to another supported by the language: If you try to return an object from a function, what is happening is that the object is copied. So a smart pointer that implements transfer of ownership has to use the copy constructor to implement that transfer of ownership. However, this in turn breaks its usage in containers, because requirements state a certain behavior of the copy constructor of elements of containers which is incompatible with this so-called "moving constructor" behavior of these smart pointers.
+
+    C++1x provides native support for transfer-of-ownership by introducing so-called "move constructors" and "move assignment operators". It also comes with such a transfer-of-ownership smart pointer called unique_ptr.
+    Categorizing smart pointers
+
+    scoped_ptr is a smart pointer that is neither transferable nor sharable. It's just usable if you locally need to allocate memory, but be sure it's freed again when it goes out of scope. But it can still be swapped with another scoped_ptr, if you wish to do so.
+
+    shared_ptr is a smart pointer that shares ownership (third kind above). It is reference counted so it can see when the last copy of it goes out of scope and then it frees the object managed.
+
+    weak_ptr is a non-owning smart pointer. It is used to reference a managed object (managed by a shared_ptr) without adding a reference count. Normally, you would need to get the raw pointer out of the shared_ptr and copy that around. But that would not be safe, as you would not have a way to check when the object was actually deleted. So, weak_ptr provides means by referencing an object managed by shared_ptr. If you need to access the object, you can lock the management of it (to avoid that in another thread a shared_ptr frees it while you use the object) and then use it. If the weak_ptr points to an object already deleted, it will notice you by throwing an exception. Using weak_ptr is most beneficial when you have a cyclic reference: Reference counting cannot easily cope with such a situation.
+
+    intrusive_ptr is like a shared_ptr but it does not keep the reference count in a shared_ptr but leaves incrementing/decrementing the count to some helper functions that need to be defined by the object that is managed. This has the advantage that an already referenced object (which has a reference count incremented by an external reference counting mechanism) can be stuffed into an intrusive_ptr - because the reference count is not anymore internal to the smart pointer, but the smart pointer uses an existing reference counting mechanism.
+
+    unique_ptr is a transfer of ownership pointer. You cannot copy it, but you can move it by using C++1x's move constructors:
+
+    unique_ptr<type> p(new type);
+    unique_ptr<type> q(p); // not legal!
+    unique_ptr<type> r(move(p)); // legal. p is now empty, but r owns the object
+    unique_ptr<type> s(function_returning_a_unique_ptr()); // legal!
+
+    This is the semantic that std::auto_ptr obeys, but because of missing native support for moving, it fails to provide them without pitfalls. unique_ptr will automatically steal resources from a temporary other unique_ptr which is one of the key features of move semantics. auto_ptr will be deprecated in the next C++ Standard release in favor of unique_ptr. C++1x will also allow stuffing objects that are only movable but not copyable into containers. So you can stuff unique_ptr's into a vector for example.
+
+    scoped_ptr is the simplest. When it goes out of scope, it is destroyed. The following code is illegal (scoped_ptrs are non-copyable) but will illustrate a point:
+
+        std::vector< scoped_ptr<T> > tPtrVec;
+        {
+             scoped_ptr<T> tPtr(new T());
+             tPtrVec.push_back(tPtr);
+             // raw T* is freed
+        }
+        tPtrVec[0]->DoSomething(); // accessing freed memory
+
+    shared_ptr is reference counted. Every time a copy or assignment occurs, the reference count is incremented. Every time an instance's destructor is fired, the reference count for the raw T* is decremented. Once it is 0, the pointer is freed.
+
+        std::vector< shared_ptr<T> > tPtrVec;
+        {
+             shared_ptr<T> tPtr(new T());
+             // This copy to tPtrVec.push_back and ultimately to the vector storage
+             // causes the reference count to go from 1->2
+             tPtrVec.push_back(tPtr);
+             // num references to T goes from 2->1 on the destruction of tPtr
+        }
+        tPtrVec[0]->DoSomething(); // raw T* still exists, so this is safe
+
+    weak_ptr is a weak-reference to a shared pointer that requires you to check to see if the pointed-to shared_ptr is still around
+
+        std::vector< weak_ptr<T> > tPtrVec;
+        {
+             shared_ptr<T> tPtr(new T());
+             tPtrVec.push_back(tPtr);
+             // num references to T goes from 1->0
+        }
+        shared_ptr<T> tPtrAccessed =  tPtrVec[0].lock();
+        if (tPtrAccessed[0].get() == 0)
+        {
+             cout << "Raw T* was freed, can't access it"
+        }
+        else
+        {
+             tPtrVec[0]->DoSomething(); // raw 
+        }
+
+    intrusive_ptr is typically used when there is a 3rd party smart ptr you must use. It will call a free function to add and decrement the reference count.See the link to boost documentation for more info.
 
 97.
 Vector - Accessing member elements using "at()" vs "[]"
@@ -3113,7 +3732,7 @@ http://stackoverflow.com/questions/10559283/how-to-create-a-vector-of-user-defin
     std::vector<int> arr(20);
 
 99.
-How to use memset or fill_n to initialize a dynamic two dimensional array in C++
+How to use memset or fill_n to initialize a dynamic two dimensional TwoD array in C++
 http://stackoverflow.com/questions/36506331/how-to-use-memset-or-fill-n-to-initialize-a-dynamic-two-dimensional-array-in-c
 
     1.
@@ -3161,6 +3780,41 @@ http://stackoverflow.com/questions/20516773/stdunique-lockstdmutex-or-stdlock-gu
     So you always use lock_guard, unless you need the capabilities of unique_lock.
     A condition_variable needs a unique_lock.
 
+    The class lock_guard is a mutex wrapper that provides a convenient RAII-style mechanism for owning a mutex for the duration of a scoped block.
+
+    When a lock_guard object is created, it attempts to take ownership of the mutex it is given.
+    When control leaves the scope in which the lock_guard object was created, the lock_guard is destructed and the mutex is released. 
+
+        #include <thread>
+        #include <mutex>
+        #include <iostream>
+         
+        int g_i = 0;
+        std::mutex g_i_mutex;  // protects g_i
+         
+        void safe_increment()
+        {
+            std::lock_guard<std::mutex> lock(g_i_mutex);
+            ++g_i;
+         
+            std::cout << std::this_thread::get_id() << ": " << g_i << '\n';
+         
+            // g_i_mutex is automatically released when lock
+            // goes out of scope
+        }
+         
+        int main()
+        {
+            std::cout << __func__ << ": " << g_i << '\n';
+         
+            std::thread t1(safe_increment);
+            std::thread t2(safe_increment);
+         
+            t1.join();
+            t2.join();
+         
+            std::cout << __func__ << ": " << g_i << '\n';
+        }
 103.
 Recursive Mutex
     The same lock can be obtained by the same thread multiple times.
@@ -3259,6 +3913,15 @@ Copy Constructor vs Assignment Operator:
 111.
 Volatile keyword:
 http://stackoverflow.com/questions/246127/why-is-volatile-needed-in-c
+
+        quit = 0;
+        while (!quit)
+        {
+            /* very small loop which is completely visible to the compiler */
+        }
+
+    The compiler is allowed to notice the loop body does not touch the quit variable and convert the loop to a while (true) loop.
+    Even if the quit variable is set on the signal handler for SIGINT and SIGTERM; the compiler has no way to know that
 
 112.
 How do you declare an interface in C++
@@ -3546,6 +4209,29 @@ http://stackoverflow.com/questions/20826078/priority-queue-comparison
             }
         }
 
+    EXAMPLE 2:
+        struct MeetingTime
+        {
+            int startTime;
+            int endTime;
+
+            MeetingTime(double sT, double eT) : startTime(sT),
+                                                endTime(eT) { }
+
+            bool operator < (const MeetingTime& meetTime) const
+            {
+                return (startTime < meetTime.startTime);
+            }
+
+            bool operator > (const MeetingTime& meetTime) const
+            {
+                return (endTime > meetTime.endTime);
+            }
+        };
+
+        vector<struct MeetingTime> meetingsEndTimeSort;
+        sort(meetingsEndTimeSort.begin(), meetingsEndTimeSort.end(), greater<MeetingTime>());
+
 122.
 C++ Erase vector element by value rather than by position
 http://stackoverflow.com/questions/3385229/c-erase-vector-element-by-value-rather-than-by-position
@@ -3559,6 +4245,676 @@ http://stackoverflow.com/questions/3385229/c-erase-vector-element-by-value-rathe
     Take a look at the description of remove(): It moves all values not equal to the value passed to the beginning of the range [begin,end).
     With your example in the question you'd get 5,9,2,0,7,7.
     As remove() however returns an iterator to the new end, vec.erase() can remove the obsolete elements (i.e. the second 7 here) if that is needed.
+
+123.
+Function Pointers and Callbacks
+http://stackoverflow.com/questions/8975208/whats-the-use-of-function-pointers
+http://stackoverflow.com/questions/2592137/what-is-the-point-of-function-pointers
+
+    Most examples boil down to callbacks:
+    You call a function f() passing the address of another function g(), and f() calls g() for some specific task.
+    If you pass f() the address of h() instead, then f() will call back h() instead.
+
+     Callers can make f() behave differently by passing different callback functions.
+     A classic is qsort() from the C standard library that takes its sorting criterion as a pointer to a comparison function. 
+
+        int buttonID = CreateButton ("Click Me!", 100, 100, 200, 100, onClick);
+    This would create a button at (100,100) with width 200 and height 100.
+    Every time you click it, onClick is called.
+
+http://stackoverflow.com/questions/1758564/what-are-function-pointers-used-for-and-how-would-i-use-them
+    A simple case is like this: You have an array of operations (functions) according to your business logic.
+    You have a hashing function that reduces an input problem to one of the business logic functions.
+    A clean code would have an array of function pointers, and your program will deduce an index to that array from the input and call it.
+
+    Here is a sample code:
+        typedef void (*fn)(void) FNTYPE;
+        FNTYPE fn_arr[5];
+
+        fn_arr[0] = fun1; // fun1 is previously defined
+        fn_arr[1] = fun2;
+        ...
+
+        void callMyFun(string inp) {
+            int idx = decideWhichFun(inp); // returns an int between 0 and 4
+            fn_arr[idx]();
+        }
+
+    But of course, callbacks are the most common usage. Sample code below:
+        void doLengthyOperation(string inp, void (*callback)(string status)) {
+          // do the lengthy task
+          callback("finished");
+        }
+
+        void fnAfterLengthyTask(string status) {
+            cout << status << endl;
+        }
+
+        int main() {
+            doLengthyOperation(someinput, fnAfterLengthyTask);
+        }
+
+http://www.geeksforgeeks.org/function-pointer-in-c/
+    Function pointer can be used in place of switch case.
+    For example, in below program, user is asked for a choice between 0 and 2 to do different tasks.
+
+        #include <stdio.h>
+        void add(int a, int b)
+        {
+            printf("Addition is %d\n", a+b);
+        }
+        void subtract(int a, int b)
+        {
+            printf("Subtraction is %d\n", a-b);
+        }
+        void multiply(int a, int b)
+        {
+            printf("Multiplication is %d\n", a*b);
+        }
+         
+        int main()
+        {
+            // fun_ptr_arr is an array of function pointers
+            void (*fun_ptr_arr[])(int, int) = {add, subtract, multiply};
+            unsigned int ch, a = 15, b = 10;
+         
+            printf("Enter Choice: 0 for add, 1 for subtract and 2 "
+                    "for multiply\n");
+            scanf("%d", &ch);
+         
+            if (ch > 2) return 0;
+         
+            (*fun_ptr_arr[ch])(a, b);
+         
+            return 0;
+        }
+
+    For example a simple qsort() function can be used to sort arrays in ascending order or descending or by any other order in case of array of structures.
+    Not only this, with function pointers and void pointers, it is possible to use qsort for any data type.
+        // A sample comparator function that is used
+        // for sorting an integer array in ascending order.
+        // To sort any array for any other data type and/or
+        // criteria, all we need to do is write more compare
+        // functions.  And we can use the same qsort()
+        int compare (const void * a, const void * b)
+        {
+          return ( *(int*)a - *(int*)b );
+        }
+         
+        int main ()
+        {
+          int arr[] = {10, 5, 15, 12, 90, 80};
+          int n = sizeof(arr)/sizeof(arr[0]), i;
+         
+          qsort (arr, n, sizeof(int), compare);
+         
+          for (i=0; i<n; i++)
+             printf ("%d ", arr[i]);
+          return 0;
+        }
+
+    // A compare function that is used for searching an integer array
+        bool compare (const void * a, const void * b)
+        {
+          return ( *(int*)a == *(int*)b );
+        }
+         
+        // General purpose search() function that can be used
+        // for searching an element *x in an array arr[] of
+        // arr_size. Note that void pointers are used so that
+        // the function can be called by passing a pointer of
+        // any type.  ele_size is size of an array element
+        int search(void *arr, int arr_size, int ele_size, void *x,
+                   bool compare (const void * , const void *))
+        {
+            // Since char takes one byte, we can use char pointer
+            // for any type/ To get pointer arithmetic correct,
+            // we need to multiply index with size of an array
+            // element ele_size
+            char *ptr = (char *)arr;
+         
+            int i;
+            for (i=0; i<arr_size; i++)
+                if (compare(ptr + i*ele_size, x))
+                   return i;
+         
+            // If element not found
+            return -1;
+        }
+         
+        int main()
+        {
+            int arr[] = {2, 5, 7, 90, 70};
+            int n = sizeof(arr)/sizeof(arr[0]);
+            int x = 7;
+            printf ("Returned index is %d ", search(arr, n,
+                                       sizeof(int), &x, compare));
+            return 0;
+        }
+
+123b.
+How do function pointers in C work
+http://stackoverflow.com/questions/840501/how-do-function-pointers-in-c-work
+
+    Function pointers are useful for passing functions as parameters to other functions
+
+    Let's start with a basic function which we will be pointing to:
+        int addInt(int n, int m) {
+            return n+m;
+        }
+
+    First thing, lets define a pointer to a function which receives 2 ints and returns and int:
+        int (*functionPtr)(int,int);
+
+    Now we can safely point to our function:
+        functionPtr = &addInt;
+
+    Now that we have a pointer to the function, lets use it:
+        int sum = (*functionPtr)(2, 3); // sum == 5
+
+    Passing the pointer to another function is basically the same:
+        int add2to3(int (*functionPtr)(int, int)) {
+            return (*functionPtr)(2, 3);
+        }
+
+    We can use function pointers in return values as well (try to keep up, it gets messy):
+        // this is a function called functionFactory which receives parameter n
+        // and returns a pointer to another function which receives two ints
+        // and it returns another int
+        int (*functionFactory(int n))(int, int) {
+            printf("Got parameter %d", n);
+            int (*functionPtr)(int,int) = &addInt;
+            return functionPtr;
+        }
+
+    But it's much nicer to use a typedef:
+        typedef int (*myFuncDef)(int, int);
+        // note that the typedef name is indeed myFuncDef
+
+        myFuncDef functionFactory(int n) {
+            printf("Got parameter %d", n);
+            myFuncDef functionPtr = &addInt;
+            return functionPtr;
+        }
+
+124.
+Registering a Callback
+http://stackoverflow.com/questions/8590335/what-do-you-mean-by-registering-a-callback-function-in-c?lq=1
+http://stackoverflow.com/questions/142789/what-is-a-callback-in-c-and-how-are-they-implemented
+
+    Registering a callback function simply means that you are arranging for an external entity to call your function.
+
+    void populate_array(int *array, size_t arraySize, int (*getNextValue)(void))
+    {
+        for (size_t i=0; i<arraySize; i++)
+            array[i] = getNextValue();
+    }
+
+    int getNextRandomValue(void)
+    {
+        return rand();
+    }
+
+    int main(void)
+    {
+        int myarray[10];
+        populate_array(myarray, 10, getNextRandomValue);
+        ...
+    }
+
+125.
+Functors in C++ 
+http://stackoverflow.com/questions/2592137/what-is-the-point-of-function-pointers
+
+    In C++, this is often done using function objects (also called functors).
+    These are objects that overload the function call operator, so you can call them as if they were a function.
+
+    Example:
+        class functor {
+          public:
+             void operator()(int i) {std::cout << "the answer is: " << i << '\n';}
+        };
+
+        functor f;
+        f(42);
+
+    The idea behind this is that, unlike a function pointer, a function object can carry not only an algorithm, but also data:
+
+        class functor {
+          public:
+             functor(const std::string& prompt) : prompt_(prompt) {}
+             void operator()(int i) {std::cout << prompt_ << i << '\n';}
+          private:
+             std::string prompt_;
+        };
+
+        functor f("the answer is: ");
+        f(42);
+
+    Another advantage is that it is sometimes easier to inline calls to function objects than calls through function pointers.
+    This is a reason why sorting in C++ is sometimes faster than sorting in C. 
+
+126.
+Operator Overloading in C++
+http://stackoverflow.com/questions/4421706/operator-overloading/4421791#4421791
+http://www.thegeekstuff.com/2013/09/cpp-operator-overloading/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed:+TheGeekStuff+(The+Geek+Stuff)
+
+    Not all operators can be overloaded in C++.
+    Among the operators that cannot be overloaded are: . :: sizeof typeid .* and the only ternary operator in C++, ?:
+
+        #include <iostream>
+        class example
+        {
+        public:
+            int a;
+            int b;
+            example operator+(const example& obj);
+            void operator=(const example& obj);
+        };
+
+        void example::operator=(const example& obj)
+        {
+            (*this).a = obj.a;
+            (*this).b = obj.b;
+
+            return;
+        }
+
+        example example::operator+(const example& obj2)
+        {
+            example tmp_obj = *this;
+            tmp_obj.a = tmp_obj.a + obj2.a;
+            tmp_obj.b = tmp_obj.b + obj2.b;
+            return tmp_obj;
+        }
+
+        int main(void)
+        {
+            example obj1, obj2, obj3;
+
+            obj1.a = 1;
+            obj1.b = 1;
+
+            obj2.a = 2;
+            obj2.b = 2;
+
+            obj3.a = 0;
+            obj3.b = 0;
+
+            obj3 = obj1 + obj2;
+
+            std::cout<<obj3.a<<"  "<<obj3.b<<"\n";
+
+            return 0;
+        }
+
+    In the example above :
+    When ‘obj1 + obj2’ is encountered, function corresponding to overloaded  operator + is called.
+    You can think of ‘obj1 + obj2’ as something like ‘obj1.add(obj2)’.
+    The function corresponding to overloaded operator + is called in context of obj1 and hence only obj2 is needed to be passed as argument.
+    obj1 can be accessed through ‘this’ pointer in that function.
+    Here in this function, individual integer member is added and the resultant object is returned.
+
+        class Time
+        {
+           private:
+              int hours;             // 0 to 23
+              int minutes;           // 0 to 59
+           public:
+              // required constructors
+              Time(){
+                 hours = 0;
+                 minutes = 0;
+              }
+              Time(int h, int m){
+                 hours = h;
+                 minutes = m;
+              }
+              // method to display time
+              void displayTime()
+              {
+                 cout << "H: " << hours << " M:" << minutes <<endl;
+              }
+
+              // overloaded prefix ++ operator
+              Time operator++ ()  
+              {
+                 ++minutes;          // increment this object
+                 if(minutes >= 60)  
+                 {
+                    ++hours;
+                    minutes -= 60;
+                 }
+                 return Time(hours, minutes);
+              }
+
+              // overloaded postfix ++ operator
+              Time operator++( int )         
+              {
+                 // save the orignal value
+                 Time T(hours, minutes);
+                 // increment this object
+                 ++minutes;                    
+                 if(minutes >= 60)
+                 {
+                    ++hours;
+                    minutes -= 60;
+                 }
+                 // return old original value
+                 return T; 
+              }
+        };
+        int main()
+        {
+           Time T1(11, 59), T2(10,40);
+         
+           ++T1;                    // increment T1
+           T1.displayTime();        // display T1
+           ++T1;                    // increment T1 again
+           T1.displayTime();        // display T1
+         
+           T2++;                    // increment T2
+           T2.displayTime();        // display T2
+           T2++;                    // increment T2 again
+           T2.displayTime();        // display T2
+           return 0;
+        }
+
+Overloading new and delete
+
+    BASICS
+    In C++, when you write a new expression like new T(arg) two things happen when this expression is evaluated: First operator new is invoked to obtain raw memory, and then the appropriate constructor of T is invoked to turn this raw memory into a valid object.
+    Likewise, when you delete an object, first its destructor is called, and then the memory is returned to operator delete.
+
+    C++ allows you to tune both of these operations: memory management and the construction/destruction of the object at the allocated memory.
+    The latter is done by writing constructors and destructors for a class.
+    Fine-tuning memory management is done by writing your own operator new and operator delete.
+
+    The first of the basic rules of operator overloading – don’t do it – applies especially to overloading new and delete.
+    Almost the only reasons to overload these operators are performance problems and memory constraints, and in many cases, other actions, like changes to the algorithms used, will provide a much higher cost/gain ratio than attempting to tweak memory management.
+
+    The C++ standard library comes with a set of predefined new and delete operators. The most important ones are these:
+        void* operator new(std::size_t) throw(std::bad_alloc); 
+        void  operator delete(void*) throw(); 
+        void* operator new[](std::size_t) throw(std::bad_alloc); 
+        void  operator delete[](void*) throw(); 
+
+    The first two allocate/deallocate memory for an object, the latter two for an array of objects.
+    If you provide your own versions of these, they will not overload, but replace the ones from the standard library.
+
+    If you overload operator new, you should always also overload the matching operator delete, even if you never intend to call it.
+    The reason is that, if a constructor throws during the evaluation of a new expression, the run-time system will return the memory to the operator delete matching the operator new that was called to allocate the memory to create the object in.
+    If you do not provide a matching operator delete, the default one is called, which is almost always wrong.
+
+    If you overload new and delete, you should consider overloading the array variants, too.
+    PLACEMENT NEW
+    C++ allows new and delete operators to take additional arguments.
+    So-called placement new allows you to create an object at a certain address which is passed to:
+        class X { /* ... */ };
+        char buffer[ sizeof(X) ];
+        void f()
+        { 
+          X* p = new(buffer) X(/*...*/);
+          // ... 
+          p->~X(); // call destructor 
+        } 
+
+    The standard library comes with the appropriate overloads of the new and delete operators for this:
+        void* operator new(std::size_t,void* p) throw(std::bad_alloc); 
+        void  operator delete(void* p,void*) throw(); 
+        void* operator new[](std::size_t,void* p) throw(std::bad_alloc); 
+        void  operator delete[](void* p,void*) throw(); 
+
+    Note that, in the example code for placement new given above, operator delete is never called, unless the constructor of X throws an exception.
+
+    You can also overload new and delete with other arguments.
+    As with the additional argument for placement new, these arguments are also listed within parentheses after the keyword new.
+    Merely for historical reasons, such variants are often also called placement new, even if their arguments are not for placing an object at a specific address.
+
+    CLASS-SPECIFIC NEW AND DELETE
+    Most commonly you will want to fine-tune memory management because measurement has shown that instances of a specific class, or of a group of related classes, are created and destroyed often and that the default memory management of the run-time system, tuned for general performance, deals inefficiently in this specific case.
+    To improve this, you can overload new and delete for a specific class:
+
+        class my_class { 
+          public: 
+            // ... 
+            void* operator new();
+            void  operator delete(void*,std::size_t);
+            void* operator new[](size_t);
+            void  operator delete[](void*,std::size_t);
+            // ... 
+        }; 
+
+    Overloaded thus, new and delete behave like static member functions.
+    For objects of my_class, the std::size_t argument will always be sizeof(my_class).
+    However, these operators are also called for dynamically allocated objects of derived classes, in which case it might be greater than that.
+
+    GLOBAL NEW AND DELETE
+    To overload the global new and delete, simply replace the pre-defined operators of the standard library with our own.
+    However, this is rarely ever needs to be done.
+
+127.
+Scope Guard in C++
+https://en.wikibooks.org/wiki/More_C++_Idioms/Scope_Guard
+
+    Intent
+        To ensure that resources are always released in face of an exception but not while returning normally
+        To provide basic exception safety guarantee
+
+    Motivation
+        Resource Acquisition is Initialization (RAII) idiom allows us to acquire resources in the constructor and release them in the destructor when scope ends successfully or due to an exception.
+        It will always release resources.
+        This is not very flexible.
+        Sometime we don't want to release resources if no exception is thrown but we do want to release them if exception is thrown.
+
+    Solution and Sample Code
+        Enhance the typical implementation of Resource Acquisition is Initialization (RAII) idiom with a conditional check.
+
+        class ScopeGuard
+        {
+        public:
+          ScopeGuard () 
+           : engaged_ (true) 
+          { /* Acquire resources here. */ }
+          
+          ~ScopeGuard ()  
+          { 
+            if (engaged_) 
+             { /* Release resources here. */} 
+          }
+          void release () 
+          { 
+             engaged_ = false; 
+             /* Resources no longer be released */ 
+          }
+        private:
+          bool engaged_;
+        };
+        void some_init_function ()
+        {
+          ScopeGuard guard;
+          // ...... Something may throw here. If it does we release resources.
+          guard.release (); // Resources will not be released in normal execution.
+        }
+
+128.
+C++11 introduced a standardized memory model. What does it mean?
+http://stackoverflow.com/questions/6319146/c11-introduced-a-standardized-memory-model-what-does-it-mean-and-how-is-it-g?rq=1
+
+    First, you have to learn to think like a Language Lawyer.
+
+    The C++ specification does not make reference to any particular compiler, operating system, or CPU.
+    It makes reference to an abstract machine that is a generalization of actual systems.
+    In the Language Lawyer world, the job of the programmer is to write code for the abstract machine; the job of the compiler is to actualize that code on a concrete machine.
+    By coding rigidly to the spec, you can be certain that your code will compile and run without modification on any system with a compliant C++ compiler, whether today or 50 years from now.
+
+    The abstract machine in the C++98/C++03 specification is fundamentally single-threaded.
+    So it is not possible to write multi-threaded C++ code that is "fully portable" with respect to the spec.
+    The spec does not even say anything about the atomicity of memory loads and stores or the order in which loads and stores might happen, never mind things like mutexes.
+
+    Of course, you can write multi-threaded code in practice for particular concrete systems -- like pthreads or Windows.
+    But there is no standard way to write multi-threaded code for C++98/C++03.
+
+    The abstract machine in C++11 is multi-threaded by design.
+    It also has a well-defined memory model; that is, it says what the compiler may and may not do when it comes to accessing memory.
+
+    Consider the following example, where a pair of global variables are accessed concurrently by two threads:
+
+                   Global
+                   int x, y;
+
+        Thread 1            Thread 2
+        x = 17;             cout << y << " ";
+        y = 37;             cout << x << endl;
+
+    What might Thread 2 output?
+    Under C++98/C++03, this is not even Undefined Behavior; the question itself is meaningless because the standard does not contemplate anything called a "thread".
+
+    Under C++11, the result is Undefined Behavior, because loads and stores need not be atomic in general.
+    Which may not seem like much of an improvement... And by itself, it's not.
+
+    But with C++11, you can write this:
+                   Global
+                   atomic<int> x, y;
+
+        Thread 1                 Thread 2
+        x.store(17);             cout << y.load() << " ";
+        y.store(37);             cout << x.load() << endl;
+
+    Now things get much more interesting.
+    First of all, the behavior here is defined.
+    Thread 2 could now print 0 0 (if it runs before Thread 1), 37 17 (if it runs after Thread 1), or 0 17 (if it runs after Thread 1 assigns to x but before it assigns to y).
+
+    What it cannot print is 37 0, because the default mode for atomic loads/stores in C++11 is to enforce sequential consistency.
+    This just means all loads and stores must be "as if" they happened in the order you wrote them within each thread, while operations among threads can be interleaved however the system likes.
+    So the default behavior of atomics provides both atomicity and ordering for loads and stores.
+
+    Now, on a modern CPU, ensuring sequential consistency can be expensive.
+    In particular, the compiler is likely to emit full-blown memory barriers between every access here.
+    But if your algorithm can tolerate out-of-order loads and stores; i.e., if it requires atomicity but not ordering;
+    i.e., if it can tolerate 37 0 as output from this program, then you can write this:
+
+                   Global
+                   atomic<int> x, y;
+
+        Thread 1                            Thread 2
+        x.store(17,memory_order_relaxed);   cout << y.load(memory_order_relaxed) << " ";
+        y.store(37,memory_order_relaxed);   cout << x.load(memory_order_relaxed) << endl;
+
+    The more modern the CPU, the more likely this is to be faster than the previous example.
+
+    Finally, if you just need to keep particular loads and stores in order, you can write:
+
+                   Global
+                   atomic<int> x, y;
+
+        Thread 1                            Thread 2
+        x.store(17,memory_order_release);   cout << y.load(memory_order_acquire) << " ";
+        y.store(37,memory_order_release);   cout << x.load(memory_order_acquire) << endl;
+
+    This takes us back to the ordered loads and stores -- so 37 0 is no longer a possible output -- but it does so with minimal overhead.
+    (In this trivial example, the result is the same as full-blown sequential consistency; in a larger program, it would not be.)
+
+    Of course, if the only outputs you want to see are 0 0 or 37 17, you can just wrap a mutex around the original code.
+    But if you have read this far, I bet you already know how that works, and this answer is already longer than I intended :-).
+
+    So, bottom line.
+    Mutexes are great, and C++11 standardizes them.
+    But sometimes for performance reasons you want lower-level primitives (e.g., the classic double-checked locking pattern).
+    The new standard provides high-level gadgets like mutexes and condition variables, and it also provides low-level gadgets like atomic types and the various flavors of memory barrier.
+    So now you can write sophisticated, high-performance concurrent routines entirely within the language specified by the standard, and you can be certain your code will compile and run unchanged on both today's systems and tomorrow's.
+
+    Although to be frank, unless you are an expert and working on some serious low-level code, you should probably stick to mutexes and condition variables.
+    That's what I intend to do.
+
+129.
+When is void* useful
+http://stackoverflow.com/questions/11626786/what-does-void-mean-and-how-to-use-it?lq=1
+
+    A pointer to void is a "generic" pointer type.
+    A void * can be converted to any other pointer type without an explicit cast.
+    You cannot dereference a void * or do pointer arithmetic with it; you must convert it to a pointer to an complete data type first.
+
+    It gets used in places where you need to be able to work with different pointer types in the same code.
+    One commonly cited example is the library function qsort:
+
+        void qsort(void *base, size_t nmemb, size_t size, 
+                   int (*compar)(const void *, const void *));
+
+    base is the address of an array, nmemb is the number of elements in the array, size is the size of each element, and compar is a pointer to a function that compares two elements of the array.
+
+    It gets called like so:
+        int iArr[10];
+        double dArr[30];
+        long lArr[50];
+        ...
+        qsort(iArr, sizeof iArr/sizeof iArr[0], sizeof iArr[0], compareInt);
+        qsort(dArr, sizeof dArr/sizeof dArr[0], sizeof dArr[0], compareDouble);
+        qsort(lArr, sizeof lArr/sizeof lArr[0], sizeof lArr[0], compareLong);
+
+    The array expressions iArr, dArr, and lArr are implicitly converted from array types to pointer types in the function call, and each is implicitly converted from "pointer to int/double/long" to "pointer to void".
+
+    The comparison functions would look something like:
+        int compareInt(const void *lhs, const void *rhs)
+        {
+          const int *x = lhs;  // convert void * to int * by assignment
+          const int *y = rhs;
+
+          if (*x > *y) return 1;
+          if (*x == *y) return 0;
+          return -1;
+        }
+
+130.
+Virtual Destructor in C++
+http://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
+
+    Virtual destructors are useful when you can delete an instance of a derived class through a pointer to base class:
+
+        class Base 
+        {
+            // some virtual methods
+        };
+
+        class Derived : public Base
+        {
+            ~Derived()
+            {
+                // Do some important cleanup
+            }
+        }
+
+    Here, you'll notice that I didn't declare Base's destructor to be virtual.
+    Now, let's have a look at the following snippet:
+
+        Base *b = new Derived();
+        // use b
+        delete b; // Here's the problem!
+
+    Since Base's destructor is not virtual and b is a Base* pointing to a Derived object, delete b has undefined behaviour.
+    In most implementations, the call to the destructor will be resolved like any non-virtual code, meaning that the destructor of the base class will be called but not the one of the derived class, resulting in resources leak.
+
+131.
+Print Unordered Map. Get key and get value
+
+    for (auto itr = myMap.begin(); itr != myMap.end(); itr++)
+    {
+        cout << itr->first << ": " << itr->second.name << " , " << itr->second.score << endl;
+    }
+
+132.
+Self Referential Structures
+http://stackoverflow.com/questions/588623/self-referential-struct-definition
+
+Clearly a Struct cannot contain another struct as it becomes a never-ending recursion.
+
+However a Struct CAN contain a pointer to another struct.
+
+    typedef struct Cell {
+      bool isParent;
+      struct Cell* child;
+    } Cell;
+
 
 
 To Read

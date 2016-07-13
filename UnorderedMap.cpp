@@ -8,6 +8,13 @@ struct Info
     uint32_t score;
 };
 
+struct CustMap
+{
+    bool stringPresent;
+    string strKey;
+    struct CustMap obj;
+};
+
 int main()
 {
     unordered_map<char, Info> myMap;
