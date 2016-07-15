@@ -26,6 +26,7 @@
 20.  Find Substring
 21.  Combining vector of strings:
 22.  Convert String to Int - C++
+22a. Concatenate String with Int
 22b. Convert INT to STRING
 23.  Align std out
 24.  IMP: Why Pointers
@@ -54,6 +55,9 @@
 44.  Unicode vs Ascii
 45.  Where are Class Members stored in memory
 45b. Memory Layout - Code Segment Data Segment Stack Heap
+45c. ELF and how it is used for compiling and linking
+     How are the different segments like heap, stack, text related to the physical memory
+45d. What is a Symbol Table
 46.  C++ Class vs C Struct Memory Layout
 47.  Pass by Value vs Const Reference
 48.  Virtual Function and Pure Virtual Functions
@@ -100,7 +104,7 @@
 79.  C++ new vs C malloc
 80.  How is memory allocated to Vectors
 81.  Where Global Variables and Pointers are stored
-82.  Where are the Variable Names stored
+82.  Where are the Variable Names stored in memory
 82b. Where in memory are return values stored in memory
 83.  What is Type Safe
 84.  What is the name of the --> operator
@@ -115,7 +119,9 @@
 93.  Case Only Labels: Jumping over initialization
 94.  What uses are there for placement new?
 95.  Is there a "placement delete"?
-96.  Shared Pointers, Weak Pointers and Scoped Pointers
+96.  Auto, Unique, Shared Pointers, Weak Pointers and Scoped Pointers
+96b. When is std::weak_ptr useful
+96c. Scoped Pointer vs Unique Pointer
 97.  Vector - Accessing member elements using "at()" vs "[]"
 98.  Created Vectors of User defined size
 99.  How to use memset or fill_n to initialize a dynamic two dimensional TwoD array in C++
@@ -670,6 +676,20 @@ http://stackoverflow.com/questions/7663709/convert-string-to-int-c
 
     There are version for all flavours of numbers:
         long stol(string), float stof(string), double stod(string)
+
+22a.
+Concatenate String with Int
+http://stackoverflow.com/questions/191757/c-concatenate-string-and-int
+
+    std::string name = "John";
+    int age = 21;
+    std::string result;
+
+    // 1. with Boost
+    result = name + boost::lexical_cast<std::string>(age);
+
+    // 2. with C++11
+    result = name + std::to_string(age);
 
 22b.
 Convert INT to STRING
@@ -1600,6 +1620,10 @@ http://programmers.stackexchange.com/questions/142475/how-does-const-storage-wor
 45b.
 Memory Layout - Code Segment Data Segment Stack Heap
     http://www.geeksforgeeks.org/memory-layout-of-c-program/
+    http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory/
+    http://www.tenouk.com/ModuleW.html
+
+    Text, Data, Stack, Heap belong to a Process
 
     Text / Code Segment:
         Machine instructions gets stored here
@@ -1611,6 +1635,51 @@ Memory Layout - Code Segment Data Segment Stack Heap
         Data segment stores program data.
         This data could be in form of initialized or uninitialized variables, and it could be local or global.
         Data segment is further divided into four sub-data segments (initialized data segment, uninitialized or .bss data segment, stack, and heap)
+
+45c.
+ELF and how it is used for compiling and linking
+How are the different segments like heap, stack, text related to the physical memory
+http://www.tenouk.com/ModuleW.html
+http://stackoverflow.com/questions/9226088/how-are-the-different-segments-like-heap-stack-text-related-to-the-physical-me
+VERY IMP LINK: http://resources.infosecinstitute.com/hello-world-c-assembly-object-file-and-executable/
+
+    An object and executable come in several formats such as ELF (Executable and Linking Format) and COFF (Common Object-File Format).
+    For example, ELF is used on Linux systems, while COFF is used on Windows systems.
+
+    Q1.
+    When a C program is compiled and the object file(ELF) is created. the object file contains different sections such as bss, data, text and other segments. I understood that these sections of the ELF are part of virtual memory address space. Am I right? Please correct me if I am wrong.
+    A1.
+    1. Correct, the ELF file lays out the absolute or relative locations in the virtual address space of a process that the operating system should copy the ELF file contents into. (The bss is just a location and a size, since its supposed to be all zeros, there is no need to actually have the zeros in the ELF file). Note that locations can be absolute locations (like virtual address 0x100000 or relative locations like 4096 bytes after the end of text.)
+
+    Q2.
+    Also, there will be a virtual memory and page table associated with the compiled program. Page table associates the virtual memory address present in ELF to the real physical memory address when loading the program. Is my understanding correct?
+    A2.
+    2. The virtual memory definition (which is kept in page tables and maps virtual addresses to physical addresses) is not associated with a compiled program, but with a "process" (or "task" or whatever your OS calls it) that represents a running instance of that program. For example, a single ELF file can be loaded into two different processes, at different virtual addresses (if the ELF file is relocatable).
+
+    Q3.
+    I read that in the created ELF file, bss sections just keeps the reference of the uninitialised global variables. Here uninitialised global variable means, the variables that are not intialised during declaration?
+    A3.
+    3. The programming language you're using defines which uninitialized state goes in the bss, and which gets explicitly initialized. Note that the bss does not contain "references" to these variables, it is the storage backing those variables.
+
+    Q4.
+    Also, I read that the local variables will be allocated space at run time (i.e., in stack). Then how they will be referenced in the object file?
+    A4.
+    4. Stack variables are referenced implicitly from the generated code. There is nothing explicit about them (or even the stack) in the ELF file.
+
+    Q5.
+    If in the program, there is particular section of code available to allocate memory dynamically. How these variables will be referenced in object file?
+    A5.
+    5. Like stack references, heap references are implicit in the generated code in the ELF file. (They're all stored in memory created by changing the virtual address space via a call to sbrk or its equivalent.)
+
+    The ELF file explains to an OS how to setup a virtual address space for an instance of a program. The different sections describe different needs. For example ".rodata" says I'd like to store read-only data (as opposed to executable code). The ".text" section means executable code. The "bss" is a region used to store state that should be zeroed by the OS. The virtual address space means the program can (optionally) rely on things being where it expects when it starts up. (For example, if it asks for the .bss to be at address 0x4000, then either the OS will refuse to start it, or it will be there.)
+
+    Note that these virtual addresses are mapped to physical addresses by the page tables managed by the OS. The instance of the ELF file doesn't need to know any of the details involved in which physical pages are used.
+
+45d. What is a Symbol Table
+
+    A C compiler first creates a symbol table, which stores the relationship between the variable name and where it's located in memory.
+    When compiling, it uses this table to replace all instances of the variable with a specific memory location, as others have stated.
+    You can find a lot more on it on the Wikipedia page.
 
 46.
 C++ Class vs C Struct Memory Layout
@@ -2264,6 +2333,34 @@ http://stackoverflow.com/questions/20026243/find-2-missing-numbers-in-an-array-o
 
     Find rightmost set bit
         x = x &(~(x-1));
+
+61b.
+Find leftmost set bit
+http://stackoverflow.com/questions/671815/what-is-the-fastest-most-efficient-way-to-find-the-highest-set-bit-msb-in-an-i
+
+    1 << ( int) log2( x)
+
+    int hibit(unsigned int n) {
+        n |= (n >>  1);
+        n |= (n >>  2);
+        n |= (n >>  4);
+        n |= (n >>  8);
+        n |= (n >> 16);
+        return n - (n >> 1);
+    }
+
+    int hob (int num)
+    {
+        if (!num)
+            return 0;
+
+        int ret = 1;
+
+        while (num >>= 1)
+            ret <<= 1;
+
+        return ret;
+    }
 
 62. 
 #define vs typedef vs Enum
@@ -3013,6 +3110,7 @@ http://www.tutorialspoint.com/cplusplus/cpp_dynamic_memory.htm
 80.
 How is memory allocated to Vectors
 http://stackoverflow.com/questions/12507114/how-does-a-stack-allocated-vector-expand-in-c
+http://stackoverflow.com/questions/5232198/about-vectors-growth
 
     vector<Type> vect;
         will allocate the vector, i.e. the header info, on the stack, but the elements on the free store ("heap").
@@ -3023,6 +3121,8 @@ http://stackoverflow.com/questions/12507114/how-does-a-stack-allocated-vector-ex
     vector<Type*> vect;
         will allocate the vector on the stack and a bunch of pointers on the free store, but where these point is determined by how you use them (you could point element 0 to the free store and element 1 to the stack, say).
 
+     IMP:
+     Implementations almost invariable choose exponential growth, in order to meet the amortized constant time requirement for the push_back operation.
 
     Internally, a vector<string> will most likely consist of a string* pointing at the actual data and probably two more size_t members indicating occupied and reserved memory.
     All the rest will be on the heap.
@@ -3133,7 +3233,7 @@ http://stackoverflow.com/questions/14588767/where-in-memory-are-my-variables-sto
         dynamically allocated space(using malloc, calloc, realloc) --------> heap
 
 82.
-Where are the Variable Names stored
+Where are the Variable Names stored in memory
 http://stackoverflow.com/questions/14612314/how-are-variable-names-stored-in-memory-in-c
 http://www.csee.umbc.edu/~chang/cs313.s02/stack.shtml
 
@@ -3147,12 +3247,10 @@ http://www.csee.umbc.edu/~chang/cs313.s02/stack.shtml
     So to answer your literal questions:
 
         How does the compiler recognize that the string "variable_name" is associated with that particular memory address?
-
     The toolchain (compiler & linker) work together to assign a memory location for the variable.
     It's the compiler's job to keep track of all the references, and linker puts in the right addresses later.
 
         Is the string "variable_name" stored somewhere in memory?
-
     Only while the compiler is running.
 
         Does the compiler just substitute variable_name for 0xaaaaaaaa whenever it sees it, and if so, wouldn't it have to use memory in order to make that substitution?
@@ -3631,6 +3729,7 @@ http://www.stroustrup.com/bs_faq2.html#placement-delete
 Auto, Unique, Shared Pointers, Weak Pointers and Scoped Pointers
 http://stackoverflow.com/questions/569775/smart-pointers-boost-explained
 http://stackoverflow.com/questions/6876751/differences-between-unique-ptr-and-shared-ptr
+VERY IMP LINK: http://www.codeproject.com/Articles/541067/Cplusplus-Smart-Pointers 
 
     auto_ptr, unique_ptr and shared_ptr
 
@@ -3716,6 +3815,96 @@ http://stackoverflow.com/questions/6876751/differences-between-unique-ptr-and-sh
         }
 
     intrusive_ptr is typically used when there is a 3rd party smart ptr you must use. It will call a free function to add and decrement the reference count.See the link to boost documentation for more info.
+
+96b.
+When is std::weak_ptr useful
+http://stackoverflow.com/questions/12030650/when-is-stdweak-ptr-useful
+
+    Creating a weak pointer out of a shared pointer increases the weak reference counter of the shared pointer.
+    This means that the shared pointer shares it resource with another pointer.
+
+    A good example would be a cache.
+    For recently accessed objects, you want to keep them in memory, so you hold a strong pointer to them.
+    Periodically, you scan the cache and decide which objects have not been accessed recently.
+    You don't need to keep those in memory, so you get rid of the strong pointer.
+
+    But what if that object is in use and some other code holds a strong pointer to it? If the cache gets rid of its only pointer to the object, it can never find it again.
+    So the cache keeps a weak pointer to objects that it needs to find if they happen to stay in memory.
+
+    This is exactly what a weak pointer does -- it allows you to locate an object if it's still around, but doesn't keep it around if nothing else needs it.
+
+    std::weak_ptr is a very good way to solve the dangling pointer problem.
+    By just using raw pointers it is impossible to know if the referenced data has been deallocated or not.
+    Instead, by letting a std::shared_ptr manage the data, and supplying std::weak_ptr to users of the data, the users can check validity of the data by calling expired() or lock().
+
+    You could not do this with std::shared_ptr alone, because all std::shared_ptr instances share the ownership of the data which is not removed before all instances of std::shared_ptr are removed.
+    Here is an example of how to check for dangling pointer using lock():
+        #include <iostream>
+        #include <memory>
+
+        int main()
+        {
+            // OLD, problem with dangling pointer
+            // PROBLEM: ref will point to undefined data!
+
+            int* ptr = new int(10);
+            int* ref = ptr;
+            delete ptr;
+
+            // NEW
+            // SOLUTION: check expired() or lock() to determine if pointer is valid
+
+            // empty definition
+            std::shared_ptr<int> sptr;
+
+            // takes ownership of pointer
+            sptr.reset(new int);
+            *sptr = 10;
+
+            // get pointer to data without taking ownership
+            std::weak_ptr<int> weak1 = sptr;
+
+            // deletes managed object, acquires new pointer
+            sptr.reset(new int);
+            *sptr = 5;
+
+            // get pointer to new data without taking ownership
+            std::weak_ptr<int> weak2 = sptr;
+
+            // weak1 is expired!
+
+            if(auto tmp = weak1.lock())
+                std::cout << *tmp << '\n';
+            else
+                std::cout << "weak1 is expired\n";
+
+            // weak2 points to new data (5)
+
+            if(auto tmp = weak2.lock())
+                std::cout << *tmp << '\n';
+            else
+                std::cout << "weak2 is expired\n";
+        }
+
+96c.
+Scoped Pointer vs Unique Pointer
+http://stackoverflow.com/questions/8199812/difference-between-boostscoped-ptrt-and-stdunique-ptrt
+
+    A difference between boost::scoped_ptr<T> and std::unique_ptr<T> the fact that,
+        std::unique_ptr<T> has move semantics whereas
+        boost::scoped_ptr<T> is just a get/reset smart pointer
+
+    The other major difference is that unique_ptr can have a destructor object with it, similarly to how shared_ptr can.
+    Unlike shared_ptr, the destructor type is part of the unique_ptr's type (the way allocators are part of STL container types).
+
+    unique_ptr owns an object exclusively.
+    It is non-copyable but supports transfer-of-ownership.
+    It was introduced as replacement for the now deprecated auto_ptr.
+
+    scoped_ptr is neither copyable nor movable.
+    It is the preferred choice when you want to make sure pointers are deleted when going out of scope.
+
+    Another preferred choice when you want to make sure that pointers are deleted at the end of a scope was unique_ptr<T> const
 
 97.
 Vector - Accessing member elements using "at()" vs "[]"
@@ -4132,7 +4321,6 @@ http://stackoverflow.com/questions/8767166/passing-a-2d-array-to-a-c-function
     Note that when calling the function the array's address should be passed process_2d_array_pointer(&a) and not the address of the first element by decay process_2d_array_pointer(a)
 
     Variable Size
-
     These are inherited from C but are less safe, the compiler has no way of checking, guaranteeing that the caller is passing the required dimensions.
     The function only banks on what the caller passes in as the dimension(s).
     These are more flexible than the above ones since arrays of different lengths can be passed to them invariably.
