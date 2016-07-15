@@ -1,4 +1,4 @@
-// http://stackoverflow.com/questions/16243711/how-to-implement-a-generic-hash-function-in-c 
+// http://stackoverflow.com/questions/16243711/how-to-implement-a-generic-hash-function-in-c
 // Should making "hash()" generic as well
 
 #include <iostream>
@@ -23,7 +23,7 @@ class HashTable
     private:
         class HashEntry;    // forward declaration
         size_t _size;
-        vector<HashEntry> _hashTable;
+        vector< vector<HashEntry> > _hashTable;
 
         class HashEntry
         {
@@ -81,10 +81,7 @@ HashTable<K, V, H>::put(K key, V value)
 
     // Create a Hash entry with user's given key and value and push into the vector
     // Index where the entry should be pushed is computed from compute Hash
-    // Replace existing value with new value if already exists
-    //
-    // TODO: Make it a list to add support for chaining
-    _hashTable.insert(_hashTable.begin() + newKey, HashEntry (key, value));
+    _hashTable.insert(_hashTable.begin() + newKey, vector<HashEntry> {HashEntry (key, value)});
 }
 
 template<typename K, typename V, typename H >
@@ -94,9 +91,28 @@ HashTable<K, V, H>::get(K key)
     // Compute a new key based on the given key
     size_t newKey = computeHash(key);
 
-    return _hashTable[newKey].getValue();
-}
+    if (_hashTable[newKey].size() > 1)
+    {
+        for (auto itr = _hashTable[newKey].begin(); itr != _hashTable[newKey].end(); ++itr)
+        {
+            if (itr->getKey() == key)
+            {
+                return itr->getValue();
+            }
+        }
 
+        // If we are here we have reached the end and the element is not present
+        throw std::out_of_range("Index at Key: " + to_string(key) + "is empty.");
+    }
+    else if (_hashTable[newKey].size() == 1)
+    {
+        return _hashTable[newKey][0].getValue();
+    }
+    else
+    {
+        throw std::out_of_range("Index at Key: " + to_string(key) + "is empty.");
+    }
+}
 
 int main()
 {

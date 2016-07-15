@@ -70,21 +70,21 @@
 54.  size_t vs size_type
 55.  File IO
 57.  Meaning of const
-57a.  Const vs ReadOnly
-57b.  Const in C vs C++
+57a. Const vs ReadOnly
+57b. Const in C vs C++
 58.  Reason to pass a pointer by reference
 59.  Returning by reference:
 60.  Sorting a vector of objects
 61.  Find rightmost set bit
 62.  #define vs typedef vs Enum
-62a.  C++ Const vs #Define
-62a.  C++ semantics of `static const` vs `const`
-62b.  C++ Const Read Only
-62b.  Const defaults to Internal Linkage in C++ and External Linkage in C
-62c.  When to use unnamed namespace
-62d.  Superiority of unnamed namespace over static
+62a. C++ Const vs #Define
+62a. C++ semantics of `static const` vs `const`
+62b. C++ Const Read Only
+62b. Const defaults to Internal Linkage in C++ and External Linkage in C
+62c. When to use unnamed namespace
+62d. Superiority of unnamed namespace over static
 63.  Dynamic Array in C++
-63b.  TWOD Vector in C++
+63b. TWOD Vector in C++
 64.  Time in C++
 65.  Ordered Data Set
 66.  Tail Recursion
@@ -97,7 +97,7 @@
 73.  How a Computer Compiles and Executes a C++ Program
 74.  When / Why to use stringstream
 75.  Steps involved for execution of a C program
-75a.  Storage Classes - Static, Extern, Auto and Register
+75a. Storage Classes - Static, Extern, Auto and Register
 76.  Abstract Class vs Interface
 77.  Can abstract class be instantiated
 78.  C++ new int[0] - will it allocate memory
@@ -134,6 +134,7 @@
 106. Sort Unordered Map
 107. IMP: Using [] operator in unordered_map inserts the element if not present.
 108. Create a vector of userdefined size and initialize with default values
+108b. Create a vector with an element using constructor
 109. Copy from one vector to another
 110. Copy Constructor vs Assignment Operator:
 111. Volatile keyword:
@@ -4077,6 +4078,11 @@ Create a vector of userdefined size and initialize with default values
 
     vector<int32_t> sumArr1(divNum, 0);
     vector<uint32_t> sumArr1(4, 0);
+
+108b.
+Create a vector with an element using constructor
+
+    vector<int> {5}
 
 109.
 Copy from one vector to another
