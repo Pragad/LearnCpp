@@ -23,7 +23,8 @@
      C FAQs
 19b.  Why should SCANF never be used
 19c.  But I heard that char a[] was identical to char *a.
-20.  Find Substring
+20a. Comparing String in C++
+20b.  Find Substring
 21.  Combining vector of strings:
 22.  Convert String to Int - C++
 22a. Concatenate String with Int
@@ -160,6 +161,9 @@
 130. Virtual Destructor in C++
 131. Print Unordered Map. Get key and get value
 132. Self Referential Structures
+133. How to use std::sort to sort a vector
+134. Queue vs Vector
+135. Differences between various Custom Comparator functions in C++ 
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -639,7 +643,25 @@ http://c-faq.com/aryptr/aryptr2.html
     3. If they're so different, then why are array and pointer declarations interchangeable as function formal parameters? 
        - Since arrays decay immediately into pointers, an array is never actually passed to a function.
 
-20.
+20a.
+Comparing String in C++
+http://stackoverflow.com/questions/9158894/differences-between-c-string-and-compare
+
+        std::string::compare() returns an int:
+
+        - equal to zero if s and t are equal,
+        - less than zero if s is less than t,
+        - greater than zero if s is greater than t.
+
+    If you want your first code snippet to be equivalent to the second one, it should actually read:
+
+    if (!s.compare(t)) {
+        // 's' and 't' are equal.
+    }
+
+    The equality operator only tests for equality (hence its name) and returns a bool
+
+20b.
 Find Substring
 http://www.cplusplus.com/reference/string/string/substr/
 
@@ -4382,6 +4404,7 @@ http://stackoverflow.com/questions/8767166/passing-a-2d-array-to-a-c-function
 Custom Comparator for Priority Queue
 http://stackoverflow.com/questions/16111337/declaring-a-priority-queue-in-c-with-a-custom-comparator
 http://stackoverflow.com/questions/20826078/priority-queue-comparison
+http://fusharblog.com/3-ways-to-define-comparison-functions-in-cpp/
 
         double computeDistanceFromOrigin(int x, int y)
         {
@@ -4692,6 +4715,9 @@ http://stackoverflow.com/questions/2592137/what-is-the-point-of-function-pointer
 Operator Overloading in C++
 http://stackoverflow.com/questions/4421706/operator-overloading/4421791#4421791
 http://www.thegeekstuff.com/2013/09/cpp-operator-overloading/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed:+TheGeekStuff+(The+Geek+Stuff)
+
+    VERY IMP:
+        Make it a friend to have access to private memebers
 
     Not all operators can be overloaded in C++.
     Among the operators that cannot be overloaded are: . :: sizeof typeid .* and the only ternary operator in C++, ?:
@@ -5109,6 +5135,94 @@ However a Struct CAN contain a pointer to another struct.
       struct Cell* child;
     } Cell;
 
+
+133.
+How to use std::sort to sort a vector
+http://fusharblog.com/3-ways-to-define-comparison-functions-in-cpp/
+http://www.cplusplus.com/reference/algorithm/sort/
+
+        bool myfunction (int i,int j) { return (i<j); }
+
+        struct myclass {
+          bool operator() (int i,int j) { return (i<j);}
+        } myobject;
+
+        int main () {
+          int myints[] = {32,71,12,45,26,80,53,33};
+          std::vector<int> myvector (myints, myints+8);               // 32 71 12 45 26 80 53 33
+
+          // using default comparison (operator <):
+          std::sort (myvector.begin(), myvector.begin()+4);           //(12 32 45 71)26 80 53 33
+
+          // using function as comp
+          std::sort (myvector.begin()+4, myvector.end(), myfunction); // 12 32 45 71(26 33 53 80)
+
+          // using object as comp
+          std::sort (myvector.begin(), myvector.end(), myobject); 
+
+134.
+Queue vs Vector
+http://stackoverflow.com/questions/14521972/can-i-use-c-vector-insted-of-queue-for-fifo-order
+http://stackoverflow.com/questions/5345152/why-would-i-prefer-using-vector-to-deque
+
+    A vector is analogous to a stack not to a queue.
+    You may only push and pop from one side not push from one and pop from the other.
+    A vector will give you the capability to access arbitrary element by its index in constant time but will not be able to efficiently remove elements from its beginning.
+
+    Elements in a deque are not contiguous in memory;
+    vector elements are guaranteed to be.
+    So if you need to interact with a plain C library that needs contiguous arrays, or if you care (a lot) about spatial locality, then you might prefer vector.
+
+
+135. 
+Differences between various Custom Comparator functions in C++ 
+http://stackoverflow.com/questions/38422886/differences-between-various-custom-comparator-functions-in-c
+
+        struct Student
+        {
+            string name;
+            uint32_t age;
+
+            // Method 1: Using operator <
+            bool operator<(const Student& ob)
+            {
+                return age < ob.age;
+            }
+        };
+
+        // Method 2: Custom Compare Function
+        bool compStudent(const Student& a, const Student& b)
+        {
+            return a.age < b.age;
+        }
+
+        // Method 3: Using operator ()
+        struct MyStudComp
+        {
+            bool operator() (const Student& a, const Student& b)
+            {
+                return a.age < b.age;
+            }
+        }obComp;
+
+    To sort a vector of students I can use either of the below methods.
+
+        vector<Student> studs; // Consider I have this object populated
+        std::sort(studs.begin(), studs.end());  // Method 1
+        std::sort(studs.begin(), studs.end(), compStudent);    // Method 2
+        std::sort(studs.begin(), studs.end(), obComp);  // Method 3
+
+        // Method 4: Using Lambda
+        sort(studs.begin(), studs.end(), 
+             [](const Student& a, const Student& b) -> bool
+             { 
+                return a.age < b.age; 
+             });
+
+    The performance between the different methods is not very different, however, using < will let you be more flexible, and makes using built-ins much easier.
+    I also think using () is kind of weird.
+
+The bigger issue in your example is that your methods should be using const refs instead of values. I.e. bool operator<(Student ob) could be friend bool operator<(const Student& ls, const Student& rs){...}. Also, see here for some examples of different things to consider when overloading operators.
 
 
 To Read

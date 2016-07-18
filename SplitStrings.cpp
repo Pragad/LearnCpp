@@ -1,7 +1,10 @@
 #include <iostream>
 #include <string>
+#include <cstring> // strlen
+#include <cassert> // assert
 using namespace std;
 
+// Utility function to split a string by a delimitor
 char** str_split(char* a_str, const char a_delim = '/')
 {
     char** result    = 0;
@@ -63,33 +66,6 @@ void splitName(char fileName[])
     }
 }
 
-/*
-char** parseInputName(char* user_name)
-{
-    char** tokens;
-    char* tokenPart;
-    tokens = str_split(user_name);
-    return tokens;
-}
-
-void getUserInput()
-{
-    string input_string;
-
-    cout << "Enter the name of File or Directory to be created: ";
-    // Ignore the contents in current buffer before reading the next input.
-    cin.ignore();
-    getline(cin, input_string);
-
-    unsigned int len = input_string.length();
-    char* user_name = new char[len];
-
-    strcpy(user_name, input_string.c_str());
-    parseInputName(user_name);
-}
-*/
-
-
 void parseInputName(char** tokens)
 {
     char* tokenPart;
@@ -107,7 +83,7 @@ void getUserInput()
 {
     string input_string;
 
-    cout << "Enter the name of File or Directory to be created: ";
+    cout << "Enter a string: ";
     // Ignore the contents in current buffer before reading the next input.
     //cin.ignore();
     getline(cin, input_string);
@@ -135,7 +111,6 @@ void getUserInput()
 
     parseInputName(tokens);
 }
-
 
 void parseInputCommand(string inputCmd)
 {
@@ -172,36 +147,51 @@ void getInputCommand()
     parseInputCommand(inputCmd);
 }
 
-
-
 int main()
 {
-    //char months[] = "JAN/FEB/MAR/APR/MAY/JUN/JUL/AUG/SEP/OCT/NOV/DEC";
-    char months[] = "JAN/FEBa/MARCH/MAY/JUNE/NOVEMBER/DECEMBER";
-    char** tokens;
-
-    cout << "months = [" << months << "]" << endl;
-
-    tokens = str_split(months);
-
-    if (tokens)
     {
-        int i;
-        for (i = 0; *(tokens + i); i++)
+        //char months[] = "JAN/FEB/MAR/APR/MAY/JUN/JUL/AUG/SEP/OCT/NOV/DEC";
+        char months[] = "JAN/FEBa/MARCH/MAY/JUNE/NOVEMBER/DECEMBER";
+        char** tokens;
+
+        cout << "months = [" << months << "]" << endl;
+
+        tokens = str_split(months);
+
+        if (tokens)
         {
-            //printf("month=[%s]\n", *(tokens + i));
-            cout << "month[" << i << "] = " << *(tokens + i) << endl;
-            free(*(tokens + i));
+            int i;
+            for (i = 0; *(tokens + i); i++)
+            {
+                //printf("month=[%s]\n", *(tokens + i));
+                cout << "month[" << i << "] = " << *(tokens + i) << endl;
+                free(*(tokens + i));
+            }
+            cout << endl;
+            free(tokens);
         }
-        cout << endl;
-        free(tokens);
+
+        char months2[] = "JAN/FEBa/MARCH/MAY/JUNE/NOVEMBER/DECEMBER";
+        //splitName(months2);
+        getUserInput();
+        //getInputCommand();
     }
 
-    char months2[] = "JAN/FEBa/MARCH/MAY/JUNE/NOVEMBER/DECEMBER";
-    //splitName(months2);
-    getUserInput();
-    //getInputCommand();
+    {
+        string tok = "My name is Hi.How Are!You!";
+        cout << tok << endl;
 
+        for (int i = 0; i < tok.length(); ++i)
+        {
+            tok[i] = tolower(tok[i]);
+            if (ispunct(tok[i])) {
+                tok.erase(i--,1);
+            }
+        }
+
+        cout << tok << endl;
+
+    }
     cout << endl;
     return 0;
 }
