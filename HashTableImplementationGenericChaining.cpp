@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector>
-#include <functional>   // Contains function for hash
+#include <functional>   // Contains function for std::hash
 using namespace std;
 
 static const uint32_t HASHTABLE_SIZE = 100;

@@ -61,6 +61,7 @@
 45d. What is a Symbol Table
 46.  C++ Class vs C Struct Memory Layout
 47.  Pass by Value vs Const Reference
+47b. Why is Pass by Value faster than Pass by reference
 48.  Virtual Function and Pure Virtual Functions
 49.  Virtual Functions
 49b. How Virtual Functions Work
@@ -164,6 +165,9 @@
 133. How to use std::sort to sort a vector
 134. Queue vs Vector
 135. Differences between various Custom Comparator functions in C++ 
+136. Creating a Vector and bitset on heap
+137. Custom Hash Function
+138. Fastest way to reset every value of std::vector<int> to 0
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -1721,11 +1725,39 @@ http://stackoverflow.com/questions/422830/structure-of-a-c-object-in-memory-vs-a
 Pass by Value vs Const Reference
 http://stackoverflow.com/questions/2582797/why-pass-by-const-reference-instead-of-by-value
 http://stackoverflow.com/questions/1567138/const-t-arg-vs-t-arg/1567186#1567186
+http://stackoverflow.com/questions/270408/is-it-better-in-c-to-pass-by-value-or-pass-by-constant-reference
+
+    It used to be generally recommended best practice1 to use pass by const ref for all types, except for builtin types (char, int, double, etc.), for iterators and for function objects (lambdas, classes deriving from std::*_function)
 
     Passing arguments by value and thus copying them can be expensive - const references avoid that expensive step while still promising the caller that the object won't be changed.
     Usually fundamental types (int, double, ...) are passed by value, while class-types are passed by const reference.
 
     Use const T & arg if sizeof(T)>sizeof(void*) and use T arg if sizeof(T) <= sizeof(void*)
+
+47b.
+Why is Pass by Value faster than Pass by reference
+http://stackoverflow.com/questions/5346853/c-why-pass-by-value-is-generally-more-efficient-than-pass-by-reference-for-bu
+Nice link with Assembly code
+http://stackoverflow.com/questions/22840120/pass-by-value-faster-than-pass-by-reference
+
+    For pod types like int, char, short, and float the size of the data is the same size (or smaller) than the address passed in to reference the actual data. Looking up the value at the referenced address is an unnecessary step and adds additional cost.
+
+    For example, take the following functions foo and bar
+        void foo(char& c) {...}
+        void bar(char c) {...}
+
+    When foo is called an address is passed by value of either 32bits or 64bits, depending on your platform. When you use c within foo you have the cost of looking up the value of data held at the passed in address.
+
+    When calling bar a value of the size of char is passed in and there is no address lookup overhead.
+
+    Overhead with passing by reference:
+        each access needs a dereference, i.e., there is one more memory read
+
+    Overhead with passing by value:
+        the value needs to be copied on stack or into registers
+
+    For small objects, such as an integer, passing by value will be faster.
+    For bigger objects (for example a large structure), the copying would create too much overhead so passing by reference will be faster.
 
 48.
 Virtual Function and Pure Virtual Functions
@@ -5224,6 +5256,42 @@ http://stackoverflow.com/questions/38422886/differences-between-various-custom-c
 
 The bigger issue in your example is that your methods should be using const refs instead of values. I.e. bool operator<(Student ob) could be friend bool operator<(const Student& ls, const Student& rs){...}. Also, see here for some examples of different things to consider when overloading operators.
 
+136.
+Creating a Vector and bitset on heap
+http://stackoverflow.com/questions/27449831/create-a-large-bitset
+
+    bitset<400000000UL>& bitsVec = *(new bitset<400000000UL>());
+    delete &bitsVec;
+
+    std::vector<int>* pResult = new std::vector<int>();
+    pResult->push_back(...) instead of result.push_back(...)
+
+137.
+Custom Hash Function
+// http://stackoverflow.com/questions/8094790/how-to-get-hash-code-of-a-string-in-c
+
+    #include <functional>   // Contains function for std::hash
+
+    template<typename K, typename V, typename H >
+    size_t
+    HashTable<K, V, H>::computeHash(const K& key)
+    {
+        size_t hashVal = H()(key);
+        return hashVal % _size;
+    }
+
+    static size_t
+    myComputeHash(const int& key)
+    {
+        size_t hashVal = hash<int>()(key);
+        return hashVal % 100;
+    }
+
+138.
+Fastest way to reset every value of std::vector<int> to 0
+http://stackoverflow.com/questions/8848575/fastest-way-to-reset-every-value-of-stdvectorint-to-0
+
+    std::fill(v.begin(), v.end(), 0);
 
 To Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
