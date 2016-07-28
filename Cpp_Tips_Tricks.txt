@@ -168,6 +168,7 @@
 136. Creating a Vector and bitset on heap
 137. Custom Hash Function
 138. Fastest way to reset every value of std::vector<int> to 0
+139. Using find_first_not_of and find_first_of
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5292,6 +5293,15 @@ Fastest way to reset every value of std::vector<int> to 0
 http://stackoverflow.com/questions/8848575/fastest-way-to-reset-every-value-of-stdvectorint-to-0
 
     std::fill(v.begin(), v.end(), 0);
+
+139.
+Using find_first_not_of and find_first_of
+
+    string tmp = "Hello. World! Hi.there!how are?you";
+    string punctChars = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+    idx = tmp.find_first_not_of(". !?", punctIdx);
+    punctIdx = (tmp.substr(idx)).find_first_of(". !?", idx);
+    string res = tmp.substr(idx, punctIdx);
 
 To Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
