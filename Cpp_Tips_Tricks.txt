@@ -5303,7 +5303,24 @@ Using find_first_not_of and find_first_of
     punctIdx = (tmp.substr(idx)).find_first_of(". !?", idx);
     string res = tmp.substr(idx, punctIdx);
 
-To Read
+140.
+Best way to extract a subvector from a vector?
+http://stackoverflow.com/questions/421573/best-way-to-extract-a-subvector-from-a-vector
+
+    {
+        vector<T>::const_iterator first = myVec.begin() + 100000;
+        vector<T>::const_iterator last = myVec.begin() + 101000;
+        vector<T> newVec(first, last);
+    }
+
+    {
+        std::vector<int>   data();
+        // Load Z elements into data so that Z > Y > X
+
+        std::vector<int>   sub(&data[100000],&data[101000]);
+    }
+
+Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
 http://stackoverflow.com/questions/8547778/why-is-one-loop-so-much-slower-than-two-loops?rq=1
