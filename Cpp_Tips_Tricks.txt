@@ -169,6 +169,8 @@
 137. Custom Hash Function
 138. Fastest way to reset every value of std::vector<int> to 0
 139. Using find_first_not_of and find_first_of
+140. Best way to extract a subvector from a vector?
+141. Running GDB on mac
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5319,6 +5321,14 @@ http://stackoverflow.com/questions/421573/best-way-to-extract-a-subvector-from-a
 
         std::vector<int>   sub(&data[100000],&data[101000]);
     }
+
+141.
+Running GDB on mac
+
+    g++ -g -o geek GeeksForGeeks.cpp
+    gdb ./geek
+    b GeeksForGeeks.cpp:66
+    run
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
