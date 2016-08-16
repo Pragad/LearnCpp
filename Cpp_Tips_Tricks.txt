@@ -171,6 +171,8 @@
 139. Using find_first_not_of and find_first_of
 140. Best way to extract a subvector from a vector?
 141. Running GDB on mac
+142. C++ enable/disable debug messages of std::couts on the fly
+143. Why use apparently meaningless do-while and if-else statements in C/C++ macros
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5329,6 +5331,43 @@ Running GDB on mac
     gdb ./geek
     b GeeksForGeeks.cpp:66
     run
+
+142.
+C++ enable/disable debug messages of std::couts on the fly
+http://stackoverflow.com/questions/3371540/c-enable-disable-debug-messages-of-stdcouts-on-the-fly
+
+    #define DEBUG
+
+    #ifdef DEBUG
+    #define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+    #else
+    #define DEBUG_MSG(str) do { } while ( false )
+    #endif
+
+143.
+Why use apparently meaningless do-while and if-else statements in C/C++ macros
+http://stackoverflow.com/questions/1067226/c-multi-line-macro-do-while0-vs-scope-block
+
+    Actual Usage: #define FOO(X) do { f(X); g(X); } while (0)
+    What If: #define BAR(X) f(x); g(x)
+
+		if (corge)
+		  BAR(corge);
+		else
+		  gralt();
+
+	The above code would expand into
+		if (corge)
+		  f(corge); g(corge);
+		else
+		  gralt();
+
+	If IF ELSE is used for the macro, then we would have an extra else
+		#define FOO(X) if (1) { f(X); g(X); } else
+		if (corge)
+		  if (1) { f(corge); g(corge); } else;
+		else
+		  gralt();
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
