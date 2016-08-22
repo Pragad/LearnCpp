@@ -173,6 +173,8 @@
 141. Running GDB on mac
 142. C++ enable/disable debug messages of std::couts on the fly
 143. Why use apparently meaningless do-while and if-else statements in C/C++ macros
+144. Printing lists with commas C++
+
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5368,6 +5370,13 @@ http://stackoverflow.com/questions/1067226/c-multi-line-macro-do-while0-vs-scope
 		  if (1) { f(corge); g(corge); } else;
 		else
 		  gralt();
+
+144.
+Printing lists with commas C++
+http://stackoverflow.com/questions/3496982/printing-lists-with-commas-c
+
+    One common approach is to print the first item prior to the loop,
+    and loop only over the remaining items, PRE-printing a comma before each remaining item.
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
