@@ -175,7 +175,8 @@
 142. C++ enable/disable debug messages of std::couts on the fly
 143. Why use apparently meaningless do-while and if-else statements in C/C++ macros
 144. Printing lists with commas C++
-
+145. Nested Class Access Specifiers
+146. Forward Declarations
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5478,6 +5479,59 @@ http://stackoverflow.com/questions/3496982/printing-lists-with-commas-c
 
     One common approach is to print the first item prior to the loop,
     and loop only over the remaining items, PRE-printing a comma before each remaining item.
+
+145.
+Nested Class Access Specifiers
+http://stackoverflow.com/questions/6998369/c-nested-classes-accessibility
+
+		class OutSideClass
+		{
+		...
+		public:
+			int i_pub;
+		protected:
+			int i_pro;
+		private:
+			int i_pri;
+
+			class InSideClass
+			{
+				...
+				public:
+					int j_pub;
+				protected:
+					int j_pro;
+				private:
+					int j_pri;
+			};
+		};
+
+    Question 1> Is it true that OutSideClass can ONLY access public members of InSideClass
+	Yes
+
+    Question 2> Is it true that InSideClass can access all members of OutSideClass
+	No, in C++03. Yes, in C++11.
+
+    The members of a nested class have no special access to members of an enclosing class, nor to classes or functions that have granted friendship to an enclosing class; the usual access rules (clause 11) shall be obeyed.
+	The members of an enclosing class have no special access to members of a nested class; the usual access rules (clause 11) shall be obeyed.
+
+146.
+Forward Declarations
+http://stackoverflow.com/questions/553682/when-can-i-use-a-forward-declaration
+
+	Put yourself in the compiler's position:
+	When you forward declare a type, all the compiler knows is that this type exists; it knows nothing about its size, members, or methods.
+	This is why it's called an incomplete type.
+	Therefore, you cannot use the type to declare a member, or a base class, since the compiler would need to know the layout of the type.
+
+	Assuming the following forward declaration.
+		class X;
+
+    Declare a member to be a pointer or a reference to the incomplete type:
+		class Foo {
+			X *pt;
+			X &pt;
+		};
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
