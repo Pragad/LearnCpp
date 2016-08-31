@@ -177,6 +177,8 @@
 144. Printing lists with commas C++
 145. Nested Class Access Specifiers
 146. Forward Declarations
+147. Access Specifier: Public, Private, Default
+148. What is std::move
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -209,12 +211,60 @@ http://stackoverflow.com/questions/236129/split-a-string-in-c
         return elems;
     }
 
-
     std::vector<std::string> split(const std::string &s, char delim)
     {
         std::vector<std::string> elems;
         split(s, delim, elems);
         return elems;
+    }
+
+    void splitStringByPatternString(const string& s, const string& pattern, vector<string>& words)
+    {
+        int startIndex = 0;
+        unordered_set<char> patternSet;
+
+        for (char c : pattern)
+        {
+            patternSet.insert(c);
+        }
+
+        for(int i = 0; i < s.length(); i++)
+        {
+            // If the character is present in the pattern, the split the word
+            if (patternSet.find(s[i]) != patternSet.end())
+            {
+                if (startIndex != i)
+                {
+                    words.push_back(s.substr(startIndex, i - startIndex));
+                    startIndex = i + 1;
+                }
+                else
+                {
+                    ++startIndex;
+                }
+            }
+        }
+    }
+
+    void splitStringIntoWords(const string& s, vector<string>& words)
+    {
+        int startIndex = 0;
+        
+        for(int i = 0; i < s.length(); i++)
+        {
+            if (s[i] == ' ' || ispunct(s[i]))
+            {
+                if (startIndex != i)
+                {
+                    words.push_back(s.substr(startIndex, i - startIndex));
+                    startIndex = i + 1;
+                }
+                else
+                {
+                    ++startIndex;
+                }
+            }
+        }
     }
 
 C++ Find Substring using a pattern
@@ -5532,6 +5582,23 @@ http://stackoverflow.com/questions/553682/when-can-i-use-a-forward-declaration
 			X *pt;
 			X &pt;
 		};
+
+147.
+Access Specifier: Public, Private, Default
+    C++: Default is Private
+    C  : Default is Public
+
+148.
+What is std::move
+http://stackoverflow.com/questions/3413470/what-is-stdmove-and-when-should-it-be-used
+http://thbecker.net/articles/rvalue_references/section_01.html
+
+    In C++11, in addition to copy constructors, objects can have move constructors.
+    (And in addition to copy assignment operators, they have move assignment operators.)
+
+    It's a new C++ way to avoid copies.
+    For example, using a move constructor, a std::vector could just copy its internal pointer to data to the new object, leaving the moved object in an incorrect state, avoiding to copy all data.
+    This would be C++-valid.
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1

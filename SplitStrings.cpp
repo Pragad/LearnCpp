@@ -1,8 +1,69 @@
 #include <iostream>
+#include <unordered_set>
+#include <vector>
 #include <string>
+#include <sstream> // stringstream
 #include <cstring> // strlen
 #include <cassert> // assert
 using namespace std;
+
+    std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+        std::stringstream ss(s);
+        std::string item;
+        while (std::getline(ss, item, delim)) {
+            elems.push_back(item);
+        }
+        return elems;
+    }
+
+void splitStringByPatternString(const string& s, const string& pattern, vector<string>& words)
+{
+    int startIndex = 0;
+    unordered_set<char> patternSet;
+
+    for (char c : pattern)
+    {
+        patternSet.insert(c);
+    }
+
+    for(int i = 0; i < s.length(); i++)
+    {
+        // If the character is present in the pattern, the split the word
+        if (patternSet.find(s[i]) != patternSet.end())
+        {
+            if (startIndex != i)
+            {
+                words.push_back(s.substr(startIndex, i - startIndex));
+                startIndex = i + 1;
+            }
+            else
+            {
+                ++startIndex;
+            }
+        }
+    }
+}
+
+void splitStringIntoWords(const string& s, vector<string>& words)
+{
+    int startIndex = 0;
+    
+    for(int i = 0; i < s.length(); i++)
+    {
+        if (s[i] == ' ' || ispunct(s[i]))
+        {
+            if (startIndex != i)
+            {
+                words.push_back(s.substr(startIndex, i - startIndex));
+                startIndex = i + 1;
+            }
+            else
+            {
+                ++startIndex;
+            }
+        }
+    }
+}
 
 // Utility function to split a string by a delimitor
 char** str_split(char* a_str, const char a_delim = '/')
@@ -191,6 +252,21 @@ int main()
 
         cout << tok << endl;
 
+    }
+
+    {
+        // Split a string into words using ' ' and ispunct
+        string tok = "  My1  45 {nam}}e33 is Hi... !How Are!!! You!  ,. ";
+        string pat = " .,!{}()1345";
+        vector<string> words;
+        //splitStringIntoWords(tok, words);
+        splitStringByPatternString(tok, pat, words);
+
+        for(string word : words)
+        {
+            cout << word << ", ";
+        }
+        cout << endl;
     }
     cout << endl;
     return 0;
