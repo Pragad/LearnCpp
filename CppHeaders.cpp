@@ -2,8 +2,10 @@
 #include <algorithm>            // std::fill_n, sort
 #include <bitset>
 #include <cassert>              // assert
+#include <chrono>               // time_since_epoch()
 #include <climits>
 #include <cmath>                // ciel
+#include <ctime>                // time
 #include <condition_variable>
 #include <cstdint>
 #include <cstdio>

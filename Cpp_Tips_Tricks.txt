@@ -1129,6 +1129,8 @@ http://stackoverflow.com/questions/18544849/how-to-use-reinterpret-cast-in-c
 28c.
 Static Cast vs Dynamic Cast
 http://stackoverflow.com/questions/2253168/dynamic-cast-and-static-cast-in-c
+IMP Regular Cast vs Static Cast:
+http://stackoverflow.com/questions/28002/regular-cast-vs-static-cast-vs-dynamic-cast
 
 static_cast< Type* >(ptr):
     This takes the pointer in ptr and tries to safely cast it to a pointer of type Type*.
@@ -2778,6 +2780,12 @@ http://code.runnable.com/U2DKRsrlaUEEYt4f/get-the-current-local-time-with-ctime-
 
         time_t rawTime = time(nullptr);   // get time now
         //time_t rawTime = time(0);   // get time now
+
+        // http://www.cplusplus.com/reference/ctime/time/
+        time_t curTime;
+        curTime = time(0); // OR
+        time(&curTime);
+
         struct tm *locTime = localtime(& rawTime); // Convert to tm struct
         cout << "Year: " << locTime->tm_year + 1900 << endl;
         cout << "Mon : " << locTime->tm_mon + 1 << endl;
