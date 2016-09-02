@@ -36,7 +36,7 @@
 26b. When to use References vs. Pointers
 27.  Smart Pointer:
 28.  C++ Cast:
-28b. Static Cast vs Reinterpret Cast
+28b. Static Cast vs Dynamic Cast vs Regular Cast
 28c. Static Cast vs Dynamic Cast
 29.  C++ to Java:
 30.  Finding all subsets of a Vector of Vector
@@ -179,6 +179,7 @@
 146. Forward Declarations
 147. Access Specifier: Public, Private, Default
 148. What is std::move
+149. Why is sizeof empty class 1
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -1127,10 +1128,21 @@ http://stackoverflow.com/questions/18544849/how-to-use-reinterpret-cast-in-c
     For casting to and from void*, static_cast should be preferred.
 
 28c.
-Static Cast vs Dynamic Cast
+Static Cast vs Dynamic Cast vs Regular Cast
 http://stackoverflow.com/questions/2253168/dynamic-cast-and-static-cast-in-c
 IMP Regular Cast vs Static Cast:
 http://stackoverflow.com/questions/28002/regular-cast-vs-static-cast-vs-dynamic-cast
+
+    REGULAR CAST:            
+        - These casts are also called C-style cast.
+        - A C-style cast is basically identical to trying out a range of sequences of C++ casts, and taking the first C++ cast that works, without ever considering dynamic_cast.
+        - Needless to say, this is much more powerful as it combines all of const_cast, static_cast and reinterpret_cast, but it's also unsafe, because it does not use dynamic_cast.
+
+        - In addition, C-style casts not only allow you to do this, but they also allow you to safely cast to a private base-class, while the "equivalent" static_cast sequence would give you a compile-time error for that.
+
+        - Some people prefer C-style casts because of their brevity.
+        - I use them for numeric casts only, and use the appropriate C++ casts when user defined types are involved, as they provide stricter checking.
+        - C-style casts are a mix of const and reinterpret cast, and it's difficult to find-and-replace in your code. A C++ application programmer should avoid C-style cast.
 
 static_cast< Type* >(ptr):
     This takes the pointer in ptr and tries to safely cast it to a pointer of type Type*.
@@ -1245,7 +1257,6 @@ dynamic_cast< Type* >(ptr):
         class Base {};
         class Der : public Base {};
 
-
         int main()
         {
             Base* base = new Der;
@@ -1270,6 +1281,31 @@ dynamic_cast< Type* >(ptr):
 
             return 0;
         }
+
+http://stackoverflow.com/questions/28002/regular-cast-vs-static-cast-vs-dynamic-cast
+    Examples of static_cast and/vs dynamic_cast
+
+        If we have the following classes
+
+            class B {};
+            class D : B {};
+
+        then you can do the following
+            B* b = new D();
+            D* d1 = static_cast<D*>b; // Valid! d1 is a valid and correct pointer to a D
+            D* d2 = dynamic_cast<D*>b; // Valid! d2 is a valid and correct pointer to a D
+
+        In this example, both pointers d1 and d2 will point to a correctly typed version of b as requested.
+
+        A potential for mishap where static_cast can be more unsafe than dynamic_cast is illustrated by the following example:
+            B* b = new B();
+            D* d1 = static_cast<D*>b; // works, but D component is invalid!
+            D* d2 = dynamic_cast<D*>b; // cast fails => d2 is now a nullptr
+
+        Now d1 will point to a data segment of type D*, but the actual data is B*, so attempting to access D-specific member is undefined behaviour.
+        d2, on the other hand, will be a nullptr and can be checked and handled correctly (i.e. do not try to use it as a D if it failed to convert).
+
+        Because dynamic_cast performs runtime type checking, it is slower, but whether this matters to your application should be checked by benchmarking.
 
 29.
 C++ to Java:
@@ -1659,6 +1695,7 @@ Where are Class Members stored in memory
 http://stackoverflow.com/questions/15572411/where-are-member-functions-stored-for-an-object
 http://stackoverflow.com/questions/22119360/class-members-and-member-functions-memory-location/22119456#22119456
 http://stackoverflow.com/questions/1169858/global-memory-management-in-c-in-stack-or-heap
+http://stackoverflow.com/questions/648647/in-c-where-in-memory-are-class-functions-put
 http://www.cs.uwm.edu/classes/cs315/Bacon/Lecture/HTML/ch10s04.html
 
     Typically a process has 5 different areas of memory allocated
@@ -1686,6 +1723,20 @@ http://www.cs.uwm.edu/classes/cs315/Bacon/Lecture/HTML/ch10s04.html
     Size of a C++ Object is determined by Class’s data members and base classes
     Only non-virtual data members occupy space.
     Each instance of derived class will contain a complete copy of the instance data of the base class
+
+http://stackoverflow.com/questions/648647/in-c-where-in-memory-are-class-functions-put
+    - It's not necessarily true that "each object - when created - will be given space in the HEAP for member variables".
+    - Each object you create will take some nonzero space somewhere for its member variables, but where is up to how you allocate the object itself.
+    - If the object has automatic (stack) allocation, so too will its data members.
+    - If the object is allocated on the free store (heap), so too will be its data members.
+    - After all, what is the allocation of an object other than that of its data members?
+
+    - If a stack-allocated object CONTAINS A POINTER or other type which is then used to allocate on the heap, that allocation will occur on the heap regardless of where the object itself was created.
+
+    - For objects with virtual functions, EACH WILL HAVE A VTABLE POINTER allocated as if it were an explicitly-declared data member within the class.
+
+    - As for member functions, the code for those is likely no different from free-function code in terms of where it goes in the executable image.
+    - After all, a member function is basically a free function with an implicit "this" pointer as its first argument.
 
 http://stackoverflow.com/questions/5037701/where-are-const-objects-stored
 http://programmers.stackexchange.com/questions/142475/how-does-const-storage-work-item-2-scott-myers-effective-c
@@ -4316,15 +4367,36 @@ http://stackoverflow.com/questions/644673/fast-way-to-copy-one-vector-into-anoth
 Copy Constructor vs Assignment Operator:
     A copy constructor is used to initialize a previously uninitialized object from some other object's data.
 
-    A(const A& rhs) : data_(rhs.data_) {}
+        A(const A& rhs) : data_(rhs.data_) {}
 
     An assignment operator is used to replace the data of a previously initialized object with some other object's data.
 
-    A& operator=(const A& rhs) {data_ = rhs.data_; return *this;}
+        A& operator=(const A& rhs) {data_ = rhs.data_; return *this;}
 
     Copy constructor is called when a new object is created from an existing object, as a copy of the existing object (see this G-Fact). And assignment operator is called when an already initialized object is assigned a new value from another existing object.
-    t2 = t1;  // calls assignment operator, same as "t2.operator=(t1);"
-    Test t3 = t1;  // calls copy constructor, same as "Test t3(t1);"
+        t2 = t1;  // calls assignment operator, same as "t2.operator=(t1);"
+        Test t3 = t1;  // calls copy constructor, same as "Test t3(t1);"
+
+        class Test
+        {
+        public:
+           Test() {}
+           Test(const Test &t)
+           {
+              cout<<"Copy constructor called "<<endl;
+           }
+           Test& operator = (const Test &t)
+           {
+              cout<<"Assignment operator called "<<endl;
+           }
+        };
+         
+        int main()
+        {
+          Test t1, t2;
+          t2 = t1;      // Assignment operator
+          Test t3 = t1; // Copy Constructor
+        }
 
 111.
 Volatile keyword:
@@ -5607,6 +5679,14 @@ http://thbecker.net/articles/rvalue_references/section_01.html
     It's a new C++ way to avoid copies.
     For example, using a move constructor, a std::vector could just copy its internal pointer to data to the new object, leaving the moved object in an incorrect state, avoiding to copy all data.
     This would be C++-valid.
+
+149.
+Why is sizeof empty class 1
+http://stackoverflow.com/questions/2362097/why-is-the-size-of-an-empty-class-in-c-not-zero
+
+    The standard does not allow objects (and classes thereof) of size 0, since that would make it possible for two distinct objects to have the same memory address.
+    That's why even empty classes must have a size of (at least) 1.
+
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
