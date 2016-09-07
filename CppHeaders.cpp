@@ -18,7 +18,7 @@
 #include <iostream>
 
 #include <iterator>
-#include <list>
+#include <list>                 // Double Linked List
 #include <map>
 #include <mutex>
 #include <pthread.h>

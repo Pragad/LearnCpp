@@ -180,6 +180,7 @@
 147. Access Specifier: Public, Private, Default
 148. What is std::move
 149. Why is sizeof empty class 1
+150. Use of std::endl vs \n
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5686,6 +5687,34 @@ http://stackoverflow.com/questions/2362097/why-is-the-size-of-an-empty-class-in-
 
     The standard does not allow objects (and classes thereof) of size 0, since that would make it possible for two distinct objects to have the same memory address.
     That's why even empty classes must have a size of (at least) 1.
+
+150. Use of std::endl vs \n
+http://stackoverflow.com/questions/213907/c-stdendl-vs-n
+http://stackoverflow.com/questions/7324843/why-use-endl-when-i-can-use-a-newline-character
+
+    The difference can be illustrated by the following:
+        std::cout << std::endl;
+    is equivalent to
+        std::cout << '\n' << std::flush;
+
+    - You would need to force a flush right before prompting the user for input from cin, but not when writing a million lines of output.
+    - for example, if you want to get all the output, and the program is unstable), use std::endl.
+    - Endl is actually slower because it forces a flush, which actually unnecessary.
+    - if you are in a command line app and want to guarantee that the user can see the output immediately.
+
+    - Use std::endl If you want to force an immediate flush to the output.
+    - Use \n if you are worried about performance (which is probably not the case if you are using the << operator).
+
+    - I use \n on most lines.
+    - Then use std::endl at the end of a paragraph (but that is just a habit and not usually necessary).
+
+    endl is more than just an alias for the \n character. When you send something to cout (or any other output stream), it does not process and output the data immediately. For example:
+        cout << "Hello, world!";
+        someFunction();
+
+    In the above example, there's is some chance that the function call will start to execute before the output is flushed.
+    Using endl you force the flush to take place before the second instruction is executed.
+    You can also ensure that with the ostream::flush function
 
 
 Read
