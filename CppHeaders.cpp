@@ -1,13 +1,13 @@
-#define __STDC_LIMIT_MACROS
 #include <algorithm>            // std::fill_n, sort
 #include <bitset>
 #include <cassert>              // assert
 #include <chrono>               // time_since_epoch()
-#include <climits>
+#include <climits>              // INT_MAX, INT_MIN
 #include <cmath>                // ciel
 #include <ctime>                // time
 #include <condition_variable>
-#include <cstdint>
+#define __STDC_LIMIT_MACROS     // std::numeric_limits<std::int32_t>::max();
+#include <cstdint>              // std::numeric_limits<std::int32_t>::max();
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>              // memset, strlen

@@ -7,15 +7,18 @@
 #include <cassert> // assert
 using namespace std;
 
-    std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
-        std::stringstream ss(s);
-        std::string item;
-        while (std::getline(ss, item, delim)) {
-            elems.push_back(item);
-        }
-        return elems;
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems)
+{
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim))
+    {
+        elems.push_back(item);
     }
+    return elems;
+}
 
+// Sping strings using a STRING of chars
 void splitStringByPatternString(const string& s, const string& pattern, vector<string>& words)
 {
     int startIndex = 0;
@@ -44,6 +47,7 @@ void splitStringByPatternString(const string& s, const string& pattern, vector<s
     }
 }
 
+// Sping strings using ' ' and isPunct
 void splitStringIntoWords(const string& s, vector<string>& words)
 {
     int startIndex = 0;
@@ -153,7 +157,6 @@ void getUserInput()
     char* user_name = new char[len];
 
     strcpy(user_name, input_string.c_str());
-
 
     cout << "Input Str: " << input_string << endl;
     cout << "User Name: " << user_name << endl;

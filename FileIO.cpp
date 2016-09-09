@@ -70,7 +70,7 @@ int main()
         }
     }
 
-    // Print only comments
+    // Print only comments, Print Comments lines
     {
         bool comment = false;
         for (auto line : fileLines)
