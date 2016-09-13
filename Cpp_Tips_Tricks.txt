@@ -161,6 +161,7 @@
 128. C++11 introduced a standardized memory model. What does it mean?
 129. When is void* useful
 130. Virtual Destructor in C++
+130b. Virtual Constructor in C++
 131. Print Unordered Map. Get key and get value
 132. Self Referential Structures
 133. How to use std::sort to sort a vector
@@ -5394,6 +5395,16 @@ http://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
     Since Base's destructor is not virtual and b is a Base* pointing to a Derived object, delete b has undefined behaviour.
     In most implementations, the call to the destructor will be resolved like any non-virtual code, meaning that the destructor of the base class will be called but not the one of the derived class, resulting in resources leak.
 
+130b. Virtual Constructor in C++
+http://stackoverflow.com/questions/733360/why-do-we-not-have-a-virtual-constructor-in-c
+
+    A virtual call is a mechanism to get work done given partial information.
+    In particular, "virtual" allows us to call a function knowing only any interfaces and not the exact type of the object.
+    To create an object you need complete information.
+    In particular, you need to know the exact type of what you want to create. Consequently, a "call to a constructor" cannot be virtual.
+
+    To construct an object, a constructor needs the exact type of the object it is to create [...]
+    Furthermore [...]you cannot have a pointer to a constructor
 131.
 Print Unordered Map. Get key and get value
 
