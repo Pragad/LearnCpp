@@ -185,6 +185,7 @@
 150. Use of std::endl vs \n
 151. Bitset to convert Integer to Decimal and Decimal to Int
 152. Print binary of a number using bitset
+153. Using iter_swap to swap elements in a vector
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5761,6 +5762,13 @@ Print binary of a number using bitset
     short c = -315;
     std::bitset<16> y(c);
     std::cout << y;
+
+153.
+Using iter_swap to swap elements in a vector
+
+    #include <algorithm>
+    std::iter_swap(nums.begin() + 2, nums.end() - 1);
+
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1

@@ -1,8 +1,8 @@
-#include <algorithm>            // std::fill_n, sort
+#include <algorithm>            // std::fill_n, sort, iter_swap, swap
 #include <bitset>
 #include <cassert>              // assert
 #include <chrono>               // time_since_epoch()
-#include <climits>              // INT_MAX, INT_MIN
+#include <climits>              // INT_MAX, INT_MIN, numeric_limits
 #include <cmath>                // ciel
 #include <ctime>                // time
 #include <condition_variable>
