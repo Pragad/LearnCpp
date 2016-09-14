@@ -152,6 +152,7 @@
 120. Passing a 2D array to a C++ function
 121. Custom Comparator for Priority Queue
 122. C++ Erase vector element by value rather than by position
+122b. Erase Vector element by position
 123. Function Pointers and Callbacks
 123b. How do function pointers in C work
 124. Registering a Callback
@@ -4744,6 +4745,11 @@ http://stackoverflow.com/questions/3385229/c-erase-vector-element-by-value-rathe
     Take a look at the description of remove(): It moves all values not equal to the value passed to the beginning of the range [begin,end).
     With your example in the question you'd get 5,9,2,0,7,7.
     As remove() however returns an iterator to the new end, vec.erase() can remove the obsolete elements (i.e. the second 7 here) if that is needed.
+
+122b.
+Erase Vector element by position
+
+    vector.pop_back()
 
 123.
 Function Pointers and Callbacks
