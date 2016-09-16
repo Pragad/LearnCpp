@@ -186,6 +186,8 @@
 151. Bitset to convert Integer to Decimal and Decimal to Int
 152. Print binary of a number using bitset
 153. Using iter_swap to swap elements in a vector
+154. strcmp vs strncmp vs memcmp vs bcmp
+155. bcmp, bzero, bcopy
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5769,7 +5771,38 @@ Using iter_swap to swap elements in a vector
     #include <algorithm>
     std::iter_swap(nums.begin() + 2, nums.end() - 1);
 
+154.
+strcmp vs strncmp vs memcmp vs bcmp
+http://stackoverflow.com/questions/13095513/what-is-the-difference-between-memcmp-strcmp-and-strncmp-in-c
 
+    strcmp  :compares null-terminated C strings
+    strncmp :compares at most N characters of null-terminated C strings
+    memcmp  :compares binary byte buffers of N bytes
+    bcmp    :
+
+    memcmp compares a number of bytes.
+    strcmp and the like compare strings.
+
+    So, if you have these strings:
+        const char s1[] = "atoms\0\0\0\0";  // extra null bytes at end
+        const char s2[] = "atoms\0abc";     // embedded null byte
+        const char s3[] = "atomsaaa";
+
+    Then these results hold true:
+        strcmp(s1, s2) == 0      // strcmp stops at null terminator
+        strcmp(s1, s3) != 0      // Strings are different
+        strncmp(s1, s3, 5) == 0  // First 5 characters of strings are the same
+        memcmp(s1, s3, 5) == 0   // First 5 bytes are the same
+        strncmp(s1, s2, 8) == 0  // Strings are the same up through the null terminator
+        memcmp(s1, s2, 8) != 0   // First 8 bytes are different
+
+155.
+bcmp, bzero, bcopy
+http://stackoverflow.com/questions/4291149/difference-between-string-h-and-strings-h
+
+        int    bcmp(const void *, const void *, size_t); /* LEGACY, see memcmp */
+        void   bcopy(const void *, void *, size_t); /* LEGACY, see memcpy, memmove */
+        void   bzero(void *, size_t); /* LEGACY, see memset */
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
