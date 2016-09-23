@@ -10,7 +10,7 @@
 #include <cstdint>              // std::numeric_limits<std::int32_t>::max();
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>              // memset, strlen
+#include <cstring>              // memset, strlen, memcmp
 #include <fstream>
 #include <functional>           // Contains function for hash, std::function
 #include <iomanip>

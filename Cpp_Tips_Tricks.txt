@@ -188,6 +188,7 @@
 153. Using iter_swap to swap elements in a vector
 154. strcmp vs strncmp vs memcmp vs bcmp
 155. bcmp, bzero, bcopy
+156. Why constant first in a IF statement and then an expression
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5803,6 +5804,18 @@ http://stackoverflow.com/questions/4291149/difference-between-string-h-and-strin
         int    bcmp(const void *, const void *, size_t); /* LEGACY, see memcmp */
         void   bcopy(const void *, void *, size_t); /* LEGACY, see memcpy, memmove */
         void   bzero(void *, size_t); /* LEGACY, see memset */
+
+156.
+Why constant first in a IF statement and then an expression
+http://stackoverflow.com/questions/2138719/whats-the-reasoning-behind-putting-constants-in-if-statements-first
+
+        if ( NULL == pMsg ) return rv;
+        if (false == flag) return something;
+
+    This is to avoid SINGLE ASSIGNMENT BUG. i.e.
+        if (pMsg = NULL) instead of (pMsg == NULL)
+        if (flag = false) instead of (flag == false)
+
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
