@@ -189,6 +189,7 @@
 154. strcmp vs strncmp vs memcmp vs bcmp
 155. bcmp, bzero, bcopy
 156. Why constant first in a IF statement and then an expression
+157. Convert char * to std::string
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5815,6 +5816,30 @@ http://stackoverflow.com/questions/2138719/whats-the-reasoning-behind-putting-co
     This is to avoid SINGLE ASSIGNMENT BUG. i.e.
         if (pMsg = NULL) instead of (pMsg == NULL)
         if (flag = false) instead of (flag == false)
+
+157.
+Convert char * to std::string
+http://stackoverflow.com/questions/1195675/convert-a-char-to-stdstring
+
+    std::string has a constructor for this:
+        const char *s = "Hello, World!";
+        std::string str(s);
+
+    Just make sure that your char * isn't NULL, or else the behavior is undefined.
+
+    If you already know size of the char*, use this instead
+        char* data = ...;
+        int size = ...;
+        std::string myString(data, size);
+    This doesn't use strlen.
+
+    EDIT: If string variable already exists, use assign():
+        std::string myString;
+        char* data = ...;
+        int size = ...;
+        myString.assign(data, size);
+
+
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1

@@ -148,6 +148,15 @@ int main()
         cout << "Time: " << time << endl;
         */
     }
+
+    {
+        const char* a = "error";
+        string b = "world";
+        //string res = "Hello " + a + " Word " + b;
+        string res(a);
+        res = "Hello " + res + " Word " + b;
+        cout << res << endl;
+    }
     cout <<  endl;
     return 0;
 }
