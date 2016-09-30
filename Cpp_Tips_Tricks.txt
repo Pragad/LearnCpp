@@ -190,6 +190,8 @@
 155. bcmp, bzero, bcopy
 156. Why constant first in a IF statement and then an expression
 157. Convert char * to std::string
+158. How to call a C function or a header from a C++ file - extern C
+159. #if 0
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5839,6 +5841,107 @@ http://stackoverflow.com/questions/1195675/convert-a-char-to-stdstring
         int size = ...;
         myString.assign(data, size);
 
+158.
+How to call a C function or a header from a C++ file - extern C
+http://stackoverflow.com/questions/67894/why-do-we-need-extern-c-include-foo-h-in-c
+http://stackoverflow.com/questions/1041866/in-c-source-what-is-the-effect-of-extern-c
+
+    Why do we need to use:
+        extern "C"
+        {
+            #include <foo.h>
+        }
+
+        extern "C" void foo(int);
+        extern "C"
+        {
+           void g(char);
+           int i;
+        }
+
+    C and C++ are superficially similar, but each compiles into a very different set of code.
+    When you include a header file with a C++ compiler, the compiler is expecting C++ code.
+    If, however, it is a C header, then the compiler expects the data contained in the header file to be compiled to a certain format—the C++ 'ABI', or 'Application Binary Interface', so the linker chokes up.
+    This is preferable to passing C++ data to a function expecting C data.
+
+    So: use extern "C" {...}; when including a c header—it's that simple.
+    Otherwise, you'll have a mismatch in compiled code, and the linker will choke.
+    extern "C" determines how symbols in the generated object file should be named.
+    If a function is declared without extern "C", the symbol name in the object file will use C++ name mangling.
+
+    Here's an example.
+    Given test.C like so:
+        void foo() { }
+
+    Compiling and listing symbols in the object file gives:
+        $ g++ -c test.C
+        $ nm test.o
+        0000000000000000 T _Z3foov
+                         U __gxx_personality_v0
+
+    The foo function is actually called "_Z3foov".
+    This string contains type information for the return type and parameters, among other things.
+    If you instead write test.C like this:
+        extern "C" {
+            void foo() { }
+        }
+
+    Then compile and look at symbols:
+        $ g++ -c test.C
+        $ nm test.o
+                         U __gxx_personality_v0
+        0000000000000000 T foo
+
+    You get C linkage.
+    The name of the "foo" function in the object file is just "foo", and it doesn't have all the fancy type info that comes from name mangling.
+
+    You generally include a header within extern "C" {} if the code that goes with it was compiled with a C compiler but you're trying to call it from C++.
+    When you do this, you're telling the compiler that all the declarations in the header will use C linkage.
+    When you link your code, your .o files will contain references to "foo", not "_Z3fooblah", which hopefully matches whatever is in the library you're linking against.
+
+159.
+#if 0
+http://stackoverflow.com/questions/2852913/what-exactly-does-an-if-0-endif-block-do
+http://stackoverflow.com/questions/3630601/why-use-if-0-for-block-commenting-out
+
+    - it not get executed, it doesn't even get compiled.
+    - #if 0 is used pretty frequently when the removed block contains block-comments
+    - #if is a preprocessor command, which gets evaluated before the actual compilation step.
+    - The code inside that block doesn't appear in the compiled binary.
+
+    It's identical to commenting out the block, except with one important difference: Nesting is not a problem. Consider this code:
+        foo();
+        bar(x, y); /* x must not be NULL */
+        baz();
+
+    If I want to comment it out, I might try:
+        /*
+        foo();
+        bar(x, y); /* x must not be NULL */
+        baz();
+        */
+
+    Bzzt. Syntax error! Why? Because block comments do not nest, and so (as you can see from SO's syntax highlighting) the */ after the word "NULL" terminates the comment, making the baz call not commented out, and the */ after baz a syntax error.
+
+    On the other hand:
+        #if 0
+        foo();
+        bar(x, y); /* x must not be NULL */
+        baz();
+        #endif
+
+    Works to comment out the entire thing. And the #if 0s will nest with each other, like so:
+        #if 0
+        pre_foo();
+        #if 0
+        foo();
+        bar(x, y); /* x must not be NULL */
+        baz();
+        #endif
+        quux();
+        #endif
+
+    Although of course this can get a bit confusing and become a maintenance headache if not commented properly.
 
 
 Read
