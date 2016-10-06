@@ -4234,6 +4234,7 @@ http://stackoverflow.com/questions/36506331/how-to-use-memset-or-fill-n-to-initi
 100.
 Unique Lock
 http://www.cplusplus.com/reference/mutex/unique_lock/
+http://stackoverflow.com/questions/32135380/how-do-unique-locks-work-compared-to-normal-mutex-locks
 
     A unique lock is an object that manages a mutex object with unique ownership in both states: locked and unlocked.
 
@@ -4242,6 +4243,30 @@ http://www.cplusplus.com/reference/mutex/unique_lock/
     The object supports both states: locked and unlocked.
 
     This class guarantees an unlocked status on destruction (even if not called explicitly). Therefore it is especially useful as an object with automatic duration, as it guarantees the mutex object is properly unlocked in case an exception is thrown.
+
+    EXAMPLE:
+    The point of unique_lock is to lock the associated mutex, and then to automatically unlock it when it goes out of scope.
+    Using a mutex without unique_lock:
+
+        mutable std::mutex m_mutex;
+        bool m_playerQuit{ false };
+
+        void SetPlayerQuit()
+        {
+            m_mutex.lock();
+            m_playerQuit = true;
+            m_mutex.unlock();
+        }
+
+    But this manual unlocking has all the problems that unique_lock was designed to solve, so it should be using a scoped lock (either unique_lock or lock_guard) but only in the function scope, not as a member:
+        mutable std::mutex m_mutex;
+        bool m_playerQuit{ false };
+
+        void SetPlayerQuit()
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            m_playerQuit = true;
+        }   // m_mutex is automatically unlocked by the ~lock_guard destructor
 
 101.
 Condition Variable
@@ -5951,6 +5976,7 @@ http://stackoverflow.com/questions/2229107/what-is-the-fastest-way-to-find-if-a-
     static inline int is_odd_A(int x) { return x & 1; }
     is more efficient than
     static inline int is_odd_B(int x) { return x % 2; }
+
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
