@@ -60,12 +60,59 @@ void printCharsMutex(uint32_t num, char ch)
 }
 
 // -----------------------------------------------------------------------------------------
+// PROBLEM 3. Another example of Mutex, Unique_lock
+// http://baptiste-wicht.com/posts/2012/03/cp11-concurrency-tutorial-part-2-protect-shared-data.html
+// -----------------------------------------------------------------------------------------
+class PersonCountNoMtx
+{
+public:
+    int _value;
+
+    PersonCount() : _value(0) { }
+
+    void increment()
+    {
+        _value++;
+    }
+};
+
+class PersonCountWithMtx
+{
+    std::mutex mtx;
+    int _value;
+
+    PersonCount() : _value(0) { }
+
+    void increment()
+    {
+        mutex.lock();
+        _value++; // IMP: If Exception happens and we crash then the lock does not get released
+        mutex.unlock();
+    }
+};
+
+class PersonCountUniqLock
+{
+    std::mutex mtx;
+    int _value;
+
+    PersonCount() : _value(0) { }
+
+    void increment()
+    {
+        unique_lock<mutex> uniqLock(mtx);   // Unlock gets called when we go out of scope
+        _value++;
+    }
+};
+
+// -----------------------------------------------------------------------------------------
 // Main Function
 // -----------------------------------------------------------------------------------------
 int main()
 {
     // Example 1
     {
+        cout << endl << "Problem 1" << endl;
         x = 0;
         thread th5 (incrementX);
         thread th6 (incrementX);
@@ -85,6 +132,7 @@ int main()
 
     // Example 2
     {
+        cout << endl << "Problem 2" << endl;
         cout << "Without Mutex" << endl;
         thread th1 (printChars, 10, '*');
         thread th2 (printChars, 10, '$');
@@ -99,6 +147,66 @@ int main()
         // Main will wait for the threads to finish execution before continuing its work
         th3.join();
         th4.join();
+    }
+
+    // PROBLEM 3. Another example of Mutex, Unique_lock
+    {
+        cout << endl << "Problem 3" << endl;
+        PersonCountNoMtx ob1;
+        vector<thread> vecThreads1;
+        for (uint32_t i = 0; i < 5; i++)
+        {
+            vecThreads1.push_back(thread(&ob1));
+            for (uint32_t j = 0; j < 10; j++)
+            {
+                ob1.increment();
+            }
+        }
+
+        for (auto th : vecThreads1)
+        {
+            th.join();
+        }
+
+        cout << "Thread 1's Value: " << ob1._value << endl;
+
+        PersonCountWithMtx ob2;
+        vector<thread> vecThreads2;
+        for (uint32_t i = 0; i < 5; i++)
+        {
+            vecThreads2.push_back(thread(&ob2));
+            for (uint32_t j = 0; j < 10; j++)
+            {
+                ob2.increment();
+            }
+        }
+
+        for (auto th : vecThreads2)
+        {
+            th.join();
+        }
+
+        cout << "Thread 2's Value: " << ob2._value << endl;
+
+
+        PersonCountUniqLock ob3;
+        vector<thread> vecThreads3;
+        for (uint32_t i = 0; i < 5; i++)
+        {
+            vecThreads3.push_back(thread(&ob3));
+            for (uint32_t j = 0; j < 10; j++)
+            {
+                ob3.increment();
+            }
+        }
+
+        for (auto th : vecThreads3)
+        {
+            th.join();
+        }
+
+        cout << "Thread 3's Value: " << ob3._value << endl;
+
     }
 
     cout << endl;

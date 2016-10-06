@@ -129,6 +129,7 @@
 98.  Created Vectors of User defined size
 99.  How to use memset or fill_n to initialize a dynamic two dimensional TwoD array in C++
 100. Unique Lock
+101a. Nice Threading tutorial
 101. Condition Variable
 102. Lock_guard vs Unique_lock
 103. Recursive Mutex
@@ -4268,10 +4269,19 @@ http://stackoverflow.com/questions/32135380/how-do-unique-locks-work-compared-to
             m_playerQuit = true;
         }   // m_mutex is automatically unlocked by the ~lock_guard destructor
 
+101a.
+Nice Threading tutorial
+http://baptiste-wicht.com/posts/2012/03/cp11-concurrency-tutorial-part-2-protect-shared-data.html
+
+    Check out the examples
+
 101.
 Condition Variable
 http://www.cplusplus.com/reference/condition_variable/condition_variable/wait/
     wait()
+        The execution of the current thread (which shall have locked lck's mutex) is blocked until notified.
+        At the moment of blocking the thread, the function automatically calls lck.unlock(), allowing other locked threads to continue.
+        
     notify_one()
 
 102.
