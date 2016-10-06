@@ -192,6 +192,7 @@
 157. Convert char * to std::string
 158. How to call a C function or a header from a C++ file - extern C
 159. #if 0
+160. Fastest way to check if a number is even or odd
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5943,7 +5944,13 @@ http://stackoverflow.com/questions/3630601/why-use-if-0-for-block-commenting-out
 
     Although of course this can get a bit confusing and become a maintenance headache if not commented properly.
 
+160.
+Fastest way to check if a number is even or odd
+http://stackoverflow.com/questions/2229107/what-is-the-fastest-way-to-find-if-a-number-is-even-or-odd
 
+    static inline int is_odd_A(int x) { return x & 1; }
+    is more efficient than
+    static inline int is_odd_B(int x) { return x % 2; }
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
