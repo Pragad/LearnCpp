@@ -8,12 +8,13 @@ using namespace std;
 
 static const uint32_t HASHTABLE_SIZE = 100;
 
+// Not used
 static size_t
-myComputeHash(const int& key)
+myComputeHash(const int& key, size_t size)
 {
     // http://stackoverflow.com/questions/8094790/how-to-get-hash-code-of-a-string-in-c
     size_t hashVal = hash<int>()(key);
-    return hashVal % 100;
+    return hashVal % size;
 }
 
 // Make Hash function generic as well
@@ -22,7 +23,8 @@ class HashTable
 {
     private:
         class HashEntry;    // forward declaration
-        size_t _size;
+        size_t _size;        // Tracks the full size of the hash list
+        size_t _numElements; // Tracks the current number of elements
         vector< vector<HashEntry> > _hashTable;
 
         class HashEntry
@@ -44,6 +46,8 @@ class HashTable
         void put(K key, V value);
         V get(K key);
 
+        size_t size();
+        size_t capacity();
         size_t computeHash(const K& key);
 };
 
@@ -53,6 +57,7 @@ template<typename K, typename V, typename H >
 HashTable<K, V, H>::HashTable(size_t size)
 {
     this->_size = size;
+    this->_numElements = 0;
     _hashTable.reserve(_size);
 }
 
@@ -60,7 +65,22 @@ template<typename K, typename V, typename H >
 HashTable<K, V, H>::HashTable()
 {
     this->_size = HASHTABLE_SIZE;
+    this->_numElements = 0;
     _hashTable.reserve(_size);
+}
+
+template<typename K, typename V, typename H >
+size_t
+HashTable<K, V, H>::size()
+{
+    return _size;
+}
+
+template<typename K, typename V, typename H >
+size_t
+HashTable<K, V, H>::capacity()
+{
+    return _numElements;
 }
 
 template<typename K, typename V, typename H >
@@ -78,10 +98,10 @@ HashTable<K, V, H>::put(K key, V value)
 {
     // Compute a new key based on the given key
     size_t newKey = computeHash(key);
-
     // Create a Hash entry with user's given key and value and push into the vector
     // Index where the entry should be pushed is computed from compute Hash
     _hashTable.insert(_hashTable.begin() + newKey, vector<HashEntry> {HashEntry (key, value)});
+    _numElements++;
 }
 
 template<typename K, typename V, typename H >
@@ -127,8 +147,17 @@ int main()
     {
         ht->put(i, "Value: " + to_string(i));
     }
+    ht->put(3, "Value: " + to_string(13));
+    ht->put(5, "Value: " + to_string(15));
+    ht->put(7, "Value: " + to_string(17));
 
-    for (uint32_t i = 0; i < 10; i++)
+    cout << "Hash Table Capacity: " << ht->capacity() << endl;
+
+    // TODO: The below line will try to insert to a random position in a vector.
+    // This would crash the program
+    // Fix: Assign dummy values to all of the vector elements
+    //ht->put(17, "Value: " + to_string(17));
+    for (uint32_t i = 0; i < ht->capacity(); i++)
     {
         cout << ht->get(i) << ", ";
     }

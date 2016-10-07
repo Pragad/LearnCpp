@@ -194,8 +194,11 @@
 158. How to call a C function or a header from a C++ file - extern C
 159. #if 0
 160. Fastest way to check if a number is even or odd
-161. Multithreading - Calling a Class's member function from main thread using objects
+161a. Multithreading in General
+161b. Multithreading - Calling a Class's member function from main thread using objects
 162. Creating vector of threads
+163. What is std::atomic
+164. Inserting at random position to vector - Not possible
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5989,7 +5992,13 @@ http://stackoverflow.com/questions/2229107/what-is-the-fastest-way-to-find-if-a-
     is more efficient than
     static inline int is_odd_B(int x) { return x % 2; }
 
-161.
+161a.
+Multithreading in General
+https://www.classes.cs.uchicago.edu/archive/2013/spring/12300-1/labs/lab6/
+https://bartoszmilewski.com/2008/12/01/c-atomics-and-memory-ordering/
+http://thispointer.com/c11-multithreading-part-7-condition-variables-explained/
+
+161b.
 Multithreading - Calling a Class's member function from main thread using objects
 http://stackoverflow.com/questions/15434492/c-11-thread-initialization-with-member-functions-compiling-error?noredirect=1&lq=1
 http://stackoverflow.com/questions/10673585/start-thread-with-member-function?noredirect=1&lq=1
@@ -6026,6 +6035,29 @@ Creating vector of threads
             }
         }
 
+163.
+What is std::atomic
+http://www.cplusplus.com/reference/atomic/
+
+    Atomic types are types that encapsulate a value whose access is guaranteed to not cause data races and can be used to synchronize memory accesses among different threads.
+
+    Now, your example:
+        a = a + 12;
+    will not evaluate to a single atomic op: it will result in a.load() (which is atomic itself), then addition between this value and 12 and a.store() (also atomic) of final result.
+
+    However, if you write a += 12, it will be an atomic operation (as I noted before).
+    As for your comment:
+        A regular int has atomic loads and stores. Whats the point of wrapping it with atomic<>
+    Your statement is only true for x86. There are other architectures, that does not provide such guarantee. std::atomic<> is something, that is guaranteed to be atomic on every platform.
+        
+164.
+Inserting at random position to vector - Not possible
+
+        vector<int> vec;
+        vec.reserve(10);
+
+    The below line crashes the program
+        vec.insert(vec.begin() + 2, 5);
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
