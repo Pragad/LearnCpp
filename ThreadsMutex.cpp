@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <vector>
 using namespace std;
 
 // -----------------------------------------------------------------------------------------
@@ -68,7 +69,7 @@ class PersonCountNoMtx
 public:
     int _value;
 
-    PersonCount() : _value(0) { }
+    PersonCountNoMtx() : _value(0) { }
 
     void increment()
     {
@@ -78,25 +79,27 @@ public:
 
 class PersonCountWithMtx
 {
+public:
     std::mutex mtx;
     int _value;
 
-    PersonCount() : _value(0) { }
+    PersonCountWithMtx() : _value(0) { }
 
     void increment()
     {
-        mutex.lock();
+        mtx.lock();
         _value++; // IMP: If Exception happens and we crash then the lock does not get released
-        mutex.unlock();
+        mtx.unlock();
     }
 };
 
 class PersonCountUniqLock
 {
+public:
     std::mutex mtx;
     int _value;
 
-    PersonCount() : _value(0) { }
+    PersonCountUniqLock() : _value(0) { }
 
     void increment()
     {
@@ -154,57 +157,58 @@ int main()
         cout << endl << "Problem 3" << endl;
         PersonCountNoMtx ob1;
         vector<thread> vecThreads1;
-        for (uint32_t i = 0; i < 5; i++)
+        for (uint32_t i = 0; i < 3; i++)
         {
-            vecThreads1.push_back(thread(&ob1));
-            for (uint32_t j = 0; j < 10; j++)
+            // Different ways to create a thread for a Class's member function
+            //thread th1(&PersonCountNoMtx::increment, PersonCountNoMtx());
+            //thread th2(&PersonCountNoMtx::increment, &ob1);
+            vecThreads1.push_back(thread(&PersonCountNoMtx::increment, &ob1));
+
+            for (uint32_t j = 0; j < 5; j++)
             {
                 ob1.increment();
             }
         }
 
-        for (auto th : vecThreads1)
+        for (auto& th : vecThreads1)
         {
             th.join();
         }
-
         cout << "Thread 1's Value: " << ob1._value << endl;
 
         PersonCountWithMtx ob2;
         vector<thread> vecThreads2;
-        for (uint32_t i = 0; i < 5; i++)
+        for (uint32_t i = 0; i < 3; i++)
         {
-            vecThreads2.push_back(thread(&ob2));
-            for (uint32_t j = 0; j < 10; j++)
+            vecThreads2.push_back(thread(&PersonCountNoMtx::increment, &ob1));
+            for (uint32_t j = 0; j < 5; j++)
             {
                 ob2.increment();
             }
         }
 
-        for (auto th : vecThreads2)
+        for (auto& th : vecThreads2)
         {
             th.join();
         }
-
         cout << "Thread 2's Value: " << ob2._value << endl;
 
 
         PersonCountUniqLock ob3;
         vector<thread> vecThreads3;
-        for (uint32_t i = 0; i < 5; i++)
+        for (uint32_t i = 0; i < 3; i++)
         {
-            vecThreads3.push_back(thread(&ob3));
-            for (uint32_t j = 0; j < 10; j++)
+            vecThreads3.push_back(thread(&PersonCountNoMtx::increment, &ob1));
+            for (uint32_t j = 0; j < 5; j++)
             {
                 ob3.increment();
             }
         }
 
-        for (auto th : vecThreads3)
+        for (auto& th : vecThreads3)
         {
             th.join();
         }
-
         cout << "Thread 3's Value: " << ob3._value << endl;
 
     }

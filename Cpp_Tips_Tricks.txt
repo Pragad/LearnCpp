@@ -194,6 +194,8 @@
 158. How to call a C function or a header from a C++ file - extern C
 159. #if 0
 160. Fastest way to check if a number is even or odd
+161. Multithreading - Calling a Class's member function from main thread using objects
+162. Creating vector of threads
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5986,6 +5988,44 @@ http://stackoverflow.com/questions/2229107/what-is-the-fastest-way-to-find-if-a-
     static inline int is_odd_A(int x) { return x & 1; }
     is more efficient than
     static inline int is_odd_B(int x) { return x % 2; }
+
+161.
+Multithreading - Calling a Class's member function from main thread using objects
+http://stackoverflow.com/questions/15434492/c-11-thread-initialization-with-member-functions-compiling-error?noredirect=1&lq=1
+http://stackoverflow.com/questions/10673585/start-thread-with-member-function?noredirect=1&lq=1
+http://stackoverflow.com/questions/10998780/stdthread-calling-method-of-class?noredirect=1&lq=1
+
+        class PersonCountNoMtx
+        {
+        public:
+            int _value;
+
+            PersonCountNoMtx() : _value(0) { }
+
+            void increment()
+            {
+                _value++;
+            }
+        };
+
+        main() {
+            thread th1(&PersonCountNoMtx::increment, PersonCountNoMtx());
+            thread th2(&PersonCountNoMtx::increment, &ob1);
+        }
+
+162.
+Creating vector of threads
+
+        for (uint32_t i = 0; i < 5; i++)
+        {
+            vecThreads1.push_back(thread(&PersonCountNoMtx::increment, &ob1));
+
+            for (uint32_t j = 0; j < 10; j++)
+            {
+                ob1.increment();
+            }
+        }
+
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
