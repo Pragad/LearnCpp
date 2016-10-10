@@ -70,6 +70,7 @@ int main()
         int c = a + b;
 
         cout << "Enter Array Size (3): ";
+        //d = 3;
         cin >> d;
         c = c + d;
         // Just C99 standard. NOT C++11
@@ -101,10 +102,13 @@ int main()
 
     // Getting multi-lines input from CIN
     {
-        /*
         std::vector<std::string> lines;
         std::string line;
         cout << "Enter a multi line string: " << endl;
+
+        // Very IMP: Else the previous new line will be on the buffer
+        // Flush the new line characters if any
+        cin.ignore();
 
         // If you want to ignore the leading whitespaces then
         //while (getline(cin >> ws, line)
@@ -124,7 +128,6 @@ int main()
         {
             cout << str << endl;
         }
-        */
     }
 
     // Date Time in C++

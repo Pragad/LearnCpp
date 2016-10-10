@@ -199,6 +199,7 @@
 162. Creating vector of threads
 163. What is std::atomic
 164. Inserting at random position to vector - Not possible
+165. Print entire contents of a char arry in c++
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -297,9 +298,10 @@ http://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-stri
 
     You can use the std::string::find() function to find the position of your string delimiter, then use std::string::substr() to get a token.
     Example:
-    std::string s = "scott>=tiger";
-    std::string delimiter = ">=";
-    std::string token = s.substr(0, s.find(delimiter)); // token is "scott"
+        std::string s = "scott>=tiger";
+        std::string delimiter = ">=";
+        std::string token = s.substr(0, s.find(delimiter)); // token is "scott"
+
     The find(const string& str, size_t pos = 0) function returns the position of the first occurrence of str in the string, or npos if the string is not found.
     The substr(size_t pos = 0, size_t n = npos) function returns a substring of the object, starting at position pos and of length npos
 
@@ -307,6 +309,10 @@ http://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-stri
 Use of cin ignore
 http://stackoverflow.com/questions/25475384/when-and-why-do-i-need-to-use-cin-ignore-in-c
 http://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-ignore-after-reading-input
+
+    Essentially, for std::cin statements you use ignore before you do a getline call, because when a user inputs something with std::cin, they hit enter and a '\n' char gets into the cin buffer.
+    Then if you use getline, it gets the newline char instead of the string you want.
+    So you do a std::cin.ignore(1000,'\n') and that should clear the buffer up to the string that you want.
 
         cin.ignore(256, '\n');
 
@@ -323,11 +329,6 @@ http://stackoverflow.com/questions/5131647/why-would-we-call-cin-clear-and-cin-i
     It will only skip up to 10000 characters, so the code is assuming the user will not put in a very long, invalid line.
 
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    Essentially, for std::cin statements you use ignore before you do a getline call, because when a user inputs something with std::cin, they hit enter and a '\n' char gets into the cin buffer.
-    Then if you use getline, it gets the newline char instead of the string you want.
-    So you do a std::cin.ignore(1000,'\n') and that should clear the buffer up to the string that you want.
-    (The 1000 is put there to skip over a specific amount of chars before the specified break point, in this case, the \n newline character.)
 
     std::ws
     Discards leading whitespace from an input stream.
@@ -366,6 +367,17 @@ http://stackoverflow.com/questions/20509734/null-vs-nullptr-why-was-it-replaced?
     nullptr is always a pointer type. 0 (aka. C's NULL bridged over into C++) could cause ambiguity in overloaded function resolution, among other things:
     f(int);
     f(foo *);
+
+        void printA1(int ptr)
+        { }
+
+        // The below line throws a warning
+        // NullPtr.cpp:19:17: warning: passing NULL to non-pointer argument 1 of 'void printA1(int)' [-Wconversion-null]
+        printA1(NULL);
+
+        // The below line throws an error
+        // NullPtr.cpp:22:20: error: cannot convert 'std::nullptr_t' to 'int' for argument '1' to 'void printA1(int)'
+        printA1(nullptr);
 
 6. 
 Print contents of a vector:
@@ -603,9 +615,26 @@ http://stackoverflow.com/questions/6210450/the-compiler-is-complaining-about-my-
 IMP: Char array vs NULL terminated String
 http://stackoverflow.com/questions/11229477/are-all-char-arrays-automatically-null-terminated
 http://stackoverflow.com/questions/12019947/null-termination-of-char-array
+http://stackoverflow.com/questions/10050228/c-char-array-null-terminator-location
 
     VERY NICE LINK. Read all examples here
 http://c-faq.com/charstring/index.html
+
+        char* str1 = "hello world";
+    As expected, strlen(str1) is equal to 11, and it is null-terminated.
+
+    Q: Is it actually allocating an array of length 12 instead of 11, with the 12th character being '\0'?
+    A: Yes.
+
+    Q: But doesn't writing to str2[11] imply that we are writing outside of the allocated memory space of str2, since str2[11] is the 12th byte, but we only allocated 11 bytes?
+    A: Yes.
+
+    Q: Would it be better to use malloc(strlen(str1) + 1) instead of malloc(strlen(str1))?
+    A. Yes, because the second form is not long enough to copy the string into.
+
+    Q: Running this code does not seem to cause any compiler warnings or run-time errors.
+    A: Detecting this in all but the simplest cases is a very difficult problem.
+       So the compiler authors simply don't bother.
 
     Only string literals get null-terminated, and that means that char x[]="asdf" is an array of 5 elements.
     char arrays are not automatically NULL terminated
@@ -651,6 +680,7 @@ A2:
         }
 
 Q3:
+http://stackoverflow.com/questions/4978056/char-array-declaration-and-initialization-in-c
     If I can say 
         char a[] = "Hello, world!";
 
@@ -659,6 +689,15 @@ Q3:
         a = "Hello, world!";
 
 A3:
+    ASSIGNMENT vs INITIALIZATION:
+    That's because your first code snippet is not performing initialization, but assignment
+        char myarray[4] = "abc";  // Initialization.
+        myarray = "abc";          // Assignment.
+
+    - And arrays are not directly assignable in C.
+    - The name myarray actually resolves to the address of its first element (&myarray[0]), which is not an lvalue, and as such cannot be the target of an assignment.
+    - Assignment and initialization are separate things to the language, even though they both use the = character. Arrays are not assignable.
+
     Strings are arrays, and you can't assign arrays directly. Use strcpy instead:
         strcpy(a, "Hello, world!");
 
@@ -671,15 +710,13 @@ Q4:
     but I got strange results.
 
 A4:
-    The main problem here is that space for the concatenated result is not properly allocated.
-    C does not provide an automatically-managed string type.
-    C compilers allocate memory only for objects explicitly mentioned in the source code (in the case of strings, this includes character arrays and string literals).
-    The programmer must arrange for sufficient space for the results of run-time operations such as string concatenation, typically by declaring arrays, or by calling malloc.
+    - The main problem here is that space for the concatenated result is not properly allocated.
+    - C compilers allocate memory only for objects explicitly mentioned in the source code (in the case of strings, this includes character arrays and string literals).
+    - The programmer must arrange for sufficient space for the results of run-time operations such as string concatenation, typically by declaring arrays, or by calling malloc.
 
-    strcat performs no allocation; the second string is appended to the first one, in place.
+    - strcat performs no allocation; the second string is appended to the first one, in place.
     The first (destination) string must be writable and have enough room for the concatenated result.
     Therefore, one fix would be to declare the first string as an array:
-
         char s1[20] = "Hello, ";
 
     Since strcat returns the value of its first argument (s1, in this case), the variable s3 in the question above is superfluous; after the call to strcat, s1 contains the result.
@@ -709,7 +746,6 @@ http://stackoverflow.com/questions/12019947/null-termination-of-char-array
     This is a great example of why scanf("%s") is dangerous and should never be used.
     It doesn't know about the size of your array which means there is no way to use it safely.
     Instead, avoid scanf and use something safer, like fgets():
-
         fgets() reads in at most one less than size characters from stream and stores them into the buffer pointed to by s.
         Reading stops after an EOF or a newline.
         If a newline is read, it is stored into the buffer.
@@ -729,18 +765,18 @@ http://c-faq.com/aryptr/aryptr2.html
 20a.
 Comparing String in C++
 http://stackoverflow.com/questions/9158894/differences-between-c-string-and-compare
+    
+    if( s == t ) vs if( !s.compare(t) )
 
         std::string::compare() returns an int:
-
         - equal to zero if s and t are equal,
         - less than zero if s is less than t,
         - greater than zero if s is greater than t.
 
     If you want your first code snippet to be equivalent to the second one, it should actually read:
-
-    if (!s.compare(t)) {
-        // 's' and 't' are equal.
-    }
+        if (!s.compare(t)) {
+            // 's' and 't' are equal.
+        }
 
     The equality operator only tests for equality (hence its name) and returns a bool
 
@@ -923,7 +959,7 @@ http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-poin
     Summary from answers and links below:
         A pointer can be re-assigned any number of times while a reference can not be re-seated after binding.
 
-    A pointer can be re-assigned:
+    1. A pointer can be re-assigned:
         int x = 5;
         int y = 6;
         int *p;
@@ -938,15 +974,16 @@ http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-poin
         int y = 6;
         int &r = x;
 
-    Pointers can point nowhere (NULL), whereas reference always refer to an object.
+    2. Pointers can point nowhere (NULL), whereas reference always refer to an object.
         int *p = NULL;
         int &r = NULL; <--- compiling error
 
-    You can't take the address of a reference like you can with pointers.
-    A pointer has its own memory address and size on the stack (4 bytes on x86), whereas a reference shares the same memory address (with the original variable) but also takes up some space on the stack.
+    3. You can't take the address of a reference like you can with pointers.
+
+    4. A pointer has its own memory address and size on the stack (4 bytes on x86), whereas a reference shares the same memory address (with the original variable) but also takes up some space on the stack.
     Since a reference has the same address as the original variable itself, it is safe to think of a reference as another name for the same variable.
 
-    There's no "reference arithmetics" (but you can take the address of an object pointed by a reference and do pointer arithmetics on it as in &obj + 5).
+    5. There's no "reference arithmetics" (but you can take the address of an object pointed by a reference and do pointer arithmetics on it as in &obj + 5).
 
 26b.
 When to use References vs. Pointers
@@ -982,7 +1019,7 @@ http://stackoverflow.com/questions/21884825/reference-vs-pointer
          auto p1 = new int[5];   // returns a pointer to an int pointing to the 1st element
          auto p2 = new short[5]; // returns a pointer to a short pointing to the 1st element
 
-    I use pointers for things which may point at different values (including no value at all).
+    IMP: I use pointers for things which may point at different values (including no value at all).
         Foo* pFoo = NULL;
 
         if (condition1)
@@ -1004,11 +1041,6 @@ http://stackoverflow.com/questions/21884825/reference-vs-pointer
 
     Another example is to use pointers to raw memory for specific memory manipulations.
     That should be hidden and localized in very narrow parts of the code, to help limit the dangerous parts of the whole code base.
-
-    In your example, there is no point in using a pointer as argument because:
-        1. if you provide nullptr as the argument, you're going in undefined-behaviour-land;
-        2. the reference attribute version doesn't allow (without easy to spot tricks) the problem with 1.
-        3. the reference attribute version is simpler to understand for the user: you have to provide a valid object, not something that could be null.
 
     If the behaviour of the function would have to work with or without a given object, then using a pointer as attribute suggests that you can pass nullptr as the argument and it is fine for the function.
     That's kind of a contract between the user and the implementation.
@@ -5762,7 +5794,36 @@ http://stackoverflow.com/questions/2362097/why-is-the-size-of-an-empty-class-in-
     The standard does not allow objects (and classes thereof) of size 0, since that would make it possible for two distinct objects to have the same memory address.
     That's why even empty classes must have a size of (at least) 1.
 
-150. Use of std::endl vs \n
+149b.
+What will a Class with no fields / parameters have in C++
+http://stackoverflow.com/questions/4044275/how-many-default-methods-does-a-class-have
+
+In C++03 there are 4:
+    Default constructor: Declared only if no user-defined constructor is declared. Defined when used
+    Copy constructor - declared only if the user hasn't declared one. Defined if used
+    Copy-assignment operator same as above
+    Destructor same as above
+
+In C++11 there are two more:
+    Move constructor
+    Move-assignment operator
+
+        class X
+        {};
+
+    The compiler will define the following methods:
+        X::X()  {}                    // Default constructor. It takes zero arguments (hence default).
+        X::~X() {}                    // Destructor
+        X::X(X const& rhs) {};        // Copy constructor
+        X& operator=(X const& rhs)
+        {return *this;}       
+
+        // C++11 adds two more
+        MyClass(MyClass&& other) noexcept;             // Move constructor
+        MyClass& operator=(MyClass&& other) noexcept;  // Move assignment operator
+
+150.
+Use of std::endl vs \n
 http://stackoverflow.com/questions/213907/c-stdendl-vs-n
 http://stackoverflow.com/questions/7324843/why-use-endl-when-i-can-use-a-newline-character
 
@@ -6058,6 +6119,106 @@ Inserting at random position to vector - Not possible
 
     The below line crashes the program
         vec.insert(vec.begin() + 2, 5);
+
+165.
+Print entire contents of a char arry in c++
+http://stackoverflow.com/questions/19371845/using-cout-to-print-the-entire-contents-of-a-character-array
+
+    Start with something simple:
+        char c_array[3];
+        c_array[0] = 'a';
+        c_array[1] = 'b';
+        c_array[2] = 'c';
+
+        for(int i=0 ; i<3 ; ++i)
+        {
+          cout << c_array[i];
+        }
+        cout << endl;
+
+    Do not go farther until you understand that much perfectly.
+    Now notice that if you null-terminate the array, you can pass the whole thing to cout, and operator<< will know when to stop:
+        char c_array[4];
+        c_array[0] = 'a';
+        c_array[1] = 'b';
+        c_array[2] = 'c';
+        c_array[3] = 0;
+
+        cout << c_array << endl;
+
+    You cannot do that with arrays of most other types.
+    Now notice that you can assign a char[] this way, and it will be null-terminated:
+        char c_array[20] = "abc";
+        cout << c_array << endl;
+
+    You can even omit the size of the array, and the compiler will infer it:
+        char c_array[] = "abc";    // this is a char[4];
+        cout << c_array << endl;
+
+166.
+What is the use of explicit keyword
+http://stackoverflow.com/questions/121162/what-does-the-explicit-keyword-in-c-mean
+
+    In C++, the compiler is allowed to make one implicit conversion to resolve the parameters to a function.
+    What this means is that the compiler can use constructors callable with a single parameter to convert from one type to another in order to get the right type for a parameter.
+
+    Here's an example class with a constructor that can be used for implicit conversions:
+        class Foo
+        {
+        public:
+          // single parameter constructor, can be used as an implicit conversion
+          Foo (int foo) : m_foo (foo) 
+          {
+          }
+
+          int GetFoo () { return m_foo; }
+
+        private:
+          int m_foo;
+        };
+
+        Here's a simple function that takes a Foo object:
+
+        void DoBar (Foo foo)
+        {
+          int i = foo.GetFoo ();
+        }
+
+    and here's where the DoBar function is called.
+        int main ()
+        {
+          DoBar (42);
+        }
+
+    The argument is not a Foo object, but an int.
+    However, there exists a constructor for Foo that takes an int so this constructor can be used to convert the parameter to the correct type.
+
+    The compiler is allowed to do this once for each parameter.
+
+    Prefixing the explicit keyword to the constructor prevents the compiler from using that constructor for implicit conversions.
+    Adding it to the above class will create a compiler error at the function call DoBar (42).
+    It is now necessary to call for conversion explicitly with DoBar (Foo (42))
+
+    Suppose you have a class String:
+        class String {
+        public:
+            String(int n); // allocate n bytes to the String object
+            String(const char *p); // initializes object with char *p
+        };
+
+    Now if you try
+        String mystring = 'x';
+
+    the char 'x' will be implicitly converted to int and then will call the String(int) constructor.
+    But this is not what the user might have intended.
+    So to prevent such conditions, we shall define the constructor as explicit:
+        class String {
+        public:
+            explicit String (int n); //allocate n bytes
+            String(const char *p); // initialize sobject with string p
+        };
+
+
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
