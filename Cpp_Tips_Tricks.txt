@@ -25,18 +25,19 @@
 19c.  But I heard that char a[] was identical to char *a.
 20a. Comparing String in C++
 20b.  Find Substring
+    You can find a lot more on it on the Wikipedia page.
 21.  Combining vector of strings:
 22.  Convert String to Int - C++
 22a. Concatenate String with Int
 22b. Convert INT to STRING
 23.  Align std out
-24.  IMP: Why Pointers
+24.  IMP: Why Pointer207.62 / 6s
 25.  Garbage Collection:
 26.  C++ References:
 26b. When to use References vs. Pointers
 27.  Smart Pointer:
 28.  C++ Cast:
-28b. Static Cast vs Dynamic Cast vs Regular Cast
+28b. Static Cast vs Reinterpret Cast
 28c. Static Cast vs Dynamic Cast
 29.  C++ to Java:
 30.  Finding all subsets of a Vector of Vector
@@ -62,6 +63,7 @@
 46.  C++ Class vs C Struct Memory Layout
 47.  Pass by Value vs Const Reference
 47b. Why is Pass by Value faster than Pass by reference
+
 48.  Virtual Function and Pure Virtual Functions
 49.  Virtual Functions
 49b. How Virtual Functions Work
@@ -126,8 +128,9 @@
 96c. When is std::weak_ptr useful
 96c. Scoped Pointer vs Unique Pointer
 97.  Vector - Accessing member elements using "at()" vs "[]"
-98.  Created Vectors of User defined size
+98.  Create Vectors of User defined size
 99.  How to use memset or fill_n to initialize a dynamic two dimensional TwoD array in C++
+99a. How to fill a Dynamic 1D Array to all 0s
 100. Unique Lock
 101a. Nice Threading tutorial
 101. Condition Variable
@@ -177,7 +180,7 @@
 141. Running GDB on mac
 142. C++ enable/disable debug messages of std::couts on the fly
 143. Why use apparently meaningless do-while and if-else statements in C/C++ macros
-144. Printing lists with commas C++
+144. Printing lists with commas such that no ending comma C++
 145. Nested Class Access Specifiers
 146. Forward Declarations
 147. Access Specifier: Public, Private, Default
@@ -200,6 +203,7 @@
 163. What is std::atomic
 164. Inserting at random position to vector - Not possible
 165. Print entire contents of a char arry in c++
+166. What is the use of explicit keyword
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -1087,40 +1091,50 @@ http://ootips.org/yonat/4dev/smart-pointers.html
 28.
 C++ Cast:
 http://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-const-cast-and-reinterpret-cast-be-used?rq=1
+http://www.geeksforgeeks.org/casting-operators-in-c-set-1-const_cast/
 
-    static_cast is the first cast you should attempt to use.
-        It does things like implicit conversions between types (such as int to float, or pointer to void*), and it can also call explicit conversion functions (or implicit ones).
-        In many cases, explicitly stating static_cast isn't necessary, but it's important to note that the T(something) syntax is equivalent to (T)something and should be avoided (more on that later).
-        A T(something, something_else) is safe, however, and guaranteed to call the constructor.
-        static_cast can also cast through inheritance hierarchies. It is unnecessary when casting upwards (towards a base class), but when casting downwards it can be used as long as it doesn't cast through virtual inheritance.
-        It does not do checking, however, and it is undefined behavior to static_cast down a hierarchy to a type that isn't actually the type of the object.
+    STATIC CAST:
+    - static_cast is the first cast you should attempt to use.
+    - Implicit conversions between types (such as int to float, or pointer to void*), and it can also call explicit conversion functions (or implicit ones).
 
-    const_cast can be used to remove or add const to a variable; no other C++ cast is capable of removing it (not even reinterpret_cast).
-        It is important to note that modifying a formerly const value is only undefined if the original variable is const; if you use it to take the const off a reference to something that wasn't declared with const, it is safe.
-        This can be useful when overloading member functions based on const, for instance.
-        It can also be used to add const to an object, such as to call a member function overload.
-        const_cast also works similarly on volatile, though that's less common.
+    - static_cast can also cast through inheritance hierarchies.
+    - It is unnecessary when casting upwards (towards a base class)
+    - when casting downwards it can be used as long as it doesn't cast through virtual inheritance.
+    - It does not do checking, however, and it is undefined behavior to static_cast down a hierarchy to a type that isn't actually the type of the object.
 
-        const_cast is safe only if you're casting a variable that was originally non-const.
-        For example, if you have a function that takes a parameter of a const char *, and you pass in a modifiable char *, it's safe to const_cast that parameter back to a char * and modify it.
-        However, if the original variable was in fact const, then using const_cast will result in undefined behavior.
+    CONST_CAST:
+    - See file StaticCast_ConstCast in "LearnCpp"
+    - const_cast is used to modify a NON-CONST Class Variable inside a const function
 
-            void func(const char *param, size_t sz, bool modify)
-            {
-                if(modify)
-                    strncpy(const_cast<char *>(param), sz, "new string");
-                printf("param: %s\n", param);
-            }
+    const_cast can be used to remove or add const to a variable;
+    no other C++ cast is capable of removing it (not even reinterpret_cast).
 
-            ...
+    - const_cast is safe only if you're casting a variable that was originally non-const.
+    - It is important to note that modifying a formerly const value is only undefined if the original variable is const; if you use it to take the const off a reference to something that wasn't declared with const, it is safe.
+    - const_cast also works similarly on volatile, though that's less common.
 
-            char buffer[16];
-            const char *unmodifiable = "string constant";
-            func(buffer, sizeof(buffer), true);  // OK
-            func(unmodifiable, strlen(unmodifiable), false); // OK
-            func(unmodifiable, strlen(unmodifiable), true);  // UNDEFINED BEHAVIOR
+    For example, if you have a function that takes a parameter of a const char *, and you pass in a modifiable char *, it's safe to const_cast that parameter back to a char * and modify it.
+    However, if the original variable was in fact const, then using const_cast will result in undefined behavior.
+
+        void func(const char *param, size_t sz, bool modify)
+        {
+            if(modify)
+                strncpy(const_cast<char *>(param), sz, "new string");
+            printf("param: %s\n", param);
+        }
+
+        ...
+
+        char buffer[16];
+        const char *unmodifiable = "string constant";
+        func(buffer, sizeof(buffer), true);  // OK
+        func(unmodifiable, strlen(unmodifiable), false); // OK
+        func(unmodifiable, strlen(unmodifiable), true);  // UNDEFINED BEHAVIOR
 
     dynamic_cast is almost exclusively used for handling polymorphism.
+        - done at run time
+        - In order for base-to-derived casting to work using dynamic_cast<>, Base, Foo and Bar must be what the Standard calls polymorphic types.
+
         You can cast a pointer or reference to any polymorphic type to any other class type (a polymorphic type has at least one virtual function, declared or inherited).
         You can use it for more than just casting downwards -- you can cast sideways or even up another chain.
         The dynamic_cast will seek out the desired object and return it if possible.
@@ -1183,6 +1197,14 @@ Static Cast vs Dynamic Cast vs Regular Cast
 http://stackoverflow.com/questions/2253168/dynamic-cast-and-static-cast-in-c
 IMP Regular Cast vs Static Cast:
 http://stackoverflow.com/questions/28002/regular-cast-vs-static-cast-vs-dynamic-cast
+
+    - The main reason is that classic C casts make no distinction between what we call static_cast<>(), reinterpret_cast<>(), const_cast<>(), and dynamic_cast<>().
+
+    PROBLEM 2:
+    - The second problem is that the C-style casts are too hard to locate.
+    - In complex expressions it can be very hard to see C-style casts.
+    - It is virtually impossible to write an automated tool that needs to locate C-style casts (for example a search tool) without a full blown C++ compiler front-end.
+    - On the other hand, it's easy to search for "static_cast<" or "reinterpret_cast<".
 
     REGULAR CAST:            
         - These casts are also called C-style cast.
@@ -1266,8 +1288,7 @@ dynamic_cast< Type* >(ptr):
             {
                 Base* base = CreateRandom();
 
-                    base->DoIt();
-
+                base->DoIt();
                 Bar* bar = (Bar*)base;
                 bar->BarIt();
             }
@@ -1367,6 +1388,10 @@ double vs float
 http://stackoverflow.com/questions/2386772/difference-between-float-and-double
 http://programmers.stackexchange.com/questions/188721/when-do-you-use-float-and-when-do-you-use-double
 
+    It seems best to use double unless two conditions are met
+    1. there are enough numbers for their memory footprint to be a significant performance issue
+    2. the developers can show that float is precise enough.
+
     - As the name implies, a double has 2x the precision of float[1]. In general a double has 15 to 16 decimal digits of precision, while float only has 7
     - Also, the maximum value of float is only about 3e38, but double is about 1.7e308, so using float can hit Infinity much easier than double for something simple e.g. computing 60!
 
@@ -1389,10 +1414,9 @@ http://stackoverflow.com/questions/3867890/count-character-occurrences-in-a-stri
 
     How can I count the number of "_" in a string like "bla_bla_blabla_bla"
 
-    #include <algorithm>
-
-    std::string s = "a_b_c";
-    size_t n = std::count(s.begin(), s.end(), '_');
+        #include <algorithm>
+        std::string s = "a_b_c";
+        size_t n = std::count(s.begin(), s.end(), '_');
 
 33.
 C++ Cin:
@@ -1403,8 +1427,8 @@ http://stackoverflow.com/questions/5838711/c-cin-input-with-spaces
     It skips all whitespace (spaces, tabs, new lines, etc.) by default.
     You can either change its behavior, or use a slightly different mechanism.
     To change its behavior, use the manipulator noskipws, as follows:
-
         cin >> noskipws >> a[i];
+
     But, since you seem like you want to look at the individual characters, I'd suggest using get, like this prior to your loop
         cin.get( a, n );
 
@@ -1419,6 +1443,7 @@ http://stackoverflow.com/questions/5838711/c-cin-input-with-spaces
            if(a[i] == ' ')
               std::cout<<"It is a space!!!"<<std::endl;
        }
+   }
 
     int main()
     {
@@ -1580,11 +1605,39 @@ http://stackoverflow.com/questions/6500313/why-should-c-programmers-minimize-use
 
     In this latter case, when the exception is thrown and the stack is unwound, the local variables are destroyed which ensures that our resource is cleaned up and doesn't leak.
 
+    Normal:
+        Circle* ob = new Circle();
+        ob->area();
+        delete ob;
+
+    RAII:
+        Class RAIICircle {
+            Circle* _ob;
+        public:
+            RAIICircle(Circle* ob) : _ob (ob) { } // Assigns ob to _ob
+            ~RAIICircle() {delete _ob; }
+        };
+
+        RAIICircle* rOb (new Circle());
+        rOb->area();
+
+    Normal:
         File f;
         f.open("boo.txt");
         //UNSAFE - an exception here means the file is never closed
         loadFromFile(f);
         f.close();
+
+    RAII:
+        class RAIIFile {
+            RAIIFile* _rF;
+        public:
+            RAIIFile (File* f) : _rF(f) { }
+            ~RAIIFile {_rF.close(); }
+        };
+
+        RAIIFile* rf (File f)
+        rf->open();
 
         Dog* dog = new Daschund;
         //UNSAFE - an exception here means the dog is never deleted
@@ -1635,7 +1688,7 @@ http://stackoverflow.com/questions/20824229/when-to-use-pthread-exit-and-when-to
 
     Pthread Join and Pthread exit
 http://stackoverflow.com/questions/20824229/when-to-use-pthread-exit-and-when-to-use-pthread-join-in-linux
-
+    JOIN: - Main Thread will wait for other threads to finish
     Both methods ensure that your process doesn't end before all of your threads have ended.
 
     The join method has your thread of the main function explicitly wait for all threads that are to be "joined".
@@ -1683,7 +1736,7 @@ http://stackoverflow.com/questions/8263926/how-to-copy-stdstring-into-stdvectorc
         std::string str = "hello";
         std::vector<char> data(str.begin(), str.end());
 
-    If you already have a vector and want to add the characters at the end, you need a back inserter:
+    If you already have a vector and want to add the characters at the end, you need a BACK INSERTER:
 
         std::string str = "hello";
         std::vector<char> data = /* ... */;
@@ -1750,7 +1803,6 @@ http://stackoverflow.com/questions/648647/in-c-where-in-memory-are-class-functio
 http://www.cs.uwm.edu/classes/cs315/Bacon/Lecture/HTML/ch10s04.html
 
     Typically a process has 5 different areas of memory allocated
-
         Code - text segment
         Initialized data – data segment
         Uninitialized data – bss segment
@@ -1778,8 +1830,8 @@ http://www.cs.uwm.edu/classes/cs315/Bacon/Lecture/HTML/ch10s04.html
 http://stackoverflow.com/questions/648647/in-c-where-in-memory-are-class-functions-put
     - It's not necessarily true that "each object - when created - will be given space in the HEAP for member variables".
     - Each object you create will take some nonzero space somewhere for its member variables, but where is up to how you allocate the object itself.
-    - If the object has automatic (stack) allocation, so too will its data members.
-    - If the object is allocated on the free store (heap), so too will be its data members.
+    1. IMP: If the object has automatic (stack) allocation, so too will its data members.
+    2. IMP: If the object is allocated on the free store (heap), so too will be its data members.
     - After all, what is the allocation of an object other than that of its data members?
 
     - If a stack-allocated object CONTAINS A POINTER or other type which is then used to allocate on the heap, that allocation will occur on the heap regardless of where the object itself was created.
@@ -1865,11 +1917,11 @@ VERY IMP LINK: http://resources.infosecinstitute.com/hello-world-c-assembly-obje
 
     Note that these virtual addresses are mapped to physical addresses by the page tables managed by the OS. The instance of the ELF file doesn't need to know any of the details involved in which physical pages are used.
 
-45d. What is a Symbol Table
+45d.
+What is a Symbol Table
 
     A C compiler first creates a symbol table, which stores the relationship between the variable name and where it's located in memory.
     When compiling, it uses this table to replace all instances of the variable with a specific memory location, as others have stated.
-    You can find a lot more on it on the Wikipedia page.
 
 46.
 C++ Class vs C Struct Memory Layout
@@ -2123,6 +2175,8 @@ http://stackoverflow.com/questions/620137/do-the-parentheses-after-the-type-name
     If called on a trivial struct/class (e.g. struct Thing { int i; };) then new Thing; is like malloc(sizeof(Thing)); whereas new Thing(); is like calloc(sizeof(Thing)); - it gets zero initialized.
 
     new uses std::nothrow to check if nullptr got returned.
+        char* p = new (std::nothrow) char [10];
+        if (p==0) std::cout << "Failed!\n";
 
 51.
 Reading Multiple words from cin
@@ -2163,7 +2217,6 @@ http://stackoverflow.com/questions/131803/unsigned-int-vs-size-t
     Most people just use an int for that sort of thing because they rarely have structures or arrays that get big enough to exceed the capacity of that int.
 
     IMP: But watch out for things like:
-
         for (size_t i = strlen (str) - 1; i >= 0; i--)
 
     which will cause an infinite loop due to the wrapping behaviour of unsigned values (although I've seen compilers warn against this).
@@ -2197,13 +2250,11 @@ http://stackoverflow.com/questions/131803/unsigned-int-vs-size-t
         unsigned long
         unsigned long long
 
-    with various requirements for their sizes and ranges (briefly, each type's range is a subset of the next type's range, but some of them may have the same range).
-
     size_t is a typedef (i.e., an alias) for some unsigned type, (probably one of the above but possibly an extended unsigned integer type, though that's unlikely). It's the type yielded by the sizeof operator.
 
     On one system, it might make sense to use unsigned int to represent sizes; on another, it might make more sense to use unsigned long or unsigned long long. (size_t is unlikely to be either unsigned char or unsigned short, but that's permitted).
 
-    The purpose of size_t is to relieve the programmer from having to worry about which of the predefined types is used to represent sizes.
+    IMP: The purpose of size_t is to relieve the programmer from having to worry about which of the predefined types is used to represent sizes.
 
     Code that assumes sizeof yields an unsigned int would not be portable. Code that assumes it yields a size_t is more likely to be portable.
 
@@ -2212,13 +2263,14 @@ size_t vs size_type
 http://stackoverflow.com/questions/918567/size-t-vs-containersize-type
 http://stackoverflow.com/questions/8507851/stdsize-t-vs-size-t-vs-stdstringsize-type
 
+    IMP: If you're writing generic code, where you don't know what the class is, then it's better to use size_type in case it's not compatible with size_t.
+
     vector<int>::size_type x;
         I would read it as "declare x as a variable of a type suitable for holding the size of a vector".
         The vector defines its own type for its length, and it's always cleanest to use that if possible, rather than "guessing" and using int, unsigned int, long, unsigned long or size_t etc directly as you'd otherwise need to do
 
     You could use size_type when using those classes if you like.
     In most cases, you'll know that it's the same as size_t, so you might as well use that and save a bit of typing.
-    If you're writing generic code, where you don't know what the class is, then it's better to use size_type in case it's not compatible with size_t.
 
     For example, you might want to write a container designed to hold more items than can be represented by size_t.
     You might use some kind of big number type to represent the container's size, which isn't convertible to size_t.
@@ -2300,6 +2352,12 @@ http://www.cplusplus.com/doc/tutorial/files/
 What is string::npos
 http://www.cplusplus.com/reference/string/string/npos/
 
+    It is usually defined like so:
+        static const size_type npos = -1;
+        if (s.find("hi") == std::string::npos)
+
+    string::find() returns the position of the found string, but if it doesn't find the given string, it returns string::npos, where npos means no position
+
     npos is a static member constant value with the greatest possible value for an element of type size_t.
 
     This value, when used as the value for a len (or sublen) parameter in string's member functions, means "until the end of the string"
@@ -2309,6 +2367,7 @@ Meaning of const
 http://stackoverflow.com/questions/1143262/what-is-the-difference-between-const-int-const-int-const-and-int-const
 http://www.gotw.ca/gotw/006.htm
 http://stackoverflow.com/questions/455518/how-many-and-which-are-the-uses-of-const-in-c
+http://stackoverflow.com/questions/8863225/storage-allocation-to-const-variables
 
         int* - pointer to int
         int const * - pointer to const int
@@ -2316,7 +2375,6 @@ http://stackoverflow.com/questions/455518/how-many-and-which-are-the-uses-of-con
         int const * const - const pointer to const int
 
     Now the first const can be on either side of the type so:
-
         const int * == int const *
         const int * const == int const * const
 
@@ -2329,6 +2387,9 @@ http://stackoverflow.com/questions/455518/how-many-and-which-are-the-uses-of-con
 
     CONST variable can either be stored in CODE segment and just copied over.
 
+        const int c1=1;
+        const int c3=my_f(3);
+        extern const int c4;
     c1 is different from the other two constants in that it is initialized with a literal value.
     This lets compiler put that value everywhere the constant is used, like this:
         int x = z + c1;
@@ -2604,9 +2665,9 @@ http://stackoverflow.com/questions/1666353/are-typedef-and-define-the-same-in-c
         a10 a, b, c; // create three 10-int arrays
 
 http://stackoverflow.com/questions/1674032/static-const-vs-define-vs-enum
-        static const int var = 5;
-        #define var 5
-        enum { var = 5 };
+        1. static const int var = 5;
+        2. #define var 5
+        3. enum { var = 5 };
 
     Ignoring issues about the choice of name, then:
         If you need to pass a pointer around, you must use (1).
@@ -2642,30 +2703,6 @@ http://stackoverflow.com/questions/1674032/static-const-vs-define-vs-enum
 
         const char *const log_file_name = OUT_NAME LOG_EXT;
         const char *const text_file_name = OUT_NAME TEXT_EXT;
-
-    It depends on what you need the value for.
-    You (and everyone else so far) omitted the third alternative:
-
-        (1) static const int var = 5;
-        (2) #define var 5
-        (3) enum { var = 5 };
-
-    Ignoring issues about the choice of name, then:
-        * If you need to pass a pointer around, you must use (1).
-        Since (2) is apparently an option, you don't need to pass pointers around.
-        Both (1) and (3) have a symbol in the debugger's symbol table - that makes debugging easier. It is more likely that (2) will not have a symbol, leaving you wondering what it is.
-        (1) cannot be used as a dimension for arrays at global scope; both (2) and (3) can.
-        (1) cannot be used as a dimension for static arrays at function scope; both (2) and (3) can.
-        Under C99, all of these can be used for local arrays. Technically, using (1) would imply the use of a VLA (variable-length array), though the dimension referenced by 'var' would of course be fixed at size 5.
-        (1) cannot be used in places like switch statements; both (2) and (3) can.
-        (1) cannot be used to initialize static variables; both (2) and (3) can.
-        (2) can change code that you didn't want changed because it is used by the preprocessor; both (1) and (3) will not have unexpected side-effects like that.
-        * You can detect whether (2) has been set in the preprocessor; neither (1) nor (3) allows that.
-
-    So, in most contexts, prefer the 'enum' over the alternatives.
-    Otherwise, the first and last bullet points are likely to be the controlling factors — and you have to think harder if you need to satisfy both at once.
-
-    If you were asking about C++, then you'd use option (1) — the static const — every time
 
 62a.
 C++ semantics of `static const` vs `const`
@@ -2747,6 +2784,8 @@ Superiority of unnamed namespace over static
 http://stackoverflow.com/questions/4422507/superiority-of-unnamed-namespace-over-static
 http://www.comeaucomputing.com/techtalk/#nostatic
 
+    Unnamed namespace is superior to static keyword, primarily because the keyword static applies only to the variables declarations and functions, not to the user-defined types.
+
 Question:
     The project makes frequent use of unnamed namespaces.
     For example, something like this may occur in a class definition file:
@@ -2768,8 +2807,6 @@ http://en.cppreference.com/w/cpp/language/namespace#Unnamed_namespaces
     Unnamed namespaces as well as all namespaces declared directly or indirectly within an unnamed namespace have internal linkage, which means that any name that is declared within an unnamed namespace has internal linkage. 
 
     The use of the static keyword is deprecated when declaring objects in a namespace scope; the unnamed-namespace provides a superior alternative.
-
-    Unnamed namespace is superior to static keyword, primarily because the keyword static applies only to the variables declarations and functions, not to the user-defined types.
 
     The following code is valid in C++
        //legal code
@@ -2807,7 +2844,7 @@ http://stackoverflow.com/questions/5368531/why-cant-i-create-an-array-of-size-n
     cin >> n;
     int array[n];
 
-    This will work if use g++. g++ support VLAs as an extension. However ISO C++ mandates size of an array to be a constant expression i.e the size must be known at compile time.
+    This will work if use g++. g++ support VLAs(Variable Length Arrays) as an extension. However ISO C++ mandates size of an array to be a constant expression i.e the size must be known at compile time.
 
         Why is it that C++ don't allow you to create array of dynamic length in stack memory?
 
@@ -2834,6 +2871,7 @@ http://stackoverflow.com/questions/5368531/why-cant-i-create-an-array-of-size-n
             std::cin >> x;
             char pz[x]; 
         }
+
     It cannot be standard C++ because that required constant array sizes, and it cannot be standard C because C does not have std::cin (or namespaces, or classes, etc...)
 
     To make it standard C++, do this:
@@ -3368,8 +3406,6 @@ http://stackoverflow.com/questions/10366474/where-does-a-stdvector-allocate-its-
         But how does it free that heap memory?
     Through its destructor when it goes out of scope. (Note that a pointer to a vector going out of scope won't trigger the destructor).
 
-    The main advantage of new over malloc() is that new doesn't just allocate memory, it constructs objects which is prime purpose of C++.
-
     All containers in the STL are parameterized with template arguments, usually the last argument is called A or Allocator and defaults to std::allocator<...> where ... represents the type of the value stored within the container.
 
     The Allocator is a class that is used to provide memory and build/destroy the elements in this memory area.
@@ -3769,7 +3805,6 @@ http://www.bogotobogo.com/cplusplus/memoryallocation.php
     It's rare but there is a chance we may want to call operator new directly.
         void *pRawMemory = operator new(sizeof(string));
 
-
     Operator New:
         The operator new returns a pointer to a chunk of memory enough to hole a string object.
         The operator new is similar to malloc in that it's responsible only for allocating memory.
@@ -3799,6 +3834,7 @@ Delete Operator and Operator Delete
 
     Malloc vs New
         Malloc just allocates memory. New allocates memory as well as constructs the object
+
 91.
 STACK VS HEAP
 http://stackoverflow.com/questions/79923/what-and-where-are-the-stack-and-heap?rq=1
@@ -4245,7 +4281,7 @@ http://stackoverflow.com/questions/9376049/vectorat-vs-vectoroperator
     IMP: Use vector.at() when INDEX is not in your control.
 
 98.
-Created Vectors of User defined size
+Create Vectors of User defined size
 http://stackoverflow.com/questions/10559283/how-to-create-a-vector-of-user-defined-size
 
     // create a vector with 20 integer elements
@@ -4269,6 +4305,12 @@ http://stackoverflow.com/questions/36506331/how-to-use-memset-or-fill-n-to-initi
             std::fill_n(abc[i], cols, 1);
         }
     
+99a.
+How to fill a Dynamic 1D Array to all 0s
+http://stackoverflow.com/questions/8283770/initialize-dynamic-array-elements-to-zeros
+
+    new int[N]() /* note parenthesis */
+
 100.
 Unique Lock
 http://www.cplusplus.com/reference/mutex/unique_lock/
@@ -4369,6 +4411,7 @@ http://stackoverflow.com/questions/20516773/stdunique-lockstdmutex-or-stdlock-gu
          
             std::cout << __func__ << ": " << g_i << '\n';
         }
+
 103.
 Recursive Mutex
     The same lock can be obtained by the same thread multiple times.
@@ -4392,6 +4435,7 @@ http://stackoverflow.com/questions/1055398/differences-between-conditional-varia
 105.
 Need for THIS Pointer
 http://stackoverflow.com/questions/577243/is-there-any-reason-to-use-this
+
     1. When the name of the formal argument is same as actual argument.
     2. For templates
 
@@ -4581,16 +4625,16 @@ http://stackoverflow.com/questions/7480146/difference-between-exception-handling
 Side effects of macros:
 https://gcc.gnu.org/onlinedocs/cpp/Duplication-of-Side-Effects.html
 
-        Many C programs define a macro min, for “minimum”, like this:
-         #define min(X, Y)  ((X) < (Y) ? (X) : (Y))
+    Many C programs define a macro min, for “minimum”, like this:
+     #define min(X, Y)  ((X) < (Y) ? (X) : (Y))
 
-        When you use this macro with an argument containing a side effect, as shown here,
-         next = min (x + y, foo (z));
+    When you use this macro with an argument containing a side effect, as shown here,
+     next = min (x + y, foo (z));
 
-        it expands as follows:
-         next = ((x + y) < (foo (z)) ? (x + y) : (foo (z)));
+    it expands as follows:
+     next = ((x + y) < (foo (z)) ? (x + y) : (foo (z)));
 
-        foo (z) gets executed twice.
+    foo (z) gets executed twice.
 
 116.
 Macros vs Inline Function:
@@ -5492,6 +5536,7 @@ http://stackoverflow.com/questions/733360/why-do-we-not-have-a-virtual-construct
 
     To construct an object, a constructor needs the exact type of the object it is to create [...]
     Furthermore [...]you cannot have a pointer to a constructor
+
 131.
 Print Unordered Map. Get key and get value
 
@@ -5551,7 +5596,6 @@ http://stackoverflow.com/questions/5345152/why-would-i-prefer-using-vector-to-de
     vector elements are guaranteed to be.
     So if you need to interact with a plain C library that needs contiguous arrays, or if you care (a lot) about spatial locality, then you might prefer vector.
 
-
 135. 
 Differences between various Custom Comparator functions in C++ 
 http://stackoverflow.com/questions/38422886/differences-between-various-custom-comparator-functions-in-c
@@ -5584,7 +5628,6 @@ http://stackoverflow.com/questions/38422886/differences-between-various-custom-c
         }obComp;
 
     To sort a vector of students I can use either of the below methods.
-
         vector<Student> studs; // Consider I have this object populated
         std::sort(studs.begin(), studs.end());  // Method 1
         std::sort(studs.begin(), studs.end(), compStudent);    // Method 2
@@ -5614,7 +5657,7 @@ http://stackoverflow.com/questions/27449831/create-a-large-bitset
 
 137.
 Custom Hash Function
-// http://stackoverflow.com/questions/8094790/how-to-get-hash-code-of-a-string-in-c
+http://stackoverflow.com/questions/8094790/how-to-get-hash-code-of-a-string-in-c
 
     #include <functional>   // Contains function for std::hash
 
@@ -5711,7 +5754,7 @@ http://stackoverflow.com/questions/1067226/c-multi-line-macro-do-while0-vs-scope
 		  gralt();
 
 144.
-Printing lists with commas C++
+Printing lists with commas such that no ending comma C++
 http://stackoverflow.com/questions/3496982/printing-lists-with-commas-c
 
     One common approach is to print the first item prior to the loop,
@@ -5851,8 +5894,10 @@ http://stackoverflow.com/questions/7324843/why-use-endl-when-i-can-use-a-newline
     Using endl you force the flush to take place before the second instruction is executed.
     You can also ensure that with the ostream::flush function
 
-151. Bitset to convert Integer to Decimal and Decimal to Int
+151.
+Bitset to convert Integer to Decimal and Decimal to Int
 http://stackoverflow.com/questions/22746429/c-decimal-to-binary-converting
+
     unsigned long int a = 15;
     std::string binaryNum = std::bitset<16>(a).to_string();
     std::cout << binaryNum << "\n";
@@ -5929,7 +5974,7 @@ http://stackoverflow.com/questions/1195675/convert-a-char-to-stdstring
         const char *s = "Hello, World!";
         std::string str(s);
 
-    Just make sure that your char * isn't NULL, or else the behavior is undefined.
+    IMP: Just make sure that your char * isn't NULL, or else the behavior is undefined.
 
     If you already know size of the char*, use this instead
         char* data = ...;
@@ -6217,7 +6262,6 @@ http://stackoverflow.com/questions/121162/what-does-the-explicit-keyword-in-c-me
             explicit String (int n); //allocate n bytes
             String(const char *p); // initialize sobject with string p
         };
-
 
 
 Read

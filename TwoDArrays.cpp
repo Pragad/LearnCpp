@@ -53,4 +53,16 @@ int main()
 
         //std::fill_n(abc, rows * cols, 0);
     }
+    
+    // Zero fill a 1D array
+    {
+        int* a = new int[10]();        
+        for (int i = 0; i < 10; i++)
+        {
+            cout << a[i] << ", ";
+        }
+        cout << endl;
+
+        delete[] a;
+    }
 }
