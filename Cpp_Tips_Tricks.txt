@@ -183,7 +183,7 @@
 144. Printing lists with commas such that no ending comma C++
 145. Nested Class Access Specifiers
 146. Forward Declarations
-147. Access Specifier: Public, Private, Default
+147. Access Specifier: Public, Private, Protected. Class Visiblity Difference during inheritance
 148. What is std::move
 149. Why is sizeof empty class 1
 150. Use of std::endl vs \n
@@ -204,6 +204,10 @@
 164. Inserting at random position to vector - Not possible
 165. Print entire contents of a char arry in c++
 166. What is the use of explicit keyword
+167. What does new() return on failure
+168. Pass by reference to a class constructor
+169. Porting C code to C++ and C++ code to C - Things to keep in mind   
+170. Write Pointer to a Function that takes an int array of pointers
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5464,8 +5468,25 @@ When is void* useful
 http://stackoverflow.com/questions/11626786/what-does-void-mean-and-how-to-use-it?lq=1
 
     A pointer to void is a "generic" pointer type.
+    It can be pointed at objects of any data type.
     A void * can be converted to any other pointer type without an explicit cast.
     You cannot dereference a void * or do pointer arithmetic with it; you must convert it to a pointer to an complete data type first.
+
+        int nValue;
+        float fValue;
+         
+        struct Something
+        {
+            int n;
+            float f;
+        };
+         
+        Something sValue;
+
+        void *ptr;
+        ptr = &nValue; // valid
+        ptr = &fValue; // valid
+        ptr = &sValue; // valid
 
     It gets used in places where you need to be able to work with different pointer types in the same code.
     One commonly cited example is the library function qsort:
@@ -5814,9 +5835,62 @@ http://stackoverflow.com/questions/553682/when-can-i-use-a-forward-declaration
 		};
 
 147.
-Access Specifier: Public, Private, Default
+Access Specifier: Public, Private, Protected. Class Visiblity Difference during inheritance
+http://stackoverflow.com/questions/860339/difference-between-private-public-and-protected-inheritance
+
     C++: Default is Private
     C  : Default is Public
+
+        class Base {
+            public:
+                int publicMember;
+            protected:
+                int protectedMember;
+            private:
+                int privateMember;
+        };
+
+    - Everything that is aware of Base is also aware that Base contains publicMember.
+    - Only the children (and their children) are aware that Base contains protectedMember.
+    - No one but Base is aware of privateMember.
+
+        class A 
+        {
+        public:
+            int x;
+        protected:
+            int y;
+        private:
+            int z;
+        };
+
+        class B : public A
+        {
+            // x is public
+            // y is protected
+            // z is not accessible from B
+        };
+
+        class C : protected A
+        {
+            // x is protected
+            // y is protected
+            // z is not accessible from C
+        };
+
+        class D : private A    // 'private' is default for classes
+        {
+            // x is private
+            // y is private
+            // z is not accessible from D
+        };
+
+    The same happens with public, private and protected inheritance.
+    Let's consider a class Base and a class Child that inherits from Base.
+
+    - If the inheritance is public, everything that is aware of Base and Child is also aware that Child inherits from Base.
+    - If the inheritance is protected, only Child, and its children, are aware that they inherit from Base.
+    - If the inheritance is private, no one other than Child is aware of the inheritance.
 
 148.
 What is std::move
@@ -6263,6 +6337,60 @@ http://stackoverflow.com/questions/121162/what-does-the-explicit-keyword-in-c-me
             String(const char *p); // initialize sobject with string p
         };
 
+167. What does new() return on failure
+http://www.cplusplus.com/reference/new/operator%20new/
+
+    Simple new() throws bad_alloc if it fails to allocate storage
+        #include <new>          // std::bad_alloc
+        try
+        {
+            int* myarray= new int[10000];
+        }
+        catch (std::bad_alloc& ba)
+        {
+            std::cerr << "bad_alloc caught: " << ba.what() << '\n';
+        }
+
+168.
+Pass by reference to a class constructor
+http://stackoverflow.com/questions/9507008/passing-by-reference-to-a-constructor
+
+    To assign a reference in a constructor you need to have a reference member
+         class A{
+             std::string& str;
+         public:
+             A(std::string& str_)
+             :    str(str_) {} 
+         };
+
+    str is now a reference to the value you passed in. Same applies for const refs
+         class A{
+             const std::string& str;
+         public:
+             A(const std::string& str_)
+             :    str(str_) {} 
+         };
+
+169.
+Porting C code to C++ and C++ code to C - Things to keep in mind   
+http://stackoverflow.com/questions/297122/what-should-i-keep-in-mind-when-porting-from-c-to-c
+http://stackoverflow.com/questions/4222661/functions-in-structure
+http://stackoverflow.com/questions/351733/can-you-write-object-oriented-code-in-c
+    
+    C++ to C:
+        C struct doesn't have functions
+        Heavy use of function pointers to achieve polymorphism
+
+    C to C++
+        use extern "C" { }
+
+170.
+Write Pointer to a Function that takes an int array of pointers
+http://www.thegeekstuff.com/2012/01/advanced-c-pointers
+
+    <return type of function> (*<name of pointer>) (type of function arguments)
+    void (*foo)(int** args, int argsSize);
+    void (*foo)(int* args[], int argsSize);
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1

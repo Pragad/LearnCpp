@@ -21,6 +21,7 @@
 #include <list>                 // Double Linked List
 #include <map>
 #include <mutex>
+#include <new>                  // std::bad_alloc
 #include <pthread.h>
 #include <queue>                // Priority Queue
 #include <set>
