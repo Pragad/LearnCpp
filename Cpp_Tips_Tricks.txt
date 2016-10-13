@@ -3797,6 +3797,25 @@ http://stackoverflow.com/questions/18590086/use-of-rtti-in-c
 
     Notice that RTTI comes at the cost of runtime checks and thus performance loss, but you probably already know that if you are familiar with the concept.
 
+87b. 
+typeid vs dynamic_cast
+http://stackoverflow.com/questions/9704893/c-dynamic-cast-vs-typeid-for-class-comparison
+
+    typeid:
+        - typeid is a C++ language operator which returns type identification information at run time.
+        - It basically returns a type_info object, which is equality-comparable with other type_info objects
+
+        if(A* test = dynamic_cast<A*>(&someClassCVar))
+        {
+            // someClassCVar is A or publicly derived from A
+        }
+
+    Whereas:
+        if(typeid(someClassCVar) == typeid(A))
+        {
+           // someClassCVar is of class A, not a derived class
+        }
+
 88.
 When to use static methods
 http://stackoverflow.com/questions/2671496/java-when-to-use-static-methods
