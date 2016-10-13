@@ -107,6 +107,7 @@
 78.  C++ new int[0] - will it allocate memory
 79.  C++ new vs C malloc
 80.  How is memory allocated to Vectors
+80b. Vector Resize vs Reserve
 81.  Where Global Variables and Pointers are stored
 82.  Where are the Variable Names stored in memory
 82b. Where in memory are return values stored in memory
@@ -144,6 +145,7 @@
 108b. Create a vector with an element using constructor
 109. Copy from one vector to another
 110. Copy Constructor vs Assignment Operator:
+110b. Private Copy Constructor and Assignment Operator - Singleton Class
 111. Volatile keyword:
 112. How do you declare an interface in C++
 113. Multiple Inheritence in C++
@@ -208,6 +210,8 @@
 168. Pass by reference to a class constructor
 169. Porting C code to C++ and C++ code to C - Things to keep in mind   
 170. Write Pointer to a Function that takes an int array of pointers
+171. cout cerr and clog
+172. Big Endian vs Little Endian
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -982,6 +986,20 @@ http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-poin
         int y = 6;
         int &r = x;
 
+http://stackoverflow.com/questions/7713266/c-reference-change-the-referred-variable
+    With C++11 there is the new(ish) std::reference_wrapper.
+
+        #include <functional>
+        int main()
+        {
+          int a = 2;
+          int b = 4;
+
+          auto ref = std::ref(a);
+          //std::reference_wrapper<int> ref = std::ref(a); <- Or with the type specified
+          ref = std::ref(b);
+        }
+
     2. Pointers can point nowhere (NULL), whereas reference always refer to an object.
         int *p = NULL;
         int &r = NULL; <--- compiling error
@@ -1241,6 +1259,13 @@ static_cast< Type* >(ptr):
         }
 
 dynamic_cast< Type* >(ptr):
+    http://stackoverflow.com/questions/1276847/difference-in-behavior-while-using-dynamic-cast-with-reference-and-pointers
+    VERY IMP
+    - If passed through REFERENCE, then REFERECE CAN'T BE NULL.
+    - When dynamic_cast for a pointer type fails it returns a null pointer and the caller can check for that,
+    - But when it fails for a reference type it can't return a null reference.
+    - So an exception is the only reasonable way to signal a problem.
+
     This again tries to take the pointer in ptr and safely cast it to a pointer of type Type*.
     But this cast is executed at runtime, not compile time.
     Because this is a run-time cast, it is useful especially when combined with polymorphic classes.
@@ -3453,6 +3478,16 @@ What should your store in a Vector
         But for a large object, like Frogatto’s custom_object class, a vector<custom_object*> is probably what we want.
         Note that to store an object directly, it must be copyable, i.e. have accessible copy constructors and assignment operators.
 
+80b.
+Vector Resize vs Reserve
+http://stackoverflow.com/questions/8928547/vector-initialization-or-reserve
+http://stackoverflow.com/questions/13029299/stdvectorresize-vs-stdvectorreserve
+
+    Resize: Gives you a vector of n default-initialized values.
+            It fills any space with objects in their default state.
+            If they are ints, they will all be zero.
+    Reserve: Reserves the memory, but does not initialize them.
+
 81.
 Where Global Variables and Pointers are stored
 http://stackoverflow.com/questions/3113668/location-of-pointers-and-global-variables-in-c
@@ -4537,6 +4572,44 @@ Copy Constructor vs Assignment Operator:
           t2 = t1;      // Assignment operator
           Test t3 = t1; // Copy Constructor
         }
+
+110b.
+Private Copy Constructor and Assignment Operator - Singleton Class
+http://stackoverflow.com/questions/6811037/whats-the-use-of-the-private-copy-constructor-in-c
+
+    // An example of singleton pattern
+    class CMySingleton
+    {
+    public:
+      static CMySingleton& GetInstance()
+      {
+        static CMySingleton singleton;
+        return singleton;
+      }
+
+    // Other non-static member functions
+    private:
+      CMySingleton() {}                                  // Private constructor
+      ~CMySingleton() {}
+      CMySingleton(const CMySingleton&);                 // Prevent copy-construction
+      CMySingleton& operator=(const CMySingleton&);      // Prevent assignment
+    };
+
+    int main(int argc, char* argv[])
+    {
+      // create a single instance of the class
+      CMySingleton &object = CMySingleton::GetInstance();
+
+      // compile fail due to private constructor
+      CMySingleton object1;
+      // compile fail due to private copy constructor
+      CMySingleton object2(object);
+      // compile fail due to private assignment operator
+      object1 = object;
+
+      // ..
+      return 0;
+    }
 
 111.
 Volatile keyword:
@@ -6391,6 +6464,74 @@ http://www.thegeekstuff.com/2012/01/advanced-c-pointers
     <return type of function> (*<name of pointer>) (type of function arguments)
     void (*foo)(int** args, int argsSize);
     void (*foo)(int* args[], int argsSize);
+
+171.
+cout cerr and clog
+http://stackoverflow.com/questions/16772842/what-is-the-difference-between-cout-cerr-clog-of-iostream-header-in-c-when
+
+    - All three are objects of ostream
+    - The major difference is that std::cerr is not buffered like the other two.
+    - cerr is tied to the standard output stream cout (see ios::tie)
+    - It indicates that cout's buffer is flushed (see ostream::flush) before each i/o operation performed on cerr.
+
+    stdout: should be used for actual program output,
+    stderr: while all information and error messages should be printed to stderr.
+            so that if the user redirects output to a file, information messages are still printed on the screen and not to the output file.
+
+    std::cout for normal output,
+    std::cerr for errors, and
+    std::clog for "logging" (which can mean whatever you want it to mean).
+
+
+172.
+Big Endian vs Little Endian
+    Big endian machines:
+        - FIRST byte of binary representation of the multibyte data-type is stored first
+        - So "01" gets stored first
+
+    Little endian:
+        - LAST byte of binary representation of the multibyte data-type is stored first
+        - So "67" gets stored first
+
+    Num = 0x01234567
+ 
+    Big Endian:
+      0x100   0x101   0x102   0x103
+    +-------+-------+-------+-------+
+    | 0x01  | 0x23  | 0x45  | 0x67  |
+    +-------+-------+-------+-------+
+ 
+    Little Endian:
+      0x100   0x101   0x102   0x103
+    +-------+-------+-------+-------+
+    | 0x67  | 0x45  | 0x23  | 0x01  |
+    +-------+-------+-------+-------+
+
+    Num = 0x00000001
+ 
+    Big Endian:
+      0x100   0x101   0x102   0x103
+    +-------+-------+-------+-------+
+    | 0x00  | 0x00  | 0x00  | 0x01  |
+    +-------+-------+-------+-------+
+ 
+    Little Endian:
+      0x100   0x101   0x102   0x103
+    +-------+-------+-------+-------+
+    | 0x01  | 0x00  | 0x00  | 0x00  |
+    +-------+-------+-------+-------+
+
+        unsigned int i = 1;
+        char *c = (char*)&i; // Storing the 0th byte of 'i' in 'c'
+
+        if (*c)
+        {
+            cout << "Little Endian" << endl;
+        }
+        else
+        {
+            cout << "Big Endian" << endl;
+        }
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1

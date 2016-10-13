@@ -237,6 +237,94 @@ void DynamicCastFun()
     }
 }
 
+// -----------------------------------------------------------------------------------------
+// Interview Questions Bloom
+//
+// Problem 1
+// -----------------------------------------------------------------------------------------
+class base_class
+{ 
+public:
+    base_class()
+    { 
+        // Problem 1. Very imp. 
+        // This will call base class's m_function()
+        cout << "base class constructor" << endl;
+        m_function();
+    }
+
+    virtual int m_function()
+    { 
+        std::cerr << "base_class function" << endl;
+    }
+};
+
+class derived_1 : public base_class
+{ 
+public:
+    derived_1()
+    {
+        cout << "derived class constructor" << endl;
+    }
+
+    virtual int m_function()
+    { 
+        std::cerr << "derived_class function" << endl;
+    }
+};
+
+class derived_2 : public base_class
+{ };
+
+//void check_function(base_class& ptr)
+void check_function_1(base_class* ptr)
+{ 
+    derived_1* d1_ob1 = dynamic_cast<derived_1*> (ptr);
+
+    if(NULL != d1_ob1)
+    {
+        // ptr is of type derived_1
+        cout << "Ptr is of type derived_1" << endl;
+    }
+    else
+    {
+        // ptr is of type derived_2
+        cout << "Ptr is of type derived_2" << endl;
+    }
+}
+
+// http://stackoverflow.com/questions/1276847/difference-in-behavior-while-using-dynamic-cast-with-reference-and-pointers
+void check_function_2(base_class& ptr)
+{ 
+    // VERY IMP
+    // If passed through REFERENCE, then REFERECE CAN'T BE NULL.
+    // When dynamic_cast for a pointer type fails it returns a null pointer and the caller can check for that,
+    // But when it fails for a reference type it can't return a null reference.
+    // So an exception is the only reasonable way to signal a problem.
+    try
+    {
+        derived_1& d1_ob2 = dynamic_cast<derived_1&> (ptr);
+    }
+    catch (std::bad_cast exp)
+    {
+        cout << "Bad Cast Exp. Object is of type dervied_2" << endl;
+    }
+    cout << "No exception. Ptr is of type derived_1" << endl;
+
+
+    /*
+    if(NULL == d1_ob2)
+    {
+        // ptr is of type derived_1
+        cout << "Ptr is of type derived_1" << endl;
+    }
+    else
+    {
+        // ptr is of type derived_2
+        cout << "Ptr is of type derived_2" << endl;
+    }
+    */
+}
 
 // ------------------------------------------------------------------------------------------
 // Main Function
@@ -313,5 +401,25 @@ int main(void)
         DynamicCastFun();
     }
 
+    // Bloomberg Problem 1
+    {
+        cout << endl << "Bloomberg Problem 1" << endl;
+        base_class *ptr = new derived_1();
+
+        check_function_1(ptr);
+        //check_function(*ptr);
+
+        delete ptr;
+    }
+
+    // Bloomberg Problem 2
+    {
+        cout << endl << "Bloomberg Problem 2" << endl;
+        base_class *ptr = new derived_1();
+
+        check_function_2(*ptr);
+
+        delete ptr;
+    }
     return 0;
 }

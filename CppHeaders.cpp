@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <cstring>              // memset, strlen, memcmp
 #include <fstream>
-#include <functional>           // Contains function for hash, std::function
+#include <functional>           // Contains function for hash, std::function, reference_wrapper
 #include <iomanip>
 
 #include <iostream>
