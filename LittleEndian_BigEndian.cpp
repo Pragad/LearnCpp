@@ -43,6 +43,8 @@ using namespace std;
 //    &i
 //
 */
+
+// Bloomberg
 int main()
 {
     unsigned int i = 1;

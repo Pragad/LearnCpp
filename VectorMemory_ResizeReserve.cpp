@@ -1,8 +1,8 @@
-// Bloom Phone Interview Questions
 #include <iostream>
 #include <vector>
 using namespace std;
 
+// Bloomberg Phone Interview Questions
 int main()
 {
     // Problem 1
