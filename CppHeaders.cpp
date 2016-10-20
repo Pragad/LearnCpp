@@ -4,13 +4,15 @@
 #include <chrono>               // time_since_epoch()
 #include <climits>              // INT_MAX, INT_MIN, numeric_limits
 #include <cmath>                // ciel
-#include <ctime>                // time
 #include <condition_variable>
+#include <cstdio>
+#include <ctime>                // time
 #define __STDC_LIMIT_MACROS     // std::numeric_limits<std::int32_t>::max();
 #include <cstdint>              // std::numeric_limits<std::int32_t>::max();
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>              // memset, strlen, memcmp
+#include <deque>
 #include <fstream>
 #include <functional>           // Contains function for hash, std::function, reference_wrapper
 #include <iomanip>
@@ -18,6 +20,7 @@
 #include <iostream>
 
 #include <iterator>
+#include <limits>
 #include <list>                 // Double Linked List
 #include <map>
 #include <mutex>
