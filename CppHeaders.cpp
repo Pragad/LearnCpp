@@ -11,7 +11,7 @@
 #include <cstdint>              // std::numeric_limits<std::int32_t>::max();
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>              // memset, strlen, memcmp
+#include <cstring>              // memset, strlen, memcmp, memcpy
 #include <deque>
 #include <fstream>
 #include <functional>           // Contains function for hash, std::function, reference_wrapper
