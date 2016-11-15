@@ -7,6 +7,17 @@
 #include <cassert> // assert
 using namespace std;
 
+void strSplit(const std::string &str, char delim, std::vector<std::string> &resultStrings)
+{
+    std::stringstream ss(str);
+    std::string temp;
+
+    while (std::getline(ss, temp, delim))
+    {
+        resultStrings.push_back(temp);
+    }
+}
+
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems)
 {
     std::stringstream ss(s);
@@ -44,6 +55,11 @@ void splitStringByPatternString(const string& s, const string& pattern, vector<s
                 ++startIndex;
             }
         }
+    }
+
+    if (startIndex < s.length())
+    {
+        words.push_back(s.substr(startIndex, s.length() - startIndex));
     }
 }
 
@@ -259,7 +275,7 @@ int main()
 
     {
         // Split a string into words using ' ' and ispunct
-        string tok = "  My1  45 {nam}}e33 is Hi... !How Are!!! You!  ,. ";
+        string tok = "  My1  45 {nam}}e33 is Hi... !How Are!!! You!  ,. anitha";
         string pat = " .,!{}()1345";
         vector<string> words;
         //splitStringIntoWords(tok, words);
