@@ -14,9 +14,10 @@ int main()
         //int a = vec[0];
 
         cout << "Cap: " << vec.capacity() << " ; Size: " << vec.size() << endl;
+        // Output: Cap: 0 ; Size: 0 
     }
 
-    // Problem 2
+    // Problem 2: reserve
     {
         cout << endl << "Problem 2" << endl;
         vector<int> vec; // holds 0 elements
@@ -30,14 +31,16 @@ int main()
 
         cout << "Cap: " << vec.capacity() << " ; Size: " << vec.size() << endl;
         cout << a << ", " << b << endl;
+        // Output:  Cap: 100 ; Size: 0
+        //          6758944, 0
     }
 
-    // Problem 3
+    // Problem 3: resize
     {
         cout << endl << "Problem 3" << endl;
         vector<int> vec; // holds 0 elements
 
-        vec.resize(100); // Allocates space for 100 items, and vec2 now has 100 items
+        vec.resize(100); // Allocates space for 100 items, and vec now has 100 items
 
         // This works as we have allocated memory
         int a = vec[0];
@@ -45,6 +48,8 @@ int main()
 
         cout << "Cap: " << vec.capacity() << " ; Size: " << vec.size() << endl;
         cout << a << ", " << b << endl;
+        // Output:  Cap: 100 ; Size: 100
+        //          0, 0
     }
 
     // Problem 4
@@ -58,6 +63,8 @@ int main()
 
         cout << "Cap: " << vec.capacity() << " ; Size: " << vec.size() << endl;
         cout << a << ", " << b << endl;
+        // Output:  Cap: 100 ; Size: 100
+        //          0, 0
     }
 
     // Problem 5
@@ -69,6 +76,7 @@ int main()
         a = 100;         // Changing the reference should change vec[0]
 
         cout << a << ", " << vec[0] << endl;
+        // Output:  100, 100
     }
 
     // Problem 6
@@ -86,6 +94,7 @@ int main()
         a = 500;
 
         cout << a << ", " << vec[0] << ", " << x << endl;
+        // Output: 500, 500, 200
     }
 
     cout << endl;

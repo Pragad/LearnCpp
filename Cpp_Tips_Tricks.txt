@@ -23,7 +23,7 @@
      C FAQs
 19b.  Why should SCANF never be used
 19c.  But I heard that char a[] was identical to char *a.
-20a. Comparing String in C++
+20a. Compare / Comparing String in C++
 20b.  Find Substring
     You can find a lot more on it on the Wikipedia page.
 21.  Combining vector of strings:
@@ -212,6 +212,10 @@
 170. Write Pointer to a Function that takes an int array of pointers
 171. cout cerr and clog
 172. Big Endian vs Little Endian
+173. Append Char to String
+174. Remove / Erase character from string
+175. Passing unordered_map as const is not possible
+176. Is it better to return Object or Pass by Reference - Return Value Optimization
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -406,12 +410,37 @@ http://stackoverflow.com/questions/10750057/c-printing-out-the-contents-of-a-vec
 7. 
 Convert string to Upper Case:
 http://stackoverflow.com/questions/735204/convert-a-string-in-c-to-upper-case
+http://www.cplusplus.com/reference/algorithm/transform/
 
     #include <algorithm>
     #include <string>
 
     std::string str = "Hello World";
     std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+
+        unary operation(1)	
+        template <class InputIterator, class OutputIterator, class UnaryOperation>
+          OutputIterator transform (InputIterator first1, InputIterator last1,
+                                    OutputIterator result, UnaryOperation op);
+
+        binary operation(2)	
+        template <class InputIterator1, class InputIterator2,
+                  class OutputIterator, class BinaryOperation>
+          OutputIterator transform (InputIterator1 first1, InputIterator1 last1,
+                                    InputIterator2 first2, OutputIterator result,
+                                    BinaryOperation binary_op);
+
+    #include <functional>   // std::plus
+    int op_increase (int i) { return ++i; }
+
+    std::vector<int> foo;   // foo: 10 20 30 40 50
+    std::vector<int> bar;
+    
+    std::transform (foo.begin(), foo.end(), bar.begin(), op_increase);
+                                                      // bar: 11 21 31 41 51
+    // std::plus adds together its two arguments:
+    std::transform (foo.begin(), foo.end(), bar.begin(), foo.begin(), std::plus<int>());
+                                                      // foo: 21 41 61 81 101
 
 8. 
 Switch can't be used on strings:
@@ -775,7 +804,7 @@ http://c-faq.com/aryptr/aryptr2.html
        - Since arrays decay immediately into pointers, an array is never actually passed to a function.
 
 20a.
-Comparing String in C++
+Compare/Comparing String in C++
 http://stackoverflow.com/questions/9158894/differences-between-c-string-and-compare
     
     if( s == t ) vs if( !s.compare(t) )
@@ -789,6 +818,11 @@ http://stackoverflow.com/questions/9158894/differences-between-c-string-and-comp
         if (!s.compare(t)) {
             // 's' and 't' are equal.
         }
+
+    VERY IMP:
+    SHOULD EQUATE TO ZERO
+    if (str.compare(0, 1, "M") == 0)
+
 
     The equality operator only tests for equality (hence its name) and returns a bool
 
@@ -6552,6 +6586,35 @@ Big Endian vs Little Endian
             cout << "Big Endian" << endl;
         }
 
+173.
+Append Char to String
+http://www.cplusplus.com/reference/string/string/operator+=/
+
+    string (1)	    string& operator+= (const string& str);
+    c-string (2)	string& operator+= (const char* s);
+    character (3)	string& operator+= (char c);
+
+174.
+Remove / Erase character from string
+
+    str.pop_back() - Erases last character
+
+    string& erase (size_t pos = 0, size_t len = npos);
+    str.erase (str.begin()+5, str.end()-9);
+
+175.
+Passing unordered_map as const is not possible
+    
+    unordered_map's [] operator inserts value if key is not present
+
+176.
+Is it better to return Object or Pass by Reference - Return Value Optimization
+http://stackoverflow.com/questions/7163018/return-a-vector-vs-use-a-parameter-for-the-vector-to-return-it
+
+    In theory, Return by Value it's copied.
+    In reality, no, most modern compilers take advantage of return value optimization.
+
+    So you can write code that acts semantically correct.
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
