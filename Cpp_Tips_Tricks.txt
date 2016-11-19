@@ -159,6 +159,7 @@
 121. Custom Comparator for Priority Queue
 122. C++ Erase vector element by value rather than by position
 122b. Erase Vector element by position
+122c. Delete or Erase or Clear a complete vector
 123. Function Pointers and Callbacks
 123b. How do function pointers in C work
 124. Registering a Callback
@@ -216,6 +217,9 @@
 174. Remove / Erase character from string
 175. Passing unordered_map as const is not possible
 176. Is it better to return Object or Pass by Reference - Return Value Optimization
+177. INT_MIN, INT_MAX numeric_limits
+178. binary_search a vector
+179. Difference between declaring variables before or in loop
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -2976,6 +2980,9 @@ http://stackoverflow.com/questions/17663186/initializing-a-two-dimensional-stdve
         std::vector::vector(count, value)
         vector< vector<int> > myTwoDVec(rows, vector<int> (cols, 5));
 
+        // Create a 2D vector and fill it with 0s
+        vector< vector<bool> > sumMap(nums.size(), vector<bool>(target + 1), 0);
+
 64.
 Time in C++
 http://www.cplusplus.com/reference/ctime/tm/
@@ -5005,6 +5012,10 @@ Erase Vector element by position
 
     vector.pop_back()
 
+122c. Delete or Erase or Clear a complete vector
+
+    vector.clear()
+
 123.
 Function Pointers and Callbacks
 http://stackoverflow.com/questions/8975208/whats-the-use-of-function-pointers
@@ -6615,6 +6626,44 @@ http://stackoverflow.com/questions/7163018/return-a-vector-vs-use-a-parameter-fo
     In reality, no, most modern compilers take advantage of return value optimization.
 
     So you can write code that acts semantically correct.
+
+177.
+INT_MIN, INT_MAX numeric_limits
+http://stackoverflow.com/questions/5579641/int-minmax-limit-macros-vs-numeric-limitst
+
+    uint32_t minIndex = std::numeric_limits<std::int32_t>::max();
+    INT_MIN, INT_MAX
+
+178.
+binary_search a vector
+
+    std::binary_search (v.begin(), v.end(), 3)
+
+179.
+Difference between declaring variables before or in loop
+http://stackoverflow.com/questions/407255/difference-between-declaring-variables-before-or-in-loop
+
+    a) declaration before loop:
+        double intermediateResult;
+        for(int i=0; i < 1000; i++)
+        {
+            intermediateResult = i;
+            System.out.println(intermediateResult);
+        }
+
+    b) declaration (repeatedly) inside loop:
+        for(int i=0; i < 1000; i++)
+        {
+            double intermediateResult = i;
+            System.out.println(intermediateResult);
+        }
+        
+    From a performance perspective, you'd have to measure it.
+    (And in my opinion, if you can measure a difference, the compiler isn't very good).
+
+    From a maintenance perspective, b is better
+
+
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1

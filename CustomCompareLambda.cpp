@@ -3,6 +3,7 @@
 #include <algorithm>
 using namespace std;
 
+// http://stackoverflow.com/questions/38422886/differences-between-various-custom-comparator-functions-in-c
 // Use const reference
 // Also make it a friend to have access to private members
 
