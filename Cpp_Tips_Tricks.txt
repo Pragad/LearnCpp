@@ -80,7 +80,7 @@
 59.  Returning by reference:
 60.  Sorting a vector of objects
 61.  Find rightmost set bit
-62.  #define vs typedef vs Enum
+62.  #define vs typedef vs Enum vs Static Const
 62a. C++ Const vs #Define
 62a. C++ semantics of `static const` vs `const`
 62b. C++ Const Read Only
@@ -190,7 +190,7 @@
 148. What is std::move
 149. Why is sizeof empty class 1
 150. Use of std::endl vs \n
-151. Bitset to convert Integer to Decimal and Decimal to Int
+151. Bitset to convert Integer to String Bits and String Bits to Int
 152. Print binary of a number using bitset
 153. Using iter_swap to swap elements in a vector
 154. strcmp vs strncmp vs memcmp vs bcmp
@@ -220,6 +220,9 @@
 177. INT_MIN, INT_MAX numeric_limits
 178. binary_search a vector
 179. Difference between declaring variables before or in loop
+180. Are bitwise operations faster. If so Why
+181. Left Shift and Right Shift on Negative numbers
+182. Arithmetic Shift vs Logical Shift Operators
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -2709,7 +2712,7 @@ http://stackoverflow.com/questions/671815/what-is-the-fastest-most-efficient-way
     }
 
 62. 
-#define vs typedef vs Enum
+#define vs typedef vs Enum vs Static Const
 http://stackoverflow.com/questions/1666353/are-typedef-and-define-the-same-in-c
 
     A typedef is generally preferred unless there's some odd reason that you specifically need a macro.
@@ -4803,6 +4806,33 @@ http://www.cplusplus.com/articles/DE18T05o/
     Overflow can only occur when sign of numbers being added is the same (which will always be the case in unsigned numbers)
     signed overflow can be easily detected by seeing that its sign is opposite to that of the operands.
 
+    // for addition
+        #include <limits.h>
+        int a = <something>;
+        int x = <something>;
+        if ((x > 0) && (a > INT_MAX - x)) /* `a + x` would overflow */;
+        if ((x < 0) && (a < INT_MIN - x)) /* `a + x` would underflow */;
+
+    // for subtraction
+        #include <limits.h>
+        int a = <something>;
+        int x = <something>;
+        if ((x < 0) && (a > INT_MAX + x)) /* `a - x` would overflow */;
+        if ((x > 0) && (a < INT_MIN + x)) /* `a - x` would underflow */;
+
+    // for multiplication
+        #include <limits.h>
+        int a = <something>;
+        int x = <something>;
+        if (a > INT_MAX / x) /* `a * x` would overflow */;
+        if ((a < INT_MIN / x)) /* `a * x` would underflow */;
+        // there may be need to check for -1 for two's complement machines
+        if ((a == -1) && (x == INT_MIN)) /* `a * x` can overflow */
+        if ((x == -1) && (a == INT_MIN)) /* `a * x` (or `a / x`) can overflow */
+
+    for division
+        (except for the INT_MIN and -1 special case) there is no possibility of going over INT_MIN or INT_MAX
+
     For addition, any two operands will result in (at most) one bit more than the largest operand's highest one-bit. For example:
         bool addition_is_safe(uint32_t a, uint32_t b) {
             size_t a_bits=highestOneBitPosition(a), b_bits=highestOneBitPosition(b);
@@ -6106,7 +6136,7 @@ http://stackoverflow.com/questions/7324843/why-use-endl-when-i-can-use-a-newline
     You can also ensure that with the ostream::flush function
 
 151.
-Bitset to convert Integer to Decimal and Decimal to Int
+Bitset to convert Integer to String Bits and String Bits to Int
 http://stackoverflow.com/questions/22746429/c-decimal-to-binary-converting
 
     unsigned long int a = 15;
@@ -6662,6 +6692,45 @@ http://stackoverflow.com/questions/407255/difference-between-declaring-variables
     (And in my opinion, if you can measure a difference, the compiler isn't very good).
 
     From a maintenance perspective, b is better
+
+180.
+Are bitwise operations faster. If so Why
+http://stackoverflow.com/questions/5148653/bit-operations-c
+
+    For example, "is a = (a>>1) faster than a = (a / 2)?"
+
+    In many cases, simple operations like this will (for various reasons including software and hardware optimisations, pipelining, caching, etc) effectively take 1 CPU cycle, so on modern processors you are unlikely to see a difference
+
+181.
+Left Shift and Right Shift on Negative numbers
+
+    For negative operands,
+    << has undefined behavior and the result of
+    >> is implementation-defined (usually as "arithmetic" right shift).
+    << and >> are conceptually not bitwise operators.
+
+182.
+Arithmetic Shift vs Logical Shift Operators
+http://stackoverflow.com/questions/7622/are-the-shift-operators-arithmetic-or-logical-in-c
+
+    - When shifting left, there is no difference between arithmetic and logical shift.
+    - When shifting right, the type of shift depends on the type of the value being shifted.
+
+    - A "logical" right shift by 1 bit shifts all the bits to the right and fills in the leftmost bit with a 0.
+    - An "arithmetic" shift leaves the original value in the leftmost bit.
+    - The difference becomes important when dealing with negative numbers.
+
+    When shifting an unsigned value, the >> operator in C is a logical shift.
+    When shifting a signed value, the >> operator is an arithmetic shift.
+
+    For example, assuming a 32 bit machine:
+        signed int x1 = 5;
+        assert((x1 >> 1) == 2);
+        signed int x2 = -5;
+        assert((x2 >> 1) == -3);
+        unsigned int x3 = (unsigned int)-5;
+        assert((x3 >> 1) == 0x7FFFFFFD);
+
 
 
 Read

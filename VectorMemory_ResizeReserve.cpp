@@ -2,6 +2,63 @@
 #include <vector>
 using namespace std;
 
+class Samp
+{
+private:
+    class Inner;
+    vector<Inner*> innerList;
+
+    class Inner
+    {
+    public:
+        int data;
+        vector<int> dataList;
+
+        Inner(int d)
+        {
+            data = d;
+            cout << "1. Data: " << data << "; Vec Size: " << dataList.size() << endl;
+        }
+
+        void printChild()
+        {
+            cout << "2. Data: " << data << "; Vec Size: " << dataList.size() << endl;
+        }
+    };
+
+public:
+    void printParent();
+    void addInnerObj(int data);
+
+    ~Samp()
+    {
+        cout << "Samp Destructor" << endl;
+        for (auto i : innerList)
+        {
+            i->printChild();
+            delete i;
+        }
+    }
+};
+
+void
+Samp::printParent()
+{
+    for (auto c : innerList)
+    {
+        cout << "In PrintParent Obj 2: " << c << endl;
+        c->printChild();
+    }
+}
+
+void
+Samp::addInnerObj(int data)
+{
+    Inner* inObj = new Inner(data);
+    innerList.push_back(inObj);
+    cout << "In addInnerObj Obj 1: " << inObj << endl;
+}
+
 // Bloomberg Phone Interview Questions
 int main()
 {
@@ -95,6 +152,14 @@ int main()
 
         cout << a << ", " << vec[0] << ", " << x << endl;
         // Output: 500, 500, 200
+    }
+
+    // Problem 7 Vector inside a class
+    {
+        cout << endl << "Problem 7" << endl;
+        Samp ob;
+        ob.addInnerObj(5);
+        ob.printParent();
     }
 
     cout << endl;
