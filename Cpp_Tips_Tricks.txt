@@ -223,6 +223,7 @@
 180. Are bitwise operations faster. If so Why
 181. Left Shift and Right Shift on Negative numbers
 182. Arithmetic Shift vs Logical Shift Operators
+183. Are C++ String mutable when passed to function
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -6731,6 +6732,10 @@ http://stackoverflow.com/questions/7622/are-the-shift-operators-arithmetic-or-lo
         unsigned int x3 = (unsigned int)-5;
         assert((x3 >> 1) == 0x7FFFFFFD);
 
+183. Are C++ String mutable when passed to function
+    
+    NO.
+    The value of string does not change when the value is changed inside a function
 
 
 Read

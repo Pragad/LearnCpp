@@ -7,6 +7,13 @@ using namespace std;
 // Q1. Assigning value to a struct inside a union
 // http://stackoverflow.com/questions/17556780/how-can-i-assign-value-to-the-struct-inside-union-here
 
+void stringMutablbe(string s)
+{
+    cout << "Inside Mutable Fn" << endl;
+    s += " bye";
+    cout << s << endl;
+}
+
 int main()
 {
     // Q2. We can't enter a string with just 5 characters.
@@ -159,6 +166,13 @@ int main()
         string res(a);
         res = "Hello " + res + " Word " + b;
         cout << res << endl;
+    }
+
+    {
+        string str = "hello";
+        cout << str << endl;
+        stringMutablbe(str);
+        cout << str << endl;
     }
     cout <<  endl;
     return 0;
