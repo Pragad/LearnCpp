@@ -27,7 +27,7 @@ using namespace std;
  * PROBLEM 7. Check a Bit
  * uint32_t checkBitInNum(int num, uint32_t bitPos)
  * 
- * PROBLEM 8. Reverse a Integer Number
+ * PROBLEM 8. Reverse bits in a number
  * int reverseBits(int num)
  */
 

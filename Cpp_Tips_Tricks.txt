@@ -33,7 +33,7 @@
 23.  Align std out
 24.  IMP: Why Pointer207.62 / 6s
 25.  Garbage Collection:
-26.  C++ References:
+26.  C++ Pointer vs References:
 26b. When to use References vs. Pointers
 27.  Smart Pointer:
 28.  C++ Cast:
@@ -224,6 +224,8 @@
 181. Left Shift and Right Shift on Negative numbers
 182. Arithmetic Shift vs Logical Shift Operators
 183. Are C++ String mutable when passed to function
+184. Convert Vector to String
+185. How to reverse a C++ vector
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -1007,7 +1009,7 @@ http://stackoverflow.com/questions/5009869/how-to-implement-garbage-collection-i
     In the meantime though, you'll need to be extremely careful not to break any of the above rules.
 
 26.
-C++ References:
+C++ Pointer vs References:
 http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-pointer-variable-and-a-reference-variable-in?rq=1
 
     Summary from answers and links below:
@@ -6737,6 +6739,18 @@ http://stackoverflow.com/questions/7622/are-the-shift-operators-arithmetic-or-lo
     NO.
     The value of string does not change when the value is changed inside a function
 
+184.
+Convert Vector to String
+http://stackoverflow.com/questions/8581832/converting-a-vector-to-string
+
+    std::vector<char> vec;
+    //... do something with vec
+    std::string str(vec.begin(), vec.end());
+
+185.
+How to reverse a C++ vector
+
+    std::reverse(a.begin(), a.end());
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
