@@ -225,7 +225,9 @@
 182. Arithmetic Shift vs Logical Shift Operators
 183. Are C++ String mutable when passed to function
 184. Convert Vector to String
-185. How to reverse a C++ vector
+185. Convert INT array to String
+186. How to reverse a C++ vector
+187. Use of functional's std::function
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -2987,7 +2989,7 @@ http://stackoverflow.com/questions/17663186/initializing-a-two-dimensional-stdve
         vector< vector<int> > myTwoDVec(rows, vector<int> (cols, 5));
 
         // Create a 2D vector and fill it with 0s
-        vector< vector<bool> > sumMap(nums.size(), vector<bool>(target + 1), 0);
+        vector<vector<int>> incPathMatrix (matrix.size(), vector<int>(matrix[0].size(), 0));
 
 64.
 Time in C++
@@ -6747,10 +6749,67 @@ http://stackoverflow.com/questions/8581832/converting-a-vector-to-string
     //... do something with vec
     std::string str(vec.begin(), vec.end());
 
-185.
+185. 
+Convert INT array to String
+
+    string convertIntArrToString(int arr[], int num)
+    {
+        //ostringstream oss;
+        std::ostringstream foo;
+        foo.str("");
+
+        for (int i = 0; i < num; i++)
+        {
+            foo << (arr[i]);
+        }
+
+        return foo.str();
+    }
+
+186.
 How to reverse a C++ vector
 
     std::reverse(a.begin(), a.end());
+
+187.
+Use of functional's std::function
+http://www.cplusplus.com/reference/functional/function/function/
+http://stackoverflow.com/questions/14677997/stdfunction-vs-template
+
+    #include <functional>   // std::function, std::negate
+
+    // a function:
+    int half(int x) {return x/2;}
+
+    // a function object class:
+    struct third_t {
+      int operator()(int x) {return x/3;}
+    };
+
+    // a class with data members:
+    struct MyValue {
+      int value;
+      int fifth() {return value/5;}
+    };
+
+    int main ()
+    {
+      std::function<int(int)> fn1 = half;                    // function
+      std::function<int(int)> fn2 = &half;                   // function pointer
+      std::function<int(int)> fn3 = third_t();               // function object
+      std::function<int(int)> fn4 = [](int x){return x/4;};  // lambda expression
+      std::function<int(int)> fn5 = std::negate<int>();      // standard function object
+
+      std::cout << "fn1(60): " << fn1(60) << '\n';
+      std::cout << "fn2(60): " << fn2(60) << '\n';
+      std::cout << "fn3(60): " << fn3(60) << '\n';
+      std::cout << "fn4(60): " << fn4(60) << '\n';
+      std::cout << "fn5(60): " << fn5(60) << '\n';
+
+      // stuff with members:
+      std::function<int(MyValue&)> value = &MyValue::value;  // pointer to data member
+      std::function<int(MyValue&)> fifth = &MyValue::fifth;  // pointer to member function
+    }
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1

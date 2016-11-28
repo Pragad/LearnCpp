@@ -11,6 +11,11 @@ struct ScoreIndex
 
     bool operator<(const ScoreIndex& buyRhs) const
     {
+        return score < buyRhs.score;
+    }
+
+    bool operator>(const ScoreIndex& buyRhs) const
+    {
         return score > buyRhs.score;
     }
 };
@@ -96,7 +101,7 @@ int main()
     // Priority Queue that holds a structure
     {
         std::priority_queue<ScoreIndex> scoreIndex;
-        std::priority_queue<ScoreIndexGreater> scoreIndexGreater;
+        std::priority_queue<ScoreIndex, vector<ScoreIndex>, std::greater<ScoreIndex>> scoreIndexGreater;
 
         scoreIndex.push(ScoreIndex{4.4, 0});
         scoreIndex.push(ScoreIndex{1.1, 1});
@@ -110,10 +115,10 @@ int main()
         }
         std::cout << std::endl;
 
-        scoreIndexGreater.push(ScoreIndexGreater{4.4, 0});
-        scoreIndexGreater.push(ScoreIndexGreater{1.1, 0});
-        scoreIndexGreater.push(ScoreIndexGreater{3.3, 0});
-        scoreIndexGreater.push(ScoreIndexGreater{2.2, 0});
+        scoreIndexGreater.push(ScoreIndex{4.4, 0});
+        scoreIndexGreater.push(ScoreIndex{1.1, 0});
+        scoreIndexGreater.push(ScoreIndex{3.3, 0});
+        scoreIndexGreater.push(ScoreIndex{2.2, 0});
 
         while (!scoreIndexGreater.empty())
         {
@@ -121,7 +126,6 @@ int main()
             scoreIndexGreater.pop();
         }
     }
-
 
     std::cout << std::endl;
     return 0;

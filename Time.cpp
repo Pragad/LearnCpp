@@ -13,7 +13,9 @@ int main()
         cout << "Epoch Time In Seconds 1: " << curTime << endl;
 
     // Method 1 to convert Time to String
-        cout << ctime(&curTime) << endl;
+        string strTime = ctime(&curTime);
+        cout << "String Time in readable format: " << strTime << endl;
+
         curTime += 1800;
         unsigned long int l1Time = (unsigned long int)curTime;
         unsigned long int l2Time = static_cast<unsigned long int>(curTime);
@@ -36,8 +38,6 @@ int main()
         // localtime Convert time_t to tm as local time (function )
         cout << asctime(locTime) << endl;
 
-
- 
         for (int i = 0; i < 100000000; i++)
         {
             int j = 5;
