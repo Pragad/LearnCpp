@@ -1,3 +1,10 @@
+#include <exception>
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <stdexcept>
+using namespace std;
+
 // ---------------------------------------------------------------------------------------
 // Main Function
 // ---------------------------------------------------------------------------------------
@@ -37,6 +44,15 @@ vector<uint32_t> getRandomNumbers(uint32_t num, uint32_t randomNumCount)
     return randomNumsList;
 }
 
+// using standard exceptions
+class MyException: public exception
+{
+  virtual const char* what() const throw()
+  {
+    return "My Custom Exception Returned";
+  }
+} myEx;
+
 int main()
 {
     // PROBLEM 1. Try Catch Exception example
@@ -44,12 +60,25 @@ int main()
         cout << endl << "PROBLEM 1. Reverse Data in a 1D array and return new array" << endl;
         try 
         {
-            vector<uint32_t> randomNums = getRandomNumbers(10, 6);
+            vector<uint32_t> randomNums = getRandomNumbers(10, 11);
         }
         catch (const std::invalid_argument& e)
         {
             cout << "EXCEPTION OCCURRED: " << e.what() << endl;
         }
 
+    }
+
+    // PROBLEM 2. Custom Exception
+    {
+        cout << endl << "PROBLEM 2. Custom Exception" << endl;
+        try
+        {
+            throw myEx;
+        }
+        catch (exception& e)
+        {
+            cout << e.what() << '\n';
+        }
     }
 }

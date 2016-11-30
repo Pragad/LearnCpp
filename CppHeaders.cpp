@@ -30,6 +30,7 @@
 #include <set>
 #include <sstream>              // stringstream, ostringstream
 #include <stack>
+#include <stdexcept>            // Standard exceptions like invalid_argument
 #include <stdint.h>             // To include the "uintptr_t
 #include <string>
 #include <strstream>
