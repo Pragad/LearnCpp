@@ -23,6 +23,7 @@
 #include <limits>
 #include <list>                 // Double Linked List
 #include <map>
+#include <memory>               // unique_ptr
 #include <mutex>
 #include <new>                  // std::bad_alloc
 #include <pthread.h>

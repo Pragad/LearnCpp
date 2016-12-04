@@ -167,6 +167,7 @@
 126. Operator Overloading in C++
 127. Scope Guard in C++
 128. C++11 introduced a standardized memory model. What does it mean?
+129a. Void* Pointer vs NULL Pointer
 129. When is void* useful
 130. Virtual Destructor in C++
 130b. Virtual Constructor in C++
@@ -228,6 +229,11 @@
 185. Convert INT array to String
 186. How to reverse a C++ vector
 187. Use of functional's std::function
+188. C vs C++
+189. Overloading by const
+190. Overloading does not work with inheritence
+191. Delete this
+192. Cannot push unique_ptr to vector
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -5635,6 +5641,13 @@ http://stackoverflow.com/questions/6319146/c11-introduced-a-standardized-memory-
     Although to be frank, unless you are an expert and working on some serious low-level code, you should probably stick to mutexes and condition variables.
     That's what I intend to do.
 
+129a.
+Void* Pointer vs NULL Pointer
+
+    void* is universal pointer type because any pointer type (except for pointer to const and/or volatile) can be implicitly converted to void*.
+    In other words, you can assign any pointer to a variable of type void*.
+    A null pointer is a pointer value 0
+
 129.
 When is void* useful
 http://stackoverflow.com/questions/11626786/what-does-void-mean-and-how-to-use-it?lq=1
@@ -6238,6 +6251,7 @@ http://stackoverflow.com/questions/1195675/convert-a-char-to-stdstring
 How to call a C function or a header from a C++ file - extern C
 http://stackoverflow.com/questions/67894/why-do-we-need-extern-c-include-foo-h-in-c
 http://stackoverflow.com/questions/1041866/in-c-source-what-is-the-effect-of-extern-c
+http://www.geeksforgeeks.org/extern-c-in-c/
 
     Why do we need to use:
         extern "C"
@@ -6250,6 +6264,25 @@ http://stackoverflow.com/questions/1041866/in-c-source-what-is-the-effect-of-ext
         {
            void g(char);
            int i;
+        }
+
+    // Without extern 'C' name mangling happens             
+    The reason for compiler error is simple, name of printf is changed by C++ compiler
+    and it doesn’t find definition of the function with new name.
+
+    The solution of problem is extern “C” in C++.
+    When some code is put in extern “C” block, the C++ compiler ensures that the function
+    names are unmangled – that the compiler emits a binary file with their names unchanged,
+    as a C compiler would do.
+        extern "C"
+        {
+            int printf(const char *format,...);
+        }
+         
+        int main()
+        {
+            printf("GeeksforGeeks");
+            return 0;
         }
 
     C and C++ are superficially similar, but each compiles into a very different set of code.
@@ -6810,6 +6843,67 @@ http://stackoverflow.com/questions/14677997/stdfunction-vs-template
       std::function<int(MyValue&)> value = &MyValue::value;  // pointer to data member
       std::function<int(MyValue&)> fifth = &MyValue::fifth;  // pointer to member function
     }
+
+188.
+C vs C++
+http://www.geeksforgeeks.org/g-fact-12-2/
+http://www.geeksforgeeks.org/write-c-program-produce-different-result-c/
+
+189. Overloading by const
+http://www.geeksforgeeks.org/function-overloading-and-const-functions/
+
+    #include<iostream>
+    using namespace std;
+     
+    class Test
+    {
+    protected:
+        int x;
+    public:
+        Test (int i):x(i) { }
+        void fun() const
+        {
+            cout << "fun() const called " << endl;
+        }
+        void fun()
+        {
+            cout << "fun() called " << endl;
+        }
+    };
+     
+    int main()
+    {
+        Test t1 (10);
+        const Test t2 (20);
+        t1.fun();
+        t2.fun();
+        return 0;
+    }
+
+    Output: The above program compiles and runs fine, and produces following output.
+
+    fun() called
+    fun() const called
+        - C allows a void* pointer to be assigned to any pointer type without a cast, whereas C++ does not
+
+190. Overloading does not work with inheritence
+http://www.geeksforgeeks.org/does-overloading-work-with-inheritance/
+
+191.
+Delete this
+http://www.geeksforgeeks.org/delete-this-in-c/
+
+    Can be done
+
+192.
+Cannot push unique_ptr to vector
+http://stackoverflow.com/questions/3283778/why-can-i-not-push-back-a-unique-ptr-into-a-vector
+
+    You need to move the unique_ptr:
+        vec.push_back(std::move(ptr2x));
+
+    unique_ptr guarantees that a single unique_ptr container has ownership of the held pointer.
+    This means that you can't make copies of a unique_ptr (because then two unique_ptrs would have ownership), so you can only move it.
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
