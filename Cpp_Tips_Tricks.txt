@@ -25,7 +25,6 @@
 19c.  But I heard that char a[] was identical to char *a.
 20a. Compare / Comparing String in C++
 20b.  Find Substring
-    You can find a lot more on it on the Wikipedia page.
 21.  Combining vector of strings:
 22.  Convert String to Int - C++
 22a. Concatenate String with Int
@@ -63,7 +62,6 @@
 46.  C++ Class vs C Struct Memory Layout
 47.  Pass by Value vs Const Reference
 47b. Why is Pass by Value faster than Pass by reference
-
 48.  Virtual Function and Pure Virtual Functions
 49.  Virtual Functions
 49b. How Virtual Functions Work
@@ -234,6 +232,7 @@
 190. Overloading does not work with inheritence
 191. Delete this
 192. Cannot push unique_ptr to vector
+193. Reverse a C++ string
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -6904,6 +6903,24 @@ http://stackoverflow.com/questions/3283778/why-can-i-not-push-back-a-unique-ptr-
 
     unique_ptr guarantees that a single unique_ptr container has ownership of the held pointer.
     This means that you can't make copies of a unique_ptr (because then two unique_ptrs would have ownership), so you can only move it.
+
+193.
+Reverse a C++ string
+
+    std::string foo("foo");
+    std::string copy(foo);
+    std::reverse(copy.begin(), copy.end());
+
+194.
+fabs vs abs
+http://stackoverflow.com/questions/3118165/when-do-i-use-fabs-and-when-is-it-sufficient-to-use-stdabs
+
+    In C++, it's always sufficient to use std::abs; it's overloaded for all the numerical types.
+
+    In C, abs only works on integers, and you need fabs for floating point values.
+    These are available in C++ (along with all of the C library), but there's no need to use them.
+
+
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
