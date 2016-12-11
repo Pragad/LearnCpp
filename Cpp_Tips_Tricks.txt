@@ -1,4 +1,4 @@
-0.  What are Classes
+0  What are Classes
 1.  Using namespace std;
 2.  How to split a string
 3.  Use of cin ignore
