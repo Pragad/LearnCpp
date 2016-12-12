@@ -4614,6 +4614,11 @@ http://stackoverflow.com/questions/644673/fast-way-to-copy-one-vector-into-anoth
 110.
 Copy Constructor vs Assignment Operator:
     A copy constructor is used to initialize a previously uninitialized object from some other object's data.
+    - VERY IMP: Copy constructor should be PASS BY REFERENCE
+    - ELSE: During a call to copy constructor, it calls a copy constructor to copy the value over stack
+    - Resulting in a endless loop and stackoverflow
+
+    - So GCC won't allow it
 
         A(const A& rhs) : data_(rhs.data_) {}
 
@@ -4627,7 +4632,7 @@ Copy Constructor vs Assignment Operator:
 
         class Test
         {
-        public:
+        public:http://www.bestbuy.com/site/insignia-mini-displayport-to-vga-adapter-white/5813139.p?skuId=5813139&ref=212&loc=1&ksid=a7bcbebe-3f58-4bf6-aa42-e70a88677ed9&ksprof_id=8&ksaffcode=pg199014&ksdevice=c&lsft=ref:212,loc:2
            Test() {}
            Test(const Test &t)
            {
