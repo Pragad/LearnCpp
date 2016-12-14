@@ -7,6 +7,7 @@ class smartPtr
     T* ptr;
 
 public:
+    // So that implicit type conversions won't happen
     explicit smartPtr(T* p = 0) : ptr(p)
     {
         cout << "In Smart A's Constructor" << endl;

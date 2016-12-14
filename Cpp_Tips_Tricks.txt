@@ -233,6 +233,7 @@
 191. Delete this
 192. Cannot push unique_ptr to vector
 193. Reverse a C++ string
+194. Turn off structure padding
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -6925,9 +6926,20 @@ http://stackoverflow.com/questions/3118165/when-do-i-use-fabs-and-when-is-it-suf
     In C, abs only works on integers, and you need fabs for floating point values.
     These are available in C++ (along with all of the C library), but there's no need to use them.
 
+194.
+Turn off structure padding
+
+Use the #pragma pack directive for that:
+
+    #pragma pack(push, 1)
+    struct foo { 
+      // etc..
+    };
+    #pragma pack(pop)
 
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
 http://stackoverflow.com/questions/8547778/why-is-one-loop-so-much-slower-than-two-loops?rq=1
+
