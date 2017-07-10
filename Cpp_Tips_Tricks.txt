@@ -234,6 +234,8 @@
 192. Cannot push unique_ptr to vector
 193. Reverse a C++ string
 194. Turn off structure padding
+195. Lambda functions
+196. Concurrency in C++ (Future, promise, .then())
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -6937,6 +6939,17 @@ Use the #pragma pack directive for that:
     };
     #pragma pack(pop)
 
+195.
+Lambda functions
+https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11
+http://www.cprogramming.com/c++11/c++11-lambda-closures.html
+https://blog.smartbear.com/c-plus-plus/c11-tutorial-lambda-expressions-the-nuts-and-bolts-of-functional-programming/
+http://www.drdobbs.com/cpp/lambdas-in-c11/240168241
+
+196.
+Concurrency in C++ (Future, promise, .then())
+https://paoloseverini.wordpress.com/2014/04/07/concurrency-in-c11/
+https://docs.microsoft.com/en-us/windows/uwp/threading-async/asynchronous-programming-in-cpp-universal-windows-platform-apps
 
 Read
 http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-code-if-i-optimize-for-size-instead-of-speed?rq=1
