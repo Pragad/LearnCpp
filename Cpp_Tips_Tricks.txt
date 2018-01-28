@@ -138,7 +138,10 @@
 104. Lock vs Mutex vs Condition Variable
 105. Need for THIS Pointer
 106. Sort Unordered Map
+106b. Sort Unordered Map by values
+106c. Sort vector of pairs
 107. IMP: Using [] operator in unordered_map inserts the element if not present.
+107b. Single line increment or set zero for unordered_map
 108. Create a vector of userdefined size and initialize with default values
 108b. Create a vector with an element using constructor
 109. Copy from one vector to another
@@ -236,6 +239,8 @@
 194. Turn off structure padding
 195. Lambda functions
 196. Concurrency in C++ (Future, promise, .then())
+197. Sort a vector of vector and delete duplicates
+198. Default Constructor
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -4585,6 +4590,42 @@ http://stackoverflow.com/questions/24212356/why-stl-unordered-map-and-unordered-
     for(auto it = ordered.begin(); it != ordered.end(); ++it)
          std::cout << it->second;
 
+106b. Sort Unordered Map by values
+    bool vecMapComparison(const pair<int, NumDetails>& a, const pair<int, NumDetails>& b)
+    {
+        // This sorts in descending order
+        return a.second.count > b.second.count;
+    }
+
+    // Copy map to a vector of pairs and then sort the vector using a function
+    vector<pair<int, NumDetails>> vecMap;
+    for (auto itr = hmap.begin(); itr != hmap.end(); ++itr) 
+    {
+        vecMap.push_back(*itr);
+    }
+
+    // Print Before Sorting
+    for (pair<int, NumDetails> e : vecMap)
+    {
+        cout << e.first << " : " << e.second.count << endl;
+    }
+    cout << endl;
+
+    // Sort using a function
+    sort(vecMap.begin(), vecMap.end(), vecMapComparison);
+
+    // Print after sorting
+    for (pair<int, NumDetails> e : vecMap)
+    {
+        cout << e.first << " : " << e.second.count << endl;
+    }
+
+
+106c. Sort vector of pairs
+    Sorting the vector elements on the basis of first element of pairs in ascending order.
+    This type of sorting can be achieved using simple "sort()" function. By default the sort function sorts the vector elements on basis of first element of pairs.
+        sort(vect.begin(), vect.end());
+
 107.
 IMP: Using [] operator in unordered_map inserts the element if not present.
 http://www.cplusplus.com/reference/unordered_map/unordered_map/operator[]/
@@ -4595,6 +4636,10 @@ http://www.cplusplus.com/reference/unordered_map/unordered_map/operator[]/
     Notice that this always increases the container size by one, even if no mapped value is assigned to the element (the element is constructed using its default constructor).
 
     IMP: Use .at() method instead
+
+107b. Single line increment or set zero for unordered_map
+        ++hasToFindMap[c];
+
 
 108. 
 Create a vector of userdefined size and initialize with default values
@@ -6956,3 +7001,9 @@ http://stackoverflow.com/questions/19470873/why-does-gcc-generate-15-20-faster-c
 http://stackoverflow.com/questions/12264970/why-is-my-program-slow-when-looping-over-exactly-8192-elements?rq=1
 http://stackoverflow.com/questions/8547778/why-is-one-loop-so-much-slower-than-two-loops?rq=1
 
+197. Sort a vector of vector and delete duplicates
+    sort(result.begin(), result.end());
+    result.erase(unique( result.begin(), result.end() ), result.end());
+
+198. Default Constructor
+    A default constructor is not synthesised if you created your own constructor with arguments. Since you gave Shape a constructor of your own, you'd have to explicitly write out a default Shape constructor
