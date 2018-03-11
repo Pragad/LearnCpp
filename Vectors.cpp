@@ -53,6 +53,10 @@ struct MeetingTime
     }
 };
 
+vector<MeetingTime*> returnEmptyVector() {
+    return {};
+}
+
 // TODO:
 struct MyMeetStrtEndComp
 {
@@ -174,6 +178,12 @@ int main()
 
         cout << "Itr: " << (*itr).startTime << "-" << (*itr).endTime << endl;
 
+    }
+
+    {
+        cout << "Return empty vector: " << endl;
+        vector<MeetingTime*> a = returnEmptyVector();
+        cout << a.size() << endl;
     }
     cout << endl;
 }

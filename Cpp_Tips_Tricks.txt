@@ -5,7 +5,8 @@
 4.  Why to use nested class
 5.  NULL pointer - nullptr
 6.  Print contents of a vector:
-7.  Convert string to Upper Case:
+7.  Convert string to Upper Case / Lower case:
+7b. Converting a single character to upper / lower case
 8.  Switch can't be used on strings:
 9.  Copy String to Char array
 10.  Char * vs Char []
@@ -68,7 +69,7 @@
 50.  new vs new()
 51.  Reading Multiple words from cin
 52.  Reading multiple lines from cin
-53.  Using size_t for loops
+53.  Using size_t for loops. Why use size_t instead of unsigned int or unsigned long
 54.  size_t vs size_type
 55.  File IO
 57.  Meaning of const
@@ -78,6 +79,7 @@
 59.  Returning by reference:
 60.  Sorting a vector of objects
 61.  Find rightmost set bit
+61b. Find leftmost set bit
 62.  #define vs typedef vs Enum vs Static Const
 62a. C++ Const vs #Define
 62a. C++ semantics of `static const` vs `const`
@@ -130,10 +132,11 @@
 98.  Create Vectors of User defined size
 99.  How to use memset or fill_n to initialize a dynamic two dimensional TwoD array in C++
 99a. How to fill a Dynamic 1D Array to all 0s
-100. Unique Lock
+100. Unique Lock unique_lock
+100a. How to use unique_lock
 101a. Nice Threading tutorial
 101. Condition Variable
-102. Lock_guard vs Unique_lock
+102. Lock guard vs Unique lock Lock_guard vs Unique_lock
 103. Recursive Mutex
 104. Lock vs Mutex vs Condition Variable
 105. Need for THIS Pointer
@@ -241,6 +244,18 @@
 196. Concurrency in C++ (Future, promise, .then())
 197. Sort a vector of vector and delete duplicates
 198. Default Constructor
+199. Difference between string.h and cstring?
+200. Sleep in C and C++
+201. Remove range of elements from vector
+202. C++ Data Structures
+203. What are inclusion guards
+204. Modulo of negative numbers
+205. How to dynamically allocate a Two 2D array in C
+205a. Free Array of Pointers
+205b. How to dynamically allocate a Two 2D array in C++
+206. Does std::string contain null terminator?
+207. Read file line by line in C
+208. Read Write file line by line in C++
 ------------------------------------------------------------------------------------------
 0. 
 What are Classes
@@ -467,6 +482,10 @@ http://www.cplusplus.com/reference/algorithm/transform/
     std::transform (foo.begin(), foo.end(), bar.begin(), foo.begin(), std::plus<int>());
                                                       // foo: 21 41 61 81 101
 
+7b. Converting a single character to upper / lower case
+    There are two different tolower functions. The one that you're using is this one, which returns an int. That's why it's printing 116. That's the ASCII value of 't'
+        std::cout << std::tolower('T', std::locale()); // prints t
+
 8. 
 Switch can't be used on strings:
 http://stackoverflow.com/questions/650162/why-switch-statement-cannot-be-applied-on-strings
@@ -491,6 +510,7 @@ http://stackoverflow.com/questions/13294067/how-to-convert-string-to-char-array-
 10.
 Char * vs Char []
 http://stackoverflow.com/questions/1704407/what-is-the-difference-between-char-s-and-char-s-in-c
+https://www.geeksforgeeks.org/whats-difference-between-char-s-and-char-s-in-c/
 
         char *s = "Hello world";
     will place Hello world in the read-only parts of the memory and making s a pointer to that, making any writing operation on this memory illegal. While doing:
@@ -502,6 +522,21 @@ http://stackoverflow.com/questions/1704407/what-is-the-difference-between-char-s
     First off, in function arguments, they are exactly equivalent:
         void foo(char *x);
         void foo(char x[]); // exactly the same in all respects (note! this only applies if the brackets are empty)
+
+    In other contexts, char * allocates a pointer, while char [] allocates an array. Where does the string go in the former case, you ask? The compiler secretly allocates a static anonymous array to hold the string literal. So:
+        char *x = "Foo";
+        // is approximately equivalent to:
+        static const char __secret_anonymous_array[] = "Foo";
+        char *x = (char *) __secret_anonymous_array;
+
+    Note that you must not ever attempt to modify the contents of this anonymous array via this pointer; the effects are undefined (often meaning a crash):
+        x[1] = 'O'; // BAD. DON'T DO THIS.
+
+    Using the array syntax directly allocates it into new memory. Thus modification is safe:
+        char x[] = "Foo";
+        x[1] = 'O'; // No problem.
+    However the array only lives as long as its contaning scope, so if you do this in a function, don't return or leak a pointer to this array - make a copy instead with strdup() or similar. If the array is allocated in global scope, of course, no problem.
+
 
     char s[] = "hello";
     Creates one object - a char array of size 6, called s, initialised with the values 'h', 'e', 'l', 'l', 'o', '\0'.
@@ -594,6 +629,8 @@ http://stackoverflow.com/questions/9169774/what-happens-in-a-double-delete
     Double delete causes an undefined behavior. So setting a pointer to NULL will overcome that.
     Deleting a NULL pointer is a Void operation
 
+    Before you were owning the block. So deleting it is safe. After first delete you gave up the block. Which means there could be anything in that block and doing a delete again on the block becomes undefined behavior
+
     Setting a pointer to 0 (which is "null" in standard C++, the NULL define from C is somewhat different) avoids crashes on double deletes.
     Consider the following:
         Foo* foo = 0; // Sets the pointer to 0 (C++ NULL)
@@ -629,7 +666,7 @@ Default value of a boolean in a struct
 http://stackoverflow.com/questions/3845353/what-will-be-the-default-value-of-an-uninitialized-boolean-value-in-c
 http://stackoverflow.com/questions/16782103/initializing-default-values-in-a-struct
 
-    The value of the bool will is undefined. It will be whatever else was on the stack before it, which is sometimes zeroed out if nothing has used it previously.
+    The value of the bool is undefined. It will be whatever else was on the stack before it, which is sometimes zeroed out if nothing has used it previously.
     But again, it is undefined, which means it can be either true or false.
     If you need a default value, you can do:
         struct fool_bool {
@@ -2065,6 +2102,8 @@ http://stackoverflow.com/questions/22840120/pass-by-value-faster-than-pass-by-re
 48.
 Virtual Function and Pure Virtual Functions
 http://stackoverflow.com/questions/1306778/c-virtual-pure-virtual-explained?rq=1
+    - Virtual Function will have implementation in base class as well as in derived class
+    - Pur Virtual Function will make the base class abstract and will have implementation only in the derived class
 
     - What a Virtual function will do is,
         - It will make its CLASS a polymorphic base class. 
@@ -2286,8 +2325,7 @@ Reading multiple lines from cin
             }
         }
 
-53.
-Using size_t for loops
+53.  Using size_t for loops. Why use size_t instead of unsigned int or unsigned long
 http://www.embedded.com/electronics-blogs/programming-pointers/4026076/Why-size-t-matters
 http://stackoverflow.com/questions/1951519/when-should-i-use-stdsize-t
 http://stackoverflow.com/questions/19732319/difference-between-size-t-and-unsigned-int
@@ -4468,6 +4506,21 @@ http://stackoverflow.com/questions/32135380/how-do-unique-locks-work-compared-to
             m_playerQuit = true;
         }   // m_mutex is automatically unlocked by the ~lock_guard destructor
 
+100a. How to use unique_lock
+    std::unique_lock use the RAII pattern.
+
+    When you want to lock a mutex, you create a local variable of type std::unique_lock passing the mutex as parameter. When the unique_lock is constructed it will lock the mutex, and it gets destructed it will unlock the mutex. More importantly: If a exceptions is thrown, the std::unique_lock destructer will be called and so the mutex will be unlocked.
+
+    Example:
+        #include<mutex>
+        int func() {
+            int a = 3;
+            { //Critical session
+                std::unique_lock<mutex> lock(my_mutex);
+                some_shared_var += a;
+            } //End of critical session
+        }        
+
 101a.
 Nice Threading tutorial
 http://baptiste-wicht.com/posts/2012/03/cp11-concurrency-tutorial-part-2-protect-shared-data.html
@@ -4483,8 +4536,39 @@ http://www.cplusplus.com/reference/condition_variable/condition_variable/wait/
         
     notify_one()
 
+101b. C++11: why does std::condition_variable use std::unique_lock?
+https://stackoverflow.com/questions/13099660/c11-why-does-stdcondition-variable-use-stdunique-lock
+
+    Let's pretend that the committee had decided to have condition_variable wait on a mutex. Here is code using that design:
+        void foo()
+        {
+            mut.lock();
+            // mut locked by this thread here
+            while (not_ready)
+                cv.wait(mut);
+            // mut locked by this thread here
+            mut.unlock();
+        }
+    This is exactly how one shouldn't use a condition_variable. In the regions marked with:
+
+    // mut locked by this thread here
+    there is an exception safety problem, and it is a serious one. If an exception is thrown in these areas (or by cv.wait itself), the locked state of the mutex is leaked unless a try/catch is also put in somewhere to catch the exception and unlock it.
+
+    Now let's look at how the code is written with the actual condition_variable API that takes a unique_lock<mutex>:
+        void foo()
+        {
+            unique_lock<mutex> lk(mut);
+            // mut locked by this thread here
+            while (not_ready)
+                cv.wait(lk);
+            // mut locked by this thread here
+        }
+    This code is as simple as it can get.
+    It is exception safe.
+    The wait function can check lk.owns_lock() and throw an exception if it is false.
+
 102.
-Lock_guard vs Unique_lock
+Lock guard vs Unique lock Lock_guard vs Unique_lock
 http://stackoverflow.com/questions/20516773/stdunique-lockstdmutex-or-stdlock-guardstdmutex
 
     lock_guard and unique_lock are pretty much the same thing; lock_guard is a restricted version with a limited interface.
@@ -6459,6 +6543,26 @@ http://stackoverflow.com/questions/10998780/stdthread-calling-method-of-class?no
             thread th2(&PersonCountNoMtx::increment, &ob1);
         }
 
+    You need to pass two things: a pointer-to-member, and the object. You cannot call a non-static member function (like Gamma) in C++ without an object. The correct syntax would be:
+        std::thread gamma_thread(&Beta::Gamma, // the pointer-to-member
+                                 my_beta,      // the object, could also be a pointer
+                                 5);           // the argument
+
+        #include <thread>
+        #include <iostream>
+
+        class bar {
+        public:
+          void foo() {
+            std::cout << "hello from member function" << std::endl;
+          }
+        };
+
+        int main()
+        {
+          std::thread t(&bar::foo, bar());
+          t.join();
+        }
 162.
 Creating vector of threads
 
@@ -6489,12 +6593,16 @@ http://www.cplusplus.com/reference/atomic/
         
 164.
 Inserting at random position to vector - Not possible
+    If you already have a vector with elements it is possible
+        v1.insert(v1.begin()+i, v2[i])
 
+    Not possible otherwise to randomly insert at some position
         vector<int> vec;
         vec.reserve(10);
 
     The below line crashes the program
         vec.insert(vec.begin() + 2, 5);
+
 
 165.
 Print entire contents of a char arry in c++
@@ -6725,6 +6833,8 @@ http://www.cplusplus.com/reference/string/string/operator+=/
     c-string (2)	string& operator+= (const char* s);
     character (3)	string& operator+= (char c);
 
+    return std::string() + char(bullCount + '0') + 'A' + char(cowCount + '0') + 'B';   
+
 174.
 Remove / Erase character from string
 
@@ -6900,6 +7010,16 @@ http://stackoverflow.com/questions/14677997/stdfunction-vs-template
 C vs C++
 http://www.geeksforgeeks.org/g-fact-12-2/
 http://www.geeksforgeeks.org/write-c-program-produce-different-result-c/
+https://www.invensis.net/blog/it/25-key-differencesbetween-c-plus-plus/
+
+    C does not support function overloading.
+    C does not support functions with default arrangements
+    C does not support references
+    In C, variable has to be defined at the beginning, in the function
+    C does not have Operator overloading
+    main() function can be called through other functions
+    Have to include the struct keyword before the name of the struct type to declare a struct
+    typedef enum {FALSE, TRUE} bool;
 
 189. Overloading by const
 http://www.geeksforgeeks.org/function-overloading-and-const-functions/
@@ -6976,6 +7096,8 @@ http://stackoverflow.com/questions/3118165/when-do-i-use-fabs-and-when-is-it-suf
 194.
 Turn off structure padding
 
+#Pragma directive is used to specify additional information to the compiler
+
 Use the #pragma pack directive for that:
 
     #pragma pack(push, 1)
@@ -7007,3 +7129,200 @@ http://stackoverflow.com/questions/8547778/why-is-one-loop-so-much-slower-than-t
 
 198. Default Constructor
     A default constructor is not synthesised if you created your own constructor with arguments. Since you gave Shape a constructor of your own, you'd have to explicitly write out a default Shape constructor
+
+199. Difference between string.h and cstring?
+    In C++ you should include cstring as the header while in c you should include string.h as the header.
+
+    In C++
+    #include <cstring>
+
+    In C
+    #include <string.h>
+
+200. Sleep in C and C++
+    #include <unistd.h>
+    unsigned int microseconds;
+    usleep(microseconds);
+
+    #include <chrono>
+    #include <thread>
+    std::this_thread::sleep_for(std::chrono::milliseconds(x));
+
+201. Remove range of elements from vector
+    v.erase(v.begin() + 10, v.end());
+
+202. C++ Data Structures
+    vector          push_back   back        pop_back    empty   size
+    stack           push        top         pop         empty   size
+    queue           push        front       pop         empty   size
+    priority_queue  push        top         pop
+    unordered_map
+    unordered_set
+
+    queue<tree*> lvlQueue;
+
+203. What are inclusion guards
+    Just to clear up what we¿re talking about, an inclusion guard looks like this:
+
+        #ifndef HEADER_FILE_H
+        #define HEADER_FILE_H
+        ...//your header
+        #endif //HEADER_FILE_H
+
+204. Modulo of negative numbers
+https://stackoverflow.com/questions/11720656/modulo-operation-with-negative-numbers
+    % is remainder operator
+    5/(-3) is -1
+    => (-1) * (-3) + 5%(-3) = 5
+    This can only happen if 5%(-3) is 2
+
+    int mod(int a, int b)
+    {
+        int r = a % b;
+        return r < 0 ? r + b : r;
+    }
+
+205. How to dynamically allocate a 2D array in C
+https://www.geeksforgeeks.org/dynamically-allocate-2d-array-c/
+    1) Using a single pointer:
+        int r = 3, c = 4;
+        int *arr = (int *)malloc(r * c * sizeof(int));
+     
+        int i, j, count = 0;
+        for (i = 0; i <  r; i++)
+          for (j = 0; j < c; j++)
+             *(arr + i*c + j) = ++count;
+
+    2) Using an array of pointers
+        int r = 3, c = 4, i, j, count;
+     
+        int *arr[r];
+        for (i=0; i<r; i++)
+             arr[i] = (int *)malloc(c * sizeof(int));
+     
+        // Note that arr[i][j] is same as *(*(arr+i)+j)
+        count = 0;
+        for (i = 0; i <  r; i++)
+          for (j = 0; j < c; j++)
+             arr[i][j] = ++count; // Or *(*(arr+i)+j) = ++count
+
+    3) Using pointer to a pointer
+        int r = 3, c = 4, i, j, count;
+     
+        int **arr = (int **)malloc(r * sizeof(int *));
+        for (i=0; i<r; i++)
+             arr[i] = (int *)malloc(c * sizeof(int));
+     
+        // Note that arr[i][j] is same as *(*(arr+i)+j)
+        count = 0;
+        for (i = 0; i <  r; i++)
+          for (j = 0; j < c; j++)
+             arr[i][j] = ++count;  // OR *(*(arr+i)+j) = ++count
+
+205a. Free Array of Pointers
+    void freeargpointer(char** array, int count)
+    {
+        int i;
+
+        for ( i = 0; array[i]; i++ )
+            free( array[i] );
+
+        free( array );
+    }
+
+205b. How to dynamically allocate a Two 2D array in C++
+    int** twoDarray = new(std::nothrow) int*[row];
+    if (twoDarray != NULL)
+    {
+        for (unsigned int i = 0; i < row; i++)
+        {
+            twoDarray[i] = new (std::nothrow) int[col];
+
+            if (twoDarray[i] == NULL)
+            {
+                for (unsigned int tmp = 0; tmp < i; tmp++)
+                {
+                    delete twoDarray[tmp];
+                }
+        
+                delete[] twoDarray;
+                return NULL;
+            }
+        }
+    }
+    else
+    {
+        return NULL;
+    }
+
+
+206. Does std::string contain null terminator?
+    Will the below string contain the null terminator '\0' ?
+        std::string temp = "hello whats up";
+
+    No, but if you say temp.c_str() a null terminator will be included in the return from this method.
+
+    It's also worth saying that you can include a null character in a string just like any other character.
+
+        string s("hello");
+        cout << s.size() << ' ';
+        s[1] = '\0';
+        cout << s.size() << '\n'; // prints 5 and not 1
+    prints
+    5 5
+
+    and not 5 1 as you might expect if null characters had a special meaning for strings.
+
+    In C++11 and later, mystring.c_str() is equivalent to mystring.data() is equivalent to &mystring[0], and mystring[mystring.size()] is guaranteed to be '\0'
+
+207. Read file line by line in C
+    int main(void)
+    {
+        FILE * fp;
+        char * line = NULL;
+        size_t len = 0;
+        ssize_t read;
+
+        fp = fopen("/etc/motd", "r");
+        if (fp == NULL)
+            exit(EXIT_FAILURE);
+
+        while ((read = getline(&line, &len, fp)) != -1) {
+            printf("Retrieved line of length %zu :\n", read);
+            printf("%s", line);
+        }
+
+        fclose(fp);
+        if (line)
+            free(line);
+        exit(EXIT_SUCCESS);
+    }
+
+208. Read Write file line by line in C++
+    vector <string> fileLines;
+    string line;
+    ifstream ifile;
+    ofstream ofile;
+
+    std::ifstream infile("thefile.txt");
+    std::string line;
+    while (std::getline(infile, line))
+    {
+        filesLines.push_back(line);
+    }
+    infile.close();
+
+    // Write data to a new file
+    ofile.open("sampNew.txt");
+    if (ofile.is_open())
+    {
+        // Write all vector lines to the file
+        for (auto line : fileLines)
+        {
+            ofile << line << "\n";
+        }
+
+        // As we are done writing, close the file
+        ofile.close();
+    }
+

@@ -1,0 +1,371 @@
+1. Copy String to Char array
+2. Char * vs Char []
+2b. Null termination
+2c. Array Re-initialization
+3. Char * assignment
+4. Deleting Array of objects using delete[]. delete[] vs delete
+4b. Why even delete[] Why can't delete figure out if it is an array or not
+5. Double delete and setting to null after delete
+6. Default value of a boolean in a struct
+7. Clearing a Char array in C
+8. Re-declaration of default parameter
+9. Difference between string.h and cstring?
+10. Array assignment vs initialization - Why are Arrays not assignable
+11. Reverse a C++ string
+12. Converting a single character to upper / lower case
+13. Inserting at random position to vector - Not possible
+14. Remove range of elements from vector
+--------------------------------------------------------------------------------
+1. Copy String to Char array
+        string tmp = "cat";
+        char tab2[1024];
+        strcpy(tab2, tmp.c_str());
+
+    For safety, you might prefer:
+        string tmp = "cat";
+        char tab2[1024];
+        strncpy(tab2, tmp.c_str(), sizeof(tab2));
+        tab2[sizeof(tab2) - 1] = 0;
+
+2. Char * vs Char []
+http://www.cplusplus.com/doc/tutorial/ntcs/
+        char s[] = "geeksquiz";
+        char *s  = "geeksquiz";
+    The statements ‘char s[] = “geeksquiz”‘ creates a character array which is like any other array and we can do all array operations. The only special thing about this array is, although we have initialized it with 9 elements, its size is 10 (Compiler automatically adds ‘\0’)
+
+    The statement ‘char *s = “geeksquiz”‘ creates a string literal. The string literal is stored in read only part of memory by most of the compilers. The C and C++ standards say that string literals have static storage duration, any attempt at modifying them gives undefined behavior.
+
+2b. Null termination
+    Only string literals get null-terminated, and that means that char x[]="asdf" is an array of 5 elements.
+    char arrays are not automatically NULL terminated
+
+    If you are creating a char array then better null-terminate it
+        char myword[] = { 'H', 'e', 'l', 'l', 'o', '\0' };
+
+    However string literals always have a null character ('\0') automatically appended at the end.
+
+        char myword[] = { 'H', 'e', 'l', 'l', 'o', '\0' };
+        char myword[] = "Hello"; 
+    In both cases, the array of characters myword is declared with a size of 6 elements of type char: the 5 characters that compose the word "Hello", plus a final null character ('\0'), which specifies the end of the sequence and that, in the second case, when using double quotes (") it is appended automatically.
+
+2c. Array Re-initialization
+    Array can't be reinitialized. However individual elements can be changed
+
+        myword = "Bye";
+        myword[] = "Bye"; 
+        myword = { 'B', 'y', 'e', '\0' };
+    would not be valid
+    Below is valid
+        myword[0] = 'B';
+        myword[1] = 'y';
+        myword[2] = 'e';
+        myword[3] = '\0';
+
+3. Char * assignment
+        char* p = "abc"; // valid in C, invalid in C++
+
+4. Deleting Array of objects using delete[]. delete[] vs delete
+    The compiler doesn't know it's an array, it's trusting the programmer. Deleting a pointer to a single int with delete [] would result in undefined behavior.
+    When you allocate memory on the heap, your allocator will keep track of how much memory you have allocated.
+    This is usually stored in a "head" segment just before the memory that you get allocated.
+    That way when it's time to free the memory, the de-allocator knows exactly how much memory to free.
+
+4b. Why even delete[] Why can't delete figure out if it is an array or not
+        If they're not using arrays, then they should not have to carry the cost of object arrays for every allocated chunk of memory.
+
+        That is, if your code simply does
+            Foo* foo = new Foo;
+
+        then the memory space that's allocated for foo shouldn't include any extra overhead that would be needed to support arrays of Foo.
+
+5. Double delete and setting to null after delete
+    Double delete causes an undefined behavior. So setting a pointer to NULL will overcome that.
+    Deleting a NULL pointer is a Void operation
+    Before you were owning the block. So deleting it is safe. After first delete you gave up the block. Which means there could be anything in that block and doing a delete again on the block becomes undefined behavior
+
+6. Default value of a boolean in a struct
+    The value of the bool is undefined. It will be whatever else was on the stack before it, which is sometimes zeroed out if nothing has used it previously.
+
+    In C++ 11 default value can be given inside the struct itself:
+        struct foo {
+            bool a = true;
+            bool b = true;
+            bool c;
+         } bar;
+
+7. Clearing a Char array in C
+        memset(&arr[0], 0, sizeof(arr));
+    This is generally the fastest way to take care of this. If you can use C++, consider std::fill instead:
+        char *begin = &arr;
+        char *end = begin + sizeof(arr);
+        std::fill(begin, end, 0);
+
+8. Re-declaration of default parameter
+    You have to specify the default values for the arguments only in the declaration but not in the definition.
+        class pBase : public sf::Thread {
+             // ....
+             void setColor( int _color = -1 );
+             // ....
+         } ;
+
+         void pBase:: setColor( int _color )
+         {
+             // ....
+         }
+
+9. Difference between string.h and cstring?
+    In C++ you should include cstring as the header while in c you should include string.h as the header.
+
+10. Array assignment vs initialization - Why are Arrays not assignable
+    If I can say 
+        char a[] = "Hello, world!";
+
+    why can't I say
+        char a[14];
+        a = "Hello, world!";
+
+Answer:
+    ASSIGNMENT vs INITIALIZATION:
+    That's because your first code snippet is not performing initialization, but assignment
+        char myarray[4] = "abc";  // Initialization.
+        myarray = "abc";          // Assignment.
+
+    - And arrays are not directly assignable in C.
+    - The name myarray actually resolves to the address of its first element (&myarray[0]), which is not an lvalue, and as such cannot be the target of an assignment.
+    - Assignment and initialization are separate things to the language, even though they both use the = character. Arrays are not assignable.
+
+11. strcat - First string should have space to put new data
+    - strcat performs no allocation; the second string is appended to the first one, in place.
+    The first (destination) string must be writable and have enough room for the concatenated result.
+
+12. C vs C++ - Size of char constants
+    I think something's wrong with my compiler: I just noticed that sizeof('a') is 2, not 1 (i.e. not sizeof(char)).
+    Perhaps surprisingly, character constants in C are of type int, so sizeof('a') is sizeof(int) (though this is another area where C++ differs)
+
+13. Avoid scanf
+    This is a great example of why scanf("%s") is dangerous and should never be used.
+    It doesn't know about the size of your array which means there is no way to use it safely.
+    Instead, avoid scanf and use something safer, like fgets():
+        fgets() reads in at most one less than size characters from stream and stores them into the buffer pointed to by s.
+
+14. Convert string to int and int to string
+        string strNum = to_string(number);
+    Instead of
+        atoi( str.c_str() )
+    you can use
+        std::stoi( str )
+    There are version for all flavours of numbers:
+        long stol(string), float stof(string), double stod(string)
+
+15. Concatenate String with Int
+    std::string name = "John";
+    int age = 21;
+    std::string result;
+    result = name + std::to_string(age);
+
+16. Pointer vs References
+    1. A pointer can be re-assigned:. A reference cannot, and must be assigned at initialization:
+    2. Pointers can point nowhere (NULL), whereas reference always refer to an object.
+    3. You can't take the address of a reference like you can with pointers.
+    4. A pointer has its own memory address and size on the stack (4 bytes on x86), whereas a reference shares the same memory address (with the original variable) but also takes up some space on the stack.
+    5. There's no "reference arithmetics" (but you can take the address of an object pointed by a reference and do pointer arithmetics on it as in &obj + 5).
+
+
+17. Smart Pointer
+    Here is part of auto_ptr's implementation, to illustrate what it does:
+        template <class T> class auto_ptr
+        {
+            T* ptr;
+        public:
+            explicit auto_ptr(T* p = 0) : ptr(p) {}
+            ~auto_ptr()                 {delete ptr;}
+            T& operator*()              {return *ptr;}
+            T* operator->()             {return ptr;}
+            // ...
+        };
+    Its smartness in the destructor: the destructor takes care of deleting the pointer
+
+    For the user of auto_ptr, this means that instead of writing:
+        void foo()
+        {
+            MyClass* p(new MyClass);
+            p->DoSomething();
+            delete p;
+        }
+
+    You can write:
+        void foo()
+        {
+            auto_ptr<MyClass> p(new MyClass);
+            p->DoSomething();
+        }
+    And trust p to cleanup after itself. 
+
+
+18. Casts
+
+19. Allocator
+
+20. Double Float Comparison
+    bool AreSame(double a, double b)
+    {
+        return fabs(a - b) < EPSILON;
+    }
+
+21. Convert Vector to Array and Array to Vector
+        std::vector<double> v;
+        double* a = &v[0];
+
+        int x[3]={1, 2, 3};
+        std::vector<int> v(x, x + sizeof x / sizeof x[0]);
+
+22. Converting String to Vector of Chars
+        std::string str = "hello";
+        std::vector<char> data(str.begin(), str.end());
+
+    If you already have a vector and want to add the characters at the end, you need a BACK INSERTER:
+        std::string str = "hello";
+        std::vector<char> data = /* ... */;
+        std::copy(str.begin(), str.end(), std::back_inserter(data));
+
+23. Initialization of a normal array with one default value
+        int array[100] = {-1};
+            sets first element to -1 and rest to 0
+        std::fill_n(array, 100, -1);
+
+24. Initialize TwoD (two dimensional) array with 0
+    int a[100][200] = {{0}}; OR
+    fill_n( a, 100*200, 0 );
+
+25. comparing int with size_t
+    size_t CANNOT be compared with int when the int is INT is negative
+    It's safe provided the int is zero or positive.
+
+26. Where are Class Members stored in memory
+    Typically a process has 5 different areas of memory allocated
+        Code - text segment
+        Initialized data  data segment
+        Uninitialized data  bss segment
+        Heap
+        Stack
+
+    The size of the text and data segments are known as soon as compilation or assembly is completed. The stack and heap segments, on the other hand, grow and shrink during program execution.
+
+    In the assembler's point of view, all variables are global.
+    The notion of a variable's scope in C or Java is enforced by the compiler, not the hardware.
+    Hardware knows only about memory addresses, and the compiler must keep track of which addresses are used by each subprogram.
+
+27. Memory Layout - Code Segment Data Segment Stack Heap
+    Text, Data, Stack, Heap belong to a Process
+
+    Text / Code Segment:
+        Machine instructions gets stored here
+        Code segment, also known as text segment contains machine code of the compiled program.
+        The text segment of an executable object file is often read-only segment that prevents a program from being accidentally modified.
+
+    DATA Segment:
+        - Has Initialized and Uninitialized segments
+        Data segment stores program data.
+        This data could be in form of initialized or uninitialized variables, and it could be local or global.
+        Data segment is further divided into four sub-data segments (initialized data segment, uninitialized or .bss data segment, stack, and heap)
+
+28. Sleep in C and C++
+    #include <unistd.h>
+    unsigned int microseconds;
+    usleep(microseconds);
+
+    #include <chrono>
+    #include <thread>
+    std::this_thread::sleep_for(std::chrono::milliseconds(x));
+
+11. Reverse a C++ string
+    std::string foo("foo");
+    std::string copy(foo);
+    std::reverse(copy.begin(), copy.end());
+
+12. Converting a single character to upper / lower case
+        std::cout << std::tolower('T', std::locale()); // prints t
+
+13. Inserting at random position to vector - Not possible
+    v1.insert(v1.begin()+i, v2[i])
+
+14. Remove range of elements from vector
+    v.erase(v.begin() + 10, v.end());
+
+15. C++ Data Structures
+    vector          push_back   back        pop_back    empty   size
+    stack           push        top         pop         empty   size
+    queue           push        front       pop         empty   size
+    priority_queue  push        top         pop
+    unordered_map
+    unordered_set   insert
+
+
+    queue<tree*> lvlQueue;
+
+16. Modulo of negative numbers
+    % is remainder operator
+    5/(-3) is -1
+    => (-1) * (-3) + 5%(-3) = 5
+    This can only happen if 5%(-3) is 2
+
+    int mod(int a, int b)
+    {
+        int r = a % b;
+        return r < 0 ? r + b : r;
+    }
+
+17. How to dynamically allocate a 2D array in C
+    1) Using a single pointer:
+        int r = 3, c = 4;
+        int *arr = (int *)malloc(r * c * sizeof(int));
+     
+        int i, j, count = 0;
+        for (i = 0; i <  r; i++)
+          for (j = 0; j < c; j++)
+             *(arr + i*c + j) = ++count;
+
+    2) Using an array of pointers
+        int r = 3, c = 4, i, j, count;
+     
+        int *arr[r];
+        for (i=0; i<r; i++)
+             arr[i] = (int *)malloc(c * sizeof(int));
+     
+        // Note that arr[i][j] is same as *(*(arr+i)+j)
+        count = 0;
+        for (i = 0; i <  r; i++)
+          for (j = 0; j < c; j++)
+             arr[i][j] = ++count; // Or *(*(arr+i)+j) = ++count
+
+    3) Using pointer to a pointer
+        int r = 3, c = 4, i, j, count;
+     
+        int **arr = (int **)malloc(r * sizeof(int *));
+        for (i=0; i<r; i++)
+             arr[i] = (int *)malloc(c * sizeof(int));
+     
+        // Note that arr[i][j] is same as *(*(arr+i)+j)
+        count = 0;
+        for (i = 0; i <  r; i++)
+          for (j = 0; j < c; j++)
+             arr[i][j] = ++count;  // OR *(*(arr+i)+j) = ++count
+
+18. Does std::string contain null terminator?
+    Will the below string contain the null terminator '\0' ?
+        std::string temp = "hello whats up";
+
+    No, but if you say temp.c_str() a null terminator will be included in the return from this method.
+
+    It's also worth saying that you can include a null character in a string just like any other character.
+
+        string s("hello");
+        cout << s.size() << ' ';
+        s[1] = '\0';
+        cout << s.size() << '\n'; // prints 5 and not 1
+    prints
+    5 5
+
+    and not 5 1 as you might expect if null characters had a special meaning for strings.
+
+    In C++11 and later, mystring.c_str() is equivalent to mystring.data() is equivalent to &mystring[0], and mystring[mystring.size()] is guaranteed to be '\0'
