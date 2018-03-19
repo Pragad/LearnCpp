@@ -1,3 +1,5 @@
+// g++ -std=c++11 A2DD_main.cpp A2DD.cpp
+
 #include <iostream>
 #include "A2DD.h"
 using namespace std;

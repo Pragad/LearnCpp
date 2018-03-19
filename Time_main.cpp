@@ -1,3 +1,4 @@
+// mkcp Time.cpp Time_main.cpp
 #include <iostream>
 using namespace std;
 #include "Time.h"
