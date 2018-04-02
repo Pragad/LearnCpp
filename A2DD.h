@@ -7,9 +7,13 @@ class A2DD
   int gx;
   int gy;
 
+  //int gx = 5;
+  //int gy = 6;
+
 public:
-  A2DD(int x,int y);
+  //A2DD(int x,int y);
   int getSum();
+  void printNum();
 
 };
 

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package School;
+
+// [START java_declaration]
+option java_package = "School";
+option java_outer_classname = "School";
+// [END java_declaration]
+
+message StudentDetails {
+    string name = 1;
+    int32 age = 2;
+    Gender gender = 3;
+}
+
+enum Gender {
+    FEMALE = 0;
+    MALE = 1;
+}

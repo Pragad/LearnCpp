@@ -5,7 +5,12 @@
 using namespace std;
 
 int main() {
-    A2DD obj(5, 6);
+/*    A2DD obj(5, 6);
     cout << obj.getSum() << endl;
+    obj.printNum();
+    */
+
+    A2DD obj2;
+    obj2.printNum();
     return 0;
 }
